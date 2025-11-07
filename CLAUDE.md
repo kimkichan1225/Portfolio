@@ -80,6 +80,21 @@ Keyboard controls via `useKeyboardControls.js`:
 - C: Camera debug logging
 - Enter: UI interactions
 
+### UI System
+
+**NavigationBar Component** (`src/App.js` - line ~11)
+- Toggle between Web Mode and Game Mode
+- Auto-hide in Game Mode: navigation bar appears when mouse moves to top 80px of screen
+- Always visible in Web Mode
+- Mode toggle button switches between 🎮 (Game) and 🌐 (Web) icons
+- Web Mode is the default state on initial load
+
+**Custom Popup System** (`showCustomPopup` function - line ~63)
+- Custom styled notification system with gradient background
+- Auto-dismisses after 2 seconds with slide-out animation
+- Used for user feedback (e.g., portal transitions, interactions)
+- Replaces browser's native alert/popup for better UX
+
 ## Custom Shaders
 
 **GradientFloorMaterial** (`src/App.js`)
@@ -110,24 +125,26 @@ Models use `useGLTF.preload()` or `useFBX()` for loading. All meshes should have
 
 Each level is a separate component that receives `characterRef`:
 
-**Level1** (`src/App.js` line ~1855)
-- Green gradient floor with natural theme
+**Level1** (`src/App.js` - `Level1` component)
+- Green gradient floor with natural theme using level1map.png texture
 - NPC character with speech bubble
-- Two portals: one to Level 2 (blue), one to Level 3 (orange)
+- Two portals: one to Level 2 (blue-white vortex), one to Level 3 (white-orange vortex)
 - Palm trees and stone decorations
 - Social media objects (GitHub cat, Instagram logo, mailbox)
+- Toolbox and other decorative elements
 
-**Level2** (`src/App.js` line ~1994)
-- Urban/racing theme
-- Drivable car (`RaceFuture` component)
-- Return portal to Level 1
+**Level2** (`src/App.js` - `Level2` component)
+- Urban/racing theme with level2map.png texture
+- Drivable car (`RaceFuture` component) at origin with scale 5
+- Return portal to Level 1 (blue-white vortex)
 - Vehicle physics and interaction system
+- Simpler environment focused on racing experience
 
-**Level3** (`src/App.js` line ~2072)
-- Architectural environment
+**Level3** (`src/App.js` - `Level3` component)
+- Architectural environment with beige floor (#FFE4B5)
 - Game map models (`GameMap.glb`, `GameMap2.glb`)
-- Return portal to Level 1
-- Complex building structures
+- Return portal to Level 1 (white-orange vortex)
+- Complex building structures for exploration
 
 ## Component Patterns
 
@@ -160,15 +177,17 @@ Animations use fade in/out transitions (0.5s duration) when switching states.
 
 ## Important Constants and Positions
 
-Portal positions and radii are defined at the top of App.js (~line 173):
-- `portalPosition`: Level 1 to Level 2 portal
-- `portalLevel3Position`: Level 1 to Level 3 portal
-- `portalLevel2ToLevel1Position`: Return portal in Level 2
-- `portalLevel3ToLevel1Position`: Return portal in Level 3
-- Portal radii: 2 units
-- Character spawn positions vary by level
+Portal positions and radii are defined at the top of App.js (~line 225):
+- `portalPosition`: Level 1 to Level 2 portal at `(-20, 7.5, -20)`
+- `portalLevel3Position`: Level 1 to Level 3 portal at `(20, 7.5, -20)`
+- `portalLevel2ToLevel1Position`: Return portal in Level 2 at `(0, 7.5, 23.5)`
+- `portalLevel3ToLevel1Position`: Return portal in Level 3 at `(0, 7.5, 23.5)`
+- `level2PortalFrontPosition`: Spawn position after entering Level 2 portal at `(-20, 0, -15)`
+- `level3PortalFrontPosition`: Spawn position after entering Level 3 portal at `(20, 0, -15)`
+- Portal radii: 2 units for all portals
+- Character spawn positions: Level 2 at `(0, 0, 10)`, Level 3 at `(0, 0, 15)`
 
-Camera offset: `new THREE.Vector3(-0.00, 28.35, 19.76)`
+Camera offset: `new THREE.Vector3(-0.00, 28.35, 19.76)` (defined at line ~238)
 
 ## Shadow System
 

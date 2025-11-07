@@ -6,6 +6,140 @@ import * as THREE from 'three';
 import './App.css';
 import { useKeyboardControls } from './useKeyboardControls';
 import { PortalVortex, PortalVortexLevel3 } from './PortalVortex';
+import { TypingAnimation } from './TypingAnimation';
+import { useScrollAnimation } from './useScrollAnimation';
+import { ProjectModal } from './ProjectModal';
+
+// 프로젝트 데이터
+const projectsData = [
+  {
+    id: 1,
+    title: '3D 포트폴리오 게임',
+    description: 'React와 Three.js를 활용한 인터랙티브 3D 포트폴리오 웹사이트',
+    image: null,
+    tech: ['React', 'Three.js', 'React Three Fiber', 'GLSL'],
+    details: [
+      '3개의 레벨로 구성된 3D 게임 환경',
+      '커스텀 셰이더를 활용한 포털 시스템',
+      '자동차 탑승 및 운전 시스템',
+      '애니메이션 캐릭터 시스템'
+    ],
+    github: 'https://github.com/yourusername/portfolio-game',
+    demo: null
+  },
+  {
+    id: 2,
+    title: 'AI 챗봇 플랫폼',
+    description: '자연어 처리를 활용한 지능형 고객 서비스 챗봇',
+    image: null,
+    tech: ['Python', 'TensorFlow', 'React', 'Node.js'],
+    details: [
+      '딥러닝 기반 자연어 이해',
+      '실시간 대화 처리',
+      '다국어 지원',
+      '관리자 대시보드'
+    ],
+    github: null,
+    demo: null
+  },
+  {
+    id: 3,
+    title: 'E-커머스 플랫폼',
+    description: '확장 가능한 온라인 쇼핑몰 솔루션',
+    image: null,
+    tech: ['Next.js', 'PostgreSQL', 'Stripe', 'AWS'],
+    details: [
+      '서버 사이드 렌더링으로 SEO 최적화',
+      '결제 시스템 통합',
+      '상품 추천 알고리즘',
+      '실시간 재고 관리'
+    ],
+    github: null,
+    demo: null
+  }
+];
+
+// 웹 모드 콘텐츠 컴포넌트
+function WebModeContent() {
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [aboutRef, aboutVisible] = useScrollAnimation();
+  const [projectsRef, projectsVisible] = useScrollAnimation();
+  const [contactRef, contactVisible] = useScrollAnimation();
+
+  return (
+    <>
+      <div className="web-mode-content">
+        <section id="about" className="section">
+          <div ref={aboutRef} className={`fade-in ${aboutVisible ? 'visible' : ''}`}>
+            <h2>
+              <TypingAnimation
+                text="안녕하세요! 👋"
+                speed={100}
+              />
+            </h2>
+            <p>3D 인터랙티브 포트폴리오에 오신 것을 환영합니다!</p>
+            <p>우측 상단의 토글 버튼을 눌러 게임 모드로 전환하여 3D 세계를 탐험해보세요.</p>
+          </div>
+        </section>
+
+        <section id="projects" className="section">
+          <div ref={projectsRef} className={`fade-in ${projectsVisible ? 'visible' : ''}`}>
+            <h2>Projects</h2>
+            <div className="projects-grid">
+              {projectsData.map((project, index) => (
+                <div
+                  key={project.id}
+                  className={`project-card scale-in ${projectsVisible ? 'visible' : ''}`}
+                  style={{ transitionDelay: `${index * 0.1}s` }}
+                  onClick={() => setSelectedProject(project)}
+                >
+                  {project.image && (
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="project-card-image"
+                    />
+                  )}
+                  {!project.image && (
+                    <div className="project-card-image"></div>
+                  )}
+                  <div className="project-card-content">
+                    <h3>{project.title}</h3>
+                    <p>{project.description}</p>
+                    {project.tech && (
+                      <div className="project-card-tech">
+                        {project.tech.map((tech, idx) => (
+                          <span key={idx} className="project-tech-tag">
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="contact" className="section">
+          <div ref={contactRef} className={`slide-in-left ${contactVisible ? 'visible' : ''}`}>
+            <h2>Contact</h2>
+            <p>이메일: your-email@example.com</p>
+            <p>GitHub: github.com/yourusername</p>
+          </div>
+        </section>
+      </div>
+
+      {selectedProject && (
+        <ProjectModal
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+        />
+      )}
+    </>
+  );
+}
 
 // 네비게이션 바 컴포넌트
 function NavigationBar({ isWebMode, onToggleMode }) {
@@ -2215,35 +2349,7 @@ function App() {
 
       {isWebMode ? (
         // 웹 모드: 포트폴리오 웹사이트
-        <div className="web-mode-content">
-          <section id="about" className="section">
-            <h2>About Me</h2>
-            <p>3D 인터랙티브 포트폴리오에 오신 것을 환영합니다!</p>
-            <p>우측 상단의 토글 버튼을 눌러 게임 모드로 전환하여 3D 세계를 탐험해보세요.</p>
-          </section>
-          <section id="projects" className="section">
-            <h2>Projects</h2>
-            <div className="projects-grid">
-              <div className="project-card">
-                <h3>프로젝트 1</h3>
-                <p>프로젝트 설명...</p>
-              </div>
-              <div className="project-card">
-                <h3>프로젝트 2</h3>
-                <p>프로젝트 설명...</p>
-              </div>
-              <div className="project-card">
-                <h3>프로젝트 3</h3>
-                <p>프로젝트 설명...</p>
-              </div>
-            </div>
-          </section>
-          <section id="contact" className="section">
-            <h2>Contact</h2>
-            <p>이메일: your-email@example.com</p>
-            <p>GitHub: github.com/yourusername</p>
-          </section>
-        </div>
+        <WebModeContent />
       ) : (
         // 게임 모드: 3D 게임
         <Canvas 
