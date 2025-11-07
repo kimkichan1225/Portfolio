@@ -60,7 +60,7 @@ const projectsData = [
 ];
 
 // 웹 모드 콘텐츠 컴포넌트
-function WebModeContent() {
+function WebModeContent({ onToggleMode }) {
   const [selectedProject, setSelectedProject] = useState(null);
   const [aboutRef, aboutVisible] = useScrollAnimation();
   const [projectsRef, projectsVisible] = useScrollAnimation();
@@ -70,20 +70,39 @@ function WebModeContent() {
     <>
       <div className="web-mode-content">
         <section id="about" className="section">
-          <div ref={aboutRef} className={`fade-in ${aboutVisible ? 'visible' : ''}`}>
-            <h2>
-              <TypingAnimation
-                text="안녕하세요! 👋"
-                speed={100}
-              />
-            </h2>
-            <p>3D 인터랙티브 포트폴리오에 오신 것을 환영합니다!</p>
-            <p>우측 상단의 토글 버튼을 눌러 게임 모드로 전환하여 3D 세계를 탐험해보세요.</p>
+          <div ref={aboutRef} className={`about-container fade-in ${aboutVisible ? 'visible' : ''}`}>
+            <div className="about-text">
+              <h2>
+                About <span className="highlight">
+                  <TypingAnimation
+                    text="Kim 귀환"
+                    speed={150}
+                  />
+                </span>
+              </h2>
+              <div className="about-info">
+                <p><strong>3D Developer</strong></p>
+                <p>Birth: 2001.12.25</p>
+                <p style={{ marginTop: '1.5rem', lineHeight: '1.8' }}>
+                  Majored in Dajin University abstudy<br />
+                  'ABCDEFG' Project Developer<br />
+                  'ABCDEFG' Project Design & Developer
+                </p>
+              </div>
+            </div>
+            <div className="about-profile">
+              <div className="profile-image-container">
+                <span className="profile-image-placeholder">👨‍💻</span>
+              </div>
+              <button className="play-game-button" onClick={onToggleMode}>
+                Play Game
+              </button>
+            </div>
           </div>
         </section>
 
         <section id="projects" className="section">
-          <div ref={projectsRef} className={`fade-in ${projectsVisible ? 'visible' : ''}`}>
+          <div ref={projectsRef} className={`fade-in ${projectsVisible ? 'visible' : ''}`} style={{ width: '100%', maxWidth: '1200px' }}>
             <h2>Projects</h2>
             <div className="projects-grid">
               {projectsData.map((project, index) => (
@@ -123,10 +142,15 @@ function WebModeContent() {
         </section>
 
         <section id="contact" className="section">
-          <div ref={contactRef} className={`slide-in-left ${contactVisible ? 'visible' : ''}`}>
+          <div ref={contactRef} className={`contact-info slide-in-left ${contactVisible ? 'visible' : ''}`}>
             <h2>Contact</h2>
-            <p>이메일: your-email@example.com</p>
-            <p>GitHub: github.com/yourusername</p>
+            <p>📧 E-mail: 1234@gmail.com</p>
+            <p>📱 Contact: +82) 10-1234-5678</p>
+            <p style={{ marginTop: '2rem', fontSize: '1rem', opacity: 0.9 }}>
+              대중 저작권 제도, 전반적인 지는 증권을<br />
+              아니라는 상태입니다. 장담하는 관점이는 담보로는<br />
+              개발의 내역에 대한 근로자의 협의 입니다.
+            </p>
           </div>
         </section>
       </div>
@@ -2349,7 +2373,7 @@ function App() {
 
       {isWebMode ? (
         // 웹 모드: 포트폴리오 웹사이트
-        <WebModeContent />
+        <WebModeContent onToggleMode={toggleMode} />
       ) : (
         // 게임 모드: 3D 게임
         <Canvas 
