@@ -62,7 +62,7 @@ const projectsData = [
       }
     ],
     github: 'https://github.com/kimkichan1225/KDTWebGame',
-    demo: null
+    demo: 'https://kdtwebgame.onrender.com/'
   },
   {
     id: 2,
@@ -268,6 +268,32 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                             {tech}
                           </span>
                         ))}
+                      </div>
+                    )}
+                    {(project.github || project.demo) && (
+                      <div className="project-card-links">
+                        {project.github && (
+                          <a
+                            href={project.github}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="project-card-link"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            GitHub
+                          </a>
+                        )}
+                        {project.demo && (
+                          <a
+                            href={project.demo}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="project-card-link demo"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Live Demo
+                          </a>
+                        )}
                       </div>
                     )}
                   </div>

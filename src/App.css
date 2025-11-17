@@ -433,6 +433,8 @@
   position: relative;
   transform-style: preserve-3d;
   perspective: 1000px;
+  display: flex;
+  flex-direction: column;
 }
 
 .project-card::before {
@@ -463,6 +465,9 @@
   padding: 2rem;
   color: white;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .project-card-content h3 {
@@ -484,6 +489,40 @@
   gap: 0.5rem;
   margin-top: 1rem;
   justify-content: center;
+}
+
+.project-card-links {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 1.5rem;
+  justify-content: center;
+}
+
+.project-card-link {
+  padding: 0.6rem 1.2rem;
+  background: #24292e;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.project-card-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background: #1a1e22;
+}
+
+.project-card-link.demo {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.project-card-link.demo:hover {
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .project-tech-tag {
@@ -671,6 +710,21 @@
   background: #2a2a2a;
   color: #7B9FFF;
   border: 1px solid #404040;
+}
+
+.dark-mode .project-card-link {
+  background: #2a2a2a;
+  border: 1px solid #404040;
+}
+
+.dark-mode .project-card-link:hover {
+  background: #333333;
+  border-color: #555555;
+}
+
+.dark-mode .project-card-link.demo {
+  background: linear-gradient(135deg, #9D7BC9 0%, #7B9FFF 100%);
+  border: none;
 }
 
 .dark-mode .particle {
