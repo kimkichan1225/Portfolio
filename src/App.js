@@ -416,14 +416,89 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
         </section>
 
         <section id="contact" className="section">
-          <div ref={contactRef} className={`contact-info slide-in-left ${contactVisible ? 'visible' : ''}`}>
-            <h2>Contact</h2>
-            <p>📧 E-mail: <a href="mailto:kimkichan1225@gmail.com" style={{ color: '#667eea', textDecoration: 'none' }}>kimkichan1225@gmail.com</a></p>
-            <p>📱 Phone: +82 10-4225-5388</p>
-            <p>💻 GitHub: <a href="https://github.com/kimkichan1225" target="_blank" rel="noopener noreferrer" style={{ color: '#667eea', textDecoration: 'none' }}>github.com/kimkichan1225</a></p>
-            <p>📷 Instagram: <a href="https://www.instagram.com/kim_kichan/#" target="_blank" rel="noopener noreferrer" style={{ color: '#667eea', textDecoration: 'none' }}>@kim_kichan</a></p>
-            <div style={{ marginTop: '2rem' }}>
-              <p style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>Let's work together!</p>
+          <div ref={contactRef} className="contact-skills-container">
+            <h2 className="contact-skills-title">Contact & Skills</h2>
+
+            <div className="contact-skills-grid">
+              <div className="contact-box">
+                <h3>연락처</h3>
+
+                <div className="skill-category">
+                  <h4>Email</h4>
+                  <div className="skill-tags">
+                    <a href="mailto:kimkichan1225@gmail.com" className="skill-tag contact-link">kimkichan1225@gmail.com</a>
+                  </div>
+                </div>
+
+                <div className="skill-category">
+                  <h4>Phone</h4>
+                  <div className="skill-tags">
+                    <span className="skill-tag">+82 10-4225-5388</span>
+                  </div>
+                </div>
+
+                <div className="skill-category">
+                  <h4>GitHub</h4>
+                  <div className="skill-tags">
+                    <a href="https://github.com/kimkichan1225" target="_blank" rel="noopener noreferrer" className="skill-tag contact-link">github.com/kimkichan1225</a>
+                  </div>
+                </div>
+
+                <div className="skill-category">
+                  <h4>Instagram</h4>
+                  <div className="skill-tags">
+                    <a href="https://www.instagram.com/kim_kichan/#" target="_blank" rel="noopener noreferrer" className="skill-tag contact-link">@kim_kichan</a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="skills-box">
+                <h3>기술 스택</h3>
+
+                <div className="skill-category">
+                  <h4>Frontend</h4>
+                  <div className="skill-tags">
+                    <span className="skill-tag">React 19</span>
+                    <span className="skill-tag">TypeScript</span>
+                    <span className="skill-tag">JavaScript</span>
+                    <span className="skill-tag">Three.js</span>
+                    <span className="skill-tag">HTML5</span>
+                    <span className="skill-tag">CSS3</span>
+                    <span className="skill-tag">TailwindCSS</span>
+                  </div>
+                </div>
+
+                <div className="skill-category">
+                  <h4>Backend</h4>
+                  <div className="skill-tags">
+                    <span className="skill-tag">Node.js</span>
+                    <span className="skill-tag">Express</span>
+                    <span className="skill-tag">Socket.IO</span>
+                    <span className="skill-tag">Supabase</span>
+                    <span className="skill-tag">PostgreSQL</span>
+                  </div>
+                </div>
+
+                <div className="skill-category">
+                  <h4>Game Development</h4>
+                  <div className="skill-tags">
+                    <span className="skill-tag">Unity 6</span>
+                    <span className="skill-tag">C#</span>
+                    <span className="skill-tag">React Three Fiber</span>
+                  </div>
+                </div>
+
+                <div className="skill-category">
+                  <h4>Tools</h4>
+                  <div className="skill-tags">
+                    <span className="skill-tag">Git</span>
+                    <span className="skill-tag">GitHub</span>
+                    <span className="skill-tag">Vite</span>
+                    <span className="skill-tag">Netlify</span>
+                    <span className="skill-tag">Render</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -471,7 +546,7 @@ function NavigationBar({ isWebMode, onToggleMode, isDarkMode, onToggleDarkMode }
           <a href="#home" className="nav-link">Home</a>
           <a href="#about" className="nav-link">About</a>
           <a href="#projects" className="nav-link">Projects</a>
-          <a href="#contact" className="nav-link">Contact</a>
+          <a href="#contact" className="nav-link">Contact & Skills</a>
         </div>
         <div className="nav-right">
           <button

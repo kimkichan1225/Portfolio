@@ -136,7 +136,6 @@
   height: 100vh;
   overflow-y: scroll;
   background: var(--light-gray);
-  scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
 }
 
@@ -149,8 +148,6 @@
   padding: 4rem 2rem;
   padding-top: calc(4rem + 70px);
   color: var(--dark-text);
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   box-sizing: border-box;
   position: relative;
 }
@@ -244,14 +241,112 @@
   color: var(--dark-text);
 }
 
-/* Contact 섹션 스타일 */
+/* Contact & Skills 섹션 스타일 */
 .section#contact {
-  background: white;
+  background: #f8f9fa !important;
   color: var(--dark-text);
 }
 
-.section#contact h2 {
-  color: var(--dark-text);
+.contact-skills-container {
+  width: 100%;
+  max-width: 1200px;
+  padding: 2rem;
+}
+
+.contact-skills-title {
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  text-align: center;
+  color: #2c3e50 !important;
+}
+
+.contact-skills-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+
+.contact-box,
+.skills-box {
+  background: white !important;
+  padding: 2rem;
+  borderRadius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 2px solid #667eea;
+}
+
+.contact-box h3,
+.skills-box h3 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #2c3e50 !important;
+}
+
+.contact-item {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #495057 !important;
+}
+
+.contact-item span {
+  color: #495057 !important;
+}
+
+.contact-item a {
+  color: #667eea !important;
+  text-decoration: none;
+  margin-left: 0.5rem;
+}
+
+.contact-item a:hover {
+  text-decoration: underline;
+}
+
+.contact-cta {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+  color: white !important;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.skill-category {
+  margin-bottom: 1.5rem;
+}
+
+.skill-category h4 {
+  font-size: 1.2rem;
+  color: #667eea !important;
+  margin-bottom: 0.75rem;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skill-tag {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white !important;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.skill-tag.contact-link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.skill-tag.contact-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .contact-info {
@@ -828,4 +923,37 @@
 /* 핵심 역량 카드 다크 모드 */
 .dark-mode div[style*="rgba(91, 127, 255, 0.05)"] {
   background: rgba(123, 159, 255, 0.08) !important;
+}
+
+/* Contact & Skills 섹션 다크 모드 */
+.dark-mode #contact {
+  background: #1a1a1a !important;
+}
+
+.dark-mode .contact-skills-title {
+  color: #e0e0e0 !important;
+}
+
+.dark-mode .contact-box,
+.dark-mode .skills-box {
+  background: #2a2a2a !important;
+  border-color: #7B9FFF;
+}
+
+.dark-mode .contact-box h3,
+.dark-mode .skills-box h3 {
+  color: #e0e0e0 !important;
+}
+
+.dark-mode .skill-category h4 {
+  color: #7B9FFF !important;
+}
+
+.dark-mode .contact-item,
+.dark-mode .contact-item span {
+  color: #b0b0b0 !important;
+}
+
+.dark-mode .contact-item a {
+  color: #7B9FFF !important;
 }
