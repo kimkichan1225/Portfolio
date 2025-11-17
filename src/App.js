@@ -14,47 +14,52 @@ import { ProjectModal } from './ProjectModal';
 const projectsData = [
   {
     id: 1,
-    title: '3D 포트폴리오 게임',
-    description: 'React와 Three.js를 활용한 인터랙티브 3D 포트폴리오 웹사이트',
+    title: 'KDT 멀티플레이어 게임',
+    description: 'Node.js와 Socket.IO를 활용한 실시간 웹 기반 멀티플레이어 액션 게임',
     image: null,
-    tech: ['React', 'Three.js', 'React Three Fiber', 'GLSL'],
+    tech: ['Node.js', 'Express', 'Socket.IO', 'JavaScript', 'HTML5'],
     details: [
-      '3개의 레벨로 구성된 3D 게임 환경',
-      '커스텀 셰이더를 활용한 포털 시스템',
-      '자동차 탑승 및 운전 시스템',
-      '애니메이션 캐릭터 시스템'
+      '실시간 멀티플레이어 환경 (Socket.IO 기반)',
+      '다양한 무기 시스템 (근접/원거리 무기, 등급별 아이템)',
+      '전투 시스템 (넉백, 기절, 출혈, 방어구 파괴 효과)',
+      '체력 시스템 및 오브젝트 상호작용',
+      '플레이어 움직임 실시간 동기화'
     ],
-    github: 'https://github.com/yourusername/portfolio-game',
+    github: 'https://github.com/kimkichan1225/KDTWebGame',
     demo: null
   },
   {
     id: 2,
-    title: 'AI 챗봇 플랫폼',
-    description: '자연어 처리를 활용한 지능형 고객 서비스 챗봇',
+    title: '편의점 종합 솔루션',
+    description: 'React 19 + TypeScript로 구축한 실시간 편의점 통합 관리 플랫폼',
     image: null,
-    tech: ['Python', 'TensorFlow', 'React', 'Node.js'],
+    tech: ['React 19', 'TypeScript', 'Supabase', 'TailwindCSS', 'Zustand', 'TanStack Query'],
     details: [
-      '딥러닝 기반 자연어 이해',
-      '실시간 대화 처리',
-      '다국어 지원',
-      '관리자 대시보드'
+      '실시간 주문 시스템 (토스페이먼츠 연동)',
+      '스마트 재고 관리 및 자동 알림',
+      '매출 분석 대시보드 (일/주/월)',
+      '본사-지점 물류 시스템',
+      'PostgreSQL RLS 보안 정책 적용',
+      'GPS 기반 지점 검색'
     ],
-    github: null,
+    github: 'https://github.com/kimkichan1225/WebConvi',
     demo: null
   },
   {
     id: 3,
-    title: 'E-커머스 플랫폼',
-    description: '확장 가능한 온라인 쇼핑몰 솔루션',
+    title: '2D Unity Action RPG',
+    description: 'Unity 6로 제작한 2D 액션 RPG 게임 (졸업 프로젝트)',
     image: null,
-    tech: ['Next.js', 'PostgreSQL', 'Stripe', 'AWS'],
+    tech: ['Unity 6', 'C#', 'Windows'],
     details: [
-      '서버 사이드 렌더링으로 SEO 최적화',
-      '결제 시스템 통합',
-      '상품 추천 알고리즘',
-      '실시간 재고 관리'
+      '3가지 무기 타입 (검, 창, 메이스) 및 고유 능력치',
+      '고급 이동 메커니즘 (벽 슬라이드, 대시, 점프)',
+      '턴제 보스 전투 시스템 (주사위 메커니즘)',
+      '다중 스테이지 및 미니게임 (대장간, 라이프맵)',
+      '레벨업, 인벤토리, 상점 시스템',
+      '세이브/로드 시스템 (3개 슬롯)'
     ],
-    github: null,
+    github: 'https://github.com/kimkichan1225/2DUnityGame',
     demo: null
   }
 ];
@@ -62,6 +67,7 @@ const projectsData = [
 // 웹 모드 콘텐츠 컴포넌트
 function WebModeContent({ onToggleMode }) {
   const [selectedProject, setSelectedProject] = useState(null);
+  const [homeRef, homeVisible] = useScrollAnimation();
   const [aboutRef, aboutVisible] = useScrollAnimation();
   const [projectsRef, projectsVisible] = useScrollAnimation();
   const [contactRef, contactVisible] = useScrollAnimation();
@@ -69,25 +75,34 @@ function WebModeContent({ onToggleMode }) {
   return (
     <>
       <div className="web-mode-content">
+        <section id="home" className="section" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div ref={homeRef} className={`fade-in ${homeVisible ? 'visible' : ''}`} style={{ textAlign: 'center', maxWidth: '800px' }}>
+            <h2 style={{ fontSize: '3rem', marginBottom: '1rem' }}>
+              <span className="highlight">
+                <TypingAnimation
+                  text="안녕하세요! 김기찬입니다."
+                  speed={150}
+                />
+              </span>
+            </h2>
+            <div style={{ fontSize: '1rem', color: '#666', lineHeight: '1.6' }}>
+              <p><strong>Full-stack & Game Developer</strong></p>
+              <p>Birth: 2001.12.25</p>
+              <p style={{ marginTop: '1.5rem', lineHeight: '1.8' }}>
+                실시간 웹 애플리케이션부터 3D 인터랙티브 경험까지,<br />
+                다양한 기술 스택으로 창의적인 아이디어를<br />
+                실제 동작하는 서비스로 구현하는 개발자입니다.
+              </p>
+            </div>
+          </div>
+        </section>
+
         <section id="about" className="section">
           <div ref={aboutRef} className={`about-container fade-in ${aboutVisible ? 'visible' : ''}`}>
             <div className="about-text">
-              <h2>
-                About <span className="highlight">
-                  <TypingAnimation
-                    text="Kim 귀환"
-                    speed={150}
-                  />
-                </span>
-              </h2>
+              <h2>About</h2>
               <div className="about-info">
-                <p><strong>3D Developer</strong></p>
-                <p>Birth: 2001.12.25</p>
-                <p style={{ marginTop: '1.5rem', lineHeight: '1.8' }}>
-                  Majored in Dajin University abstudy<br />
-                  'ABCDEFG' Project Developer<br />
-                  'ABCDEFG' Project Design & Developer
-                </p>
+                <p>About 섹션 내용</p>
               </div>
             </div>
             <div className="about-profile">
@@ -147,11 +162,6 @@ function WebModeContent({ onToggleMode }) {
             <p>📷 Instagram: <a href="https://www.instagram.com/kim_kichan/#" target="_blank" rel="noopener noreferrer" style={{ color: '#667eea', textDecoration: 'none' }}>@kim_kichan</a></p>
             <div style={{ marginTop: '2rem' }}>
               <p style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>Let's work together!</p>
-              <p style={{ fontSize: '1rem', opacity: 0.9, lineHeight: '1.8' }}>
-                I'm always open to discussing new projects,<br />
-                creative ideas, or opportunities to be part of your visions.<br />
-                Feel free to reach out anytime!
-              </p>
             </div>
           </div>
         </section>
@@ -196,6 +206,7 @@ function NavigationBar({ isWebMode, onToggleMode }) {
           <h1 className="nav-logo">3D Portfolio</h1>
         </div>
         <div className="nav-center">
+          <a href="#home" className="nav-link">Home</a>
           <a href="#about" className="nav-link">About</a>
           <a href="#projects" className="nav-link">Projects</a>
           <a href="#contact" className="nav-link">Contact</a>
