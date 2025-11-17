@@ -220,6 +220,18 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
   const [projectsRef, projectsVisible] = useScrollAnimation();
   const [contactRef, contactVisible] = useScrollAnimation();
 
+  // 이메일 복사 함수
+  const handleCopyEmail = async (e) => {
+    e.preventDefault();
+    const email = 'kimkichan1225@gmail.com';
+    try {
+      await navigator.clipboard.writeText(email);
+      showCustomPopup('이메일이 복사되었습니다! 📋');
+    } catch (err) {
+      console.error('복사 실패:', err);
+    }
+  };
+
   return (
     <>
       <div className="web-mode-content">
@@ -426,7 +438,7 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                 <div className="skill-category">
                   <h4>Email</h4>
                   <div className="skill-tags">
-                    <a href="mailto:kimkichan1225@gmail.com" className="skill-tag contact-link">kimkichan1225@gmail.com</a>
+                    <span onClick={handleCopyEmail} className="skill-tag contact-link" style={{ cursor: 'pointer' }}>kimkichan1225@gmail.com</span>
                   </div>
                 </div>
 
