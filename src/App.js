@@ -81,19 +81,72 @@ const projectsData = [
   {
     id: 2,
     title: '편의점 종합 솔루션',
-    description: 'React 19 + TypeScript로 구축한 실시간 편의점 통합 관리 플랫폼',
-    image: null,
-    tech: ['React 19', 'TypeScript', 'Supabase', 'TailwindCSS', 'Zustand', 'TanStack Query'],
-    details: [
-      '실시간 주문 시스템 (토스페이먼츠 연동)',
-      '스마트 재고 관리 및 자동 알림',
-      '매출 분석 대시보드 (일/주/월)',
-      '본사-지점 물류 시스템',
-      'PostgreSQL RLS 보안 정책 적용',
-      'GPS 기반 지점 검색'
+    description: 'React 19 + TypeScript로 구축한 실시간 편의점 통합 관리 플랫폼 (98% 완성)',
+    image: '/SecondProject.png',
+    video: '/SecondProjectPlay.mov',
+    tech: ['React 19', 'TypeScript', 'Vite 6', 'Supabase', 'PostgreSQL', 'TailwindCSS', 'Zustand', 'TanStack Query'],
+    overview: [
+      'React 19 + TypeScript + Vite 6 기반 모던 프론트엔드 아키텍처',
+      'Supabase (PostgreSQL 15) + Row Level Security (RLS) 보안 시스템',
+      '3개 역할 시스템 (고객/점주/본사) 완전 분리 구조',
+      '17개 테이블 + 13개 Database Functions + 15개 Triggers',
+      '토스페이먼츠 결제 연동 (카드, 간편결제, 계좌이체)',
+      'GPS 기반 지점 검색 (PostGIS + Google Maps API)',
+      'WebSocket 실시간 알림 시스템 (주문, 재고, 매출)',
+      '완전한 주문 워크플로우 (장바구니 → 결제 → 추적 → 완료)',
+      '자동화된 재고 관리 (주문 시 자동 차감, 부족 알림)',
+      '통합 매출 분석 (일/주/월 차트, 상품별/지점별 통계)'
+    ],
+    achievements: [
+      '17개 테이블 완전한 ERD 설계 및 정규화',
+      'Row Level Security로 테이블 수준 권한 제어',
+      'PaymentKey 기반 3단계 중복 결제 방지 시스템',
+      '자동화된 비즈니스 로직 (13개 함수 + 15개 트리거)',
+      '실시간 WebSocket 구독으로 즉시 UI 업데이트',
+      'TypeScript Strict Mode 전체 적용 (타입 안전성)',
+      'Zustand + TanStack Query 최적화된 상태 관리',
+      '완전한 반응형 디자인 (모바일/태블릿/데스크톱)',
+      '5분 원클릭 데이터베이스 초기화 스크립트',
+      'SPA 라우팅 최적화 (Render 배포 지원)'
+    ],
+    challenges: [
+      {
+        title: '복잡한 다중 역할 시스템 설계',
+        description: '고객/점주/본사 3개 역할의 완전히 다른 UI/UX와 권한 체계를 단일 애플리케이션에 구현. Supabase RLS 정책으로 각 역할별로 접근 가능한 데이터를 테이블 레벨에서 제어. profiles 테이블의 role 컬럼과 auth.uid()를 조합하여 동적 권한 검증. React Router의 Protected Routes와 역할 기반 리다이렉트 로직으로 잘못된 접근 차단.'
+      },
+      {
+        title: '중복 결제 방지 및 트랜잭션 처리',
+        description: '토스페이먼츠 결제 승인 후 네트워크 오류나 새로고침으로 인한 중복 주문 생성 문제 해결. 3단계 방어: (1) 클라이언트 sessionStorage로 결제 중 상태 추적, (2) PaymentKey unique constraint로 DB 레벨 중복 방지, (3) 주문 생성 전 PaymentKey 존재 여부 체크. PostgreSQL 트랜잭션과 Supabase 함수를 활용한 원자성 보장.'
+      },
+      {
+        title: '실시간 재고 동기화 및 자동화',
+        description: '주문 완료 시 store_products 테이블의 재고를 자동으로 차감하고, 재고 부족 시 점주에게 즉시 알림. inventory_transactions 테이블로 모든 재고 변동 이력 추적. PostgreSQL Trigger를 활용하여 order_items 삽입 시 자동으로 재고 차감 및 트랜잭션 기록. Supabase Realtime으로 재고 변경 사항을 실시간 구독하여 UI 즉시 업데이트.'
+      },
+      {
+        title: '복잡한 공급망 관리 워크플로우',
+        description: '지점 → 본사 재고 요청 → 승인 → 배송 → 입고의 전체 프로세스 구현. supply_requests, supply_request_items, shipments 3개 테이블 연계. 본사 승인 시 자동으로 shipment 생성 및 배송 상태 추적. 배송 완료 시 지점 재고 자동 증가 및 inventory_transactions 기록. 상태 변경마다 관련 당사자에게 실시간 알림 발송.'
+      },
+      {
+        title: 'TypeScript 타입 안전성 및 DX 최적화',
+        description: 'Supabase의 자동 생성 타입과 커스텀 타입을 조합하여 완전한 타입 추론 환경 구축. Database.ts에서 모든 테이블/뷰/함수 타입 정의 자동 생성. Zustand 스토어와 TanStack Query에 제네릭 타입 적용으로 IDE 자동완성 지원. TypeScript Strict Mode로 null/undefined 안전성 보장. Vite의 Hot Module Replacement로 즉시 변경사항 반영.'
+      }
     ],
     github: 'https://github.com/kimkichan1225/WebConvi',
-    demo: null
+    demo: 'https://webconvi.netlify.app/',
+    reports: [
+      {
+        title: '계획 보고서',
+        file: '/SecondProjectPlanReport.pdf'
+      },
+      {
+        title: '완료 보고서',
+        file: '/SecondProjectFinishReport.pdf'
+      },
+      {
+        title: '발표 PPT',
+        file: '/SecondProjectPowerPoint.pdf'
+      }
+    ]
   },
   {
     id: 3,
