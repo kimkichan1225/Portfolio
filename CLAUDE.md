@@ -4,7 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a 3D interactive portfolio game built with React, Three.js, and React Three Fiber. The project features three distinct levels where users control an animated character to explore projects and interact with various 3D elements including portals, vehicles, and environmental objects.
+This is a dual-mode 3D interactive portfolio built with React, Three.js, and React Three Fiber. The application features:
+- **Web Mode**: Traditional portfolio website with About, Projects, and Contact sections
+- **Game Mode**: 3D game with three distinct levels where users control an animated character to explore projects and interact with various 3D elements including portals, vehicles, and environmental objects
+
+The application defaults to Web Mode on load, with seamless toggling between modes via the navigation bar.
 
 ## Development Commands
 
@@ -34,8 +38,13 @@ Deploys the production build to Netlify. The project includes `netlify.toml` con
 
 ## Core Architecture
 
+### Application Mode Management
+The application has two primary modes controlled by `isWebMode` state:
+- **Web Mode** (`isWebMode: true`): Displays `WebModeContent` component with portfolio sections
+- **Game Mode** (`isWebMode: false`): Displays 3D Canvas with game levels
+
 ### Game State Management
-The application uses a state machine pattern with the following states:
+Within Game Mode, a state machine pattern manages level transitions:
 - `playing_level1`: Natural environment with palm trees, NPC, and portals
 - `entering_portal`: Transition state when entering Level 2 portal
 - `playing_level2`: Urban racing environment with drivable car
@@ -82,14 +91,30 @@ Keyboard controls via `useKeyboardControls.js`:
 
 ### UI System
 
-**NavigationBar Component** (`src/App.js` - line ~11)
+**NavigationBar Component** (`src/App.js` - `NavigationBar` component)
 - Toggle between Web Mode and Game Mode
 - Auto-hide in Game Mode: navigation bar appears when mouse moves to top 80px of screen
 - Always visible in Web Mode
 - Mode toggle button switches between 🎮 (Game) and 🌐 (Web) icons
 - Web Mode is the default state on initial load
+- Contains navigation links (About, Projects, Contact) that work in Web Mode
 
-**Custom Popup System** (`showCustomPopup` function - line ~63)
+**WebModeContent Component** (`src/App.js` - `WebModeContent` component)
+- Traditional portfolio website layout
+- Three main sections: About, Projects, Contact
+- Scroll-based animations using `useScrollAnimation` hook
+- Project cards displayed in grid layout
+- Clicking project cards opens detailed modal via `ProjectModal` component
+- Typing animation effect for name using `TypingAnimation` component
+
+**ProjectModal Component** (`src/ProjectModal.js`)
+- Modal overlay for displaying project details
+- Displays project title, description, tech stack, and detailed features
+- Links to GitHub and live demo (when available)
+- Closes on ESC key or clicking outside modal
+- Prevents body scroll when open
+
+**Custom Popup System** (`showCustomPopup` function)
 - Custom styled notification system with gradient background
 - Auto-dismisses after 2 seconds with slide-out animation
 - Used for user feedback (e.g., portal transitions, interactions)
@@ -146,6 +171,27 @@ Each level is a separate component that receives `characterRef`:
 - Return portal to Level 1 (white-orange vortex)
 - Complex building structures for exploration
 
+## Utility Hooks
+
+**useKeyboardControls** (`src/useKeyboardControls.js`)
+- Custom hook for keyboard input handling
+- Tracks key states: forward, backward, left, right, shift, log, e, enter
+- Uses event listeners for keydown/keyup
+- Returns object with boolean values for each key state
+
+**useScrollAnimation** (`src/useScrollAnimation.js`)
+- Custom hook for scroll-triggered animations
+- Uses IntersectionObserver API to detect when elements enter viewport
+- Configurable threshold and rootMargin options
+- Option for one-time or repeating animations
+- Returns `[elementRef, isVisible]` tuple
+
+**TypingAnimation Component** (`src/TypingAnimation.js`)
+- Animated text typing effect
+- Configurable speed and delay parameters
+- Optional onComplete callback
+- Includes blinking cursor animation
+
 ## Component Patterns
 
 **Model Cloning**
@@ -174,6 +220,21 @@ if (distance < portalRadius) {
 
 **Animation State Management**
 Animations use fade in/out transitions (0.5s duration) when switching states.
+
+**Project Data Structure**
+Projects are stored in `projectsData` array at top of App.js with structure:
+```javascript
+{
+  id: number,
+  title: string,
+  description: string,
+  image: string | null,
+  tech: string[],
+  details: string[],
+  github: string | null,
+  demo: string | null
+}
+```
 
 ## Important Constants and Positions
 
@@ -204,7 +265,53 @@ The game uses Three.js shadow mapping:
 - Audio files are preloaded with `preload='auto'`
 - Shadow maps are performance-intensive; camera settings optimized for balance
 
+## Styling and CSS
+
+The application uses multiple CSS files for styling:
+- **src/App.css**: Main application styles including Web Mode layout, navigation bar, project cards, and animations
+- **src/ProjectModal.css**: Modal-specific styles for project detail overlay
+- **src/index.css**: Global styles and CSS reset
+
+CSS animations include:
+- Fade-in, slide-in, and scale-in animations for scroll-triggered effects
+- Typing cursor blink animation
+- Popup slide-in/slide-out animations
+- Navigation bar show/hide transitions
+
+## File Structure
+
+```
+portfolio-game/
+├── public/
+│   ├── resources/              # 3D models and textures
+│   │   ├── kenney_car-kit/
+│   │   ├── Nature-Kit/
+│   │   ├── Ultimate Animated Character Pack/
+│   │   └── Ultimate Nature Pack/
+│   ├── sounds/                 # Audio files
+│   └── *.glb                   # Additional 3D models
+├── src/
+│   ├── App.js                  # Main application component
+│   ├── App.css                 # Main styles
+│   ├── PortalVortex.js         # Portal shader component
+│   ├── ProjectModal.js         # Project detail modal
+│   ├── ProjectModal.css        # Modal styles
+│   ├── TypingAnimation.js      # Typing effect component
+│   ├── useKeyboardControls.js  # Keyboard input hook
+│   ├── useScrollAnimation.js   # Scroll animation hook
+│   ├── index.js                # React entry point
+│   └── index.css               # Global styles
+├── netlify.toml                # Netlify deployment config
+└── package.json                # Dependencies and scripts
+```
+
 ## Common Development Tasks
+
+**Adding a new project to Web Mode:**
+1. Add project object to `projectsData` array in App.js
+2. Include all required fields: id, title, description, tech, details
+3. Optional: Add project image to public folder and reference in image field
+4. Optional: Add GitHub and demo URLs
 
 **Adding a new 3D object:**
 1. Place asset file in appropriate `public/resources/` subdirectory
@@ -214,7 +321,7 @@ The game uses Three.js shadow mapping:
 5. Place component in desired level with position/scale/rotation props
 
 **Adding a new portal:**
-1. Define portal position and radius constants
+1. Define portal position and radius constants at top of App.js
 2. Add portal collision detection in `Model` component's `useFrame`
 3. Create new game state for transition
 4. Add `PortalVortex` visual component at portal location
@@ -230,3 +337,8 @@ The game uses Three.js shadow mapping:
 2. Create `useRef()` for audio element
 3. Load in `useEffect()` with `new Audio(path)`
 4. Trigger playback with `.play()` at appropriate event
+
+**Modifying Web Mode animations:**
+- Adjust `useScrollAnimation` options (threshold, rootMargin) for trigger points
+- Modify animation delays in style={{ transitionDelay }} props
+- Edit CSS animation classes in App.css (fade-in, slide-in, scale-in)

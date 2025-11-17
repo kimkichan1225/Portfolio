@@ -94,9 +94,6 @@ function WebModeContent({ onToggleMode }) {
               <div className="profile-image-container">
                 <span className="profile-image-placeholder">👨‍💻</span>
               </div>
-              <button className="play-game-button" onClick={onToggleMode}>
-                Play Game
-              </button>
             </div>
           </div>
         </section>
@@ -144,13 +141,18 @@ function WebModeContent({ onToggleMode }) {
         <section id="contact" className="section">
           <div ref={contactRef} className={`contact-info slide-in-left ${contactVisible ? 'visible' : ''}`}>
             <h2>Contact</h2>
-            <p>📧 E-mail: 1234@gmail.com</p>
-            <p>📱 Contact: +82) 10-1234-5678</p>
-            <p style={{ marginTop: '2rem', fontSize: '1rem', opacity: 0.9 }}>
-              대중 저작권 제도, 전반적인 지는 증권을<br />
-              아니라는 상태입니다. 장담하는 관점이는 담보로는<br />
-              개발의 내역에 대한 근로자의 협의 입니다.
-            </p>
+            <p>📧 E-mail: <a href="mailto:kimkichan1225@gmail.com" style={{ color: '#667eea', textDecoration: 'none' }}>kimkichan1225@gmail.com</a></p>
+            <p>📱 Phone: +82 10-4225-5388</p>
+            <p>💻 GitHub: <a href="https://github.com/kimkichan1225" target="_blank" rel="noopener noreferrer" style={{ color: '#667eea', textDecoration: 'none' }}>github.com/kimkichan1225</a></p>
+            <p>📷 Instagram: <a href="https://www.instagram.com/kim_kichan/#" target="_blank" rel="noopener noreferrer" style={{ color: '#667eea', textDecoration: 'none' }}>@kim_kichan</a></p>
+            <div style={{ marginTop: '2rem' }}>
+              <p style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>Let's work together!</p>
+              <p style={{ fontSize: '1rem', opacity: 0.9, lineHeight: '1.8' }}>
+                I'm always open to discussing new projects,<br />
+                creative ideas, or opportunities to be part of your visions.<br />
+                Feel free to reach out anytime!
+              </p>
+            </div>
           </div>
         </section>
       </div>
