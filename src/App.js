@@ -65,7 +65,7 @@ const projectsData = [
 ];
 
 // 웹 모드 콘텐츠 컴포넌트
-function WebModeContent({ onToggleMode }) {
+function WebModeContent({ onToggleMode, isDarkMode }) {
   const [selectedProject, setSelectedProject] = useState(null);
   const [homeRef, homeVisible] = useScrollAnimation();
   const [aboutRef, aboutVisible] = useScrollAnimation();
@@ -266,7 +266,7 @@ function WebModeContent({ onToggleMode }) {
 }
 
 // 네비게이션 바 컴포넌트
-function NavigationBar({ isWebMode, onToggleMode }) {
+function NavigationBar({ isWebMode, onToggleMode, isDarkMode, onToggleDarkMode }) {
   const [mouseY, setMouseY] = useState(0);
 
   useEffect(() => {
@@ -300,6 +300,15 @@ function NavigationBar({ isWebMode, onToggleMode }) {
           <a href="#contact" className="nav-link">Contact</a>
         </div>
         <div className="nav-right">
+          <button
+            className="dark-mode-toggle"
+            onClick={onToggleDarkMode}
+            title={isDarkMode ? '라이트 모드로 전환' : '다크 모드로 전환'}
+          >
+            <span className="toggle-icon">
+              {isDarkMode ? '☀️' : '🌙'}
+            </span>
+          </button>
           <button
             className={`mode-toggle ${isWebMode ? 'web' : 'game'}`}
             onClick={onToggleMode}
@@ -2463,18 +2472,32 @@ function App() {
   const [gameState, setGameState] = useState('playing_level1'); // playing_level1, entering_portal, playing_level2
   const characterRef = useRef();
   const [isWebMode, setIsWebMode] = useState(true); // 웹/게임 모드 상태 - 웹 모드로 시작
+  const [isDarkMode, setIsDarkMode] = useState(false); // 다크 모드 상태
 
   const toggleMode = () => {
     setIsWebMode(!isWebMode);
   };
 
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
+  // 다크 모드 클래스 적용
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }, [isDarkMode]);
+
   return (
-    <div className="App">
-      <NavigationBar isWebMode={isWebMode} onToggleMode={toggleMode} />
+    <div className={`App ${isDarkMode ? 'dark-mode' : ''}`}>
+      <NavigationBar isWebMode={isWebMode} onToggleMode={toggleMode} isDarkMode={isDarkMode} onToggleDarkMode={toggleDarkMode} />
 
       {isWebMode ? (
         // 웹 모드: 포트폴리오 웹사이트
-        <WebModeContent onToggleMode={toggleMode} />
+        <WebModeContent onToggleMode={toggleMode} isDarkMode={isDarkMode} />
       ) : (
         // 게임 모드: 3D 게임
         <Canvas 
