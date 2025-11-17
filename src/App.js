@@ -146,8 +146,8 @@ function WebModeContent({ onToggleMode }) {
               </div>
             </div>
             <div className="about-profile">
-              <div className="profile-image-container">
-                <span className="profile-image-placeholder">👨‍💻</span>
+              <div className="profile-image-container" style={{ border: 'none', boxShadow: 'none', borderRadius: '10px' }}>
+                <img src="/Kimkichan.png" alt="김기찬" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px', border: 'none' }} />
               </div>
               <p style={{ marginTop: '1rem', fontSize: '1rem', color: '#666' }}>Birth: 2001.12.25</p>
             </div>

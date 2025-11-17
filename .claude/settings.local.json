@@ -14,7 +14,8 @@
       "Bash(powershell -Command \"Stop-Process -Id 10792 -Force\")",
       "Bash(git remote set-url:*)",
       "Bash(git config:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(copy:*)"
     ],
     "deny": [],
     "ask": []

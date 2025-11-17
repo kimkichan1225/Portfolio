@@ -196,16 +196,20 @@
 }
 
 .profile-image-container {
-  width: 250px;
-  height: 250px;
+  width: 200px;
+  height: 280px;
   margin: 0 auto 1.5rem;
   border-radius: 50%;
-  background: var(--primary-blue);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 40px rgba(91, 127, 255, 0.3);
-  border: 5px solid white;
+  box-shadow: none;
+  border: none;
+}
+
+.profile-image-container img {
+  border: none;
 }
 
 .profile-image-placeholder {
