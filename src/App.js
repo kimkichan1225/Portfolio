@@ -75,8 +75,24 @@ function WebModeContent({ onToggleMode }) {
   return (
     <>
       <div className="web-mode-content">
-        <section id="home" className="section" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div ref={homeRef} className={`fade-in ${homeVisible ? 'visible' : ''}`} style={{ textAlign: 'center', maxWidth: '800px' }}>
+        <section id="home" className="section" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+          {/* Floating Particles */}
+          <div className="floating-particles">
+            {[...Array(15)].map((_, i) => (
+              <div
+                key={i}
+                className="particle"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 5}s`,
+                  animationDuration: `${8 + Math.random() * 7}s`,
+                }}
+              />
+            ))}
+          </div>
+
+          <div ref={homeRef} className={`fade-in ${homeVisible ? 'visible' : ''}`} style={{ textAlign: 'center', maxWidth: '800px', position: 'relative', zIndex: 1 }}>
             <h2 style={{ fontSize: '3rem', marginBottom: '1rem' }}>
               <span className="highlight">
                 <TypingAnimation
