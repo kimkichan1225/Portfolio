@@ -85,6 +85,22 @@
   object-fit: cover;
 }
 
+.modal-video-container {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 20px 20px 0 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-video {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
 .modal-body {
   padding: 2rem;
 }

@@ -30,7 +30,13 @@ export function ProjectModal({ project, onClose }) {
           ×
         </button>
 
-        {project.image && (
+        {project.video ? (
+          <div className="modal-video-container">
+            <video src={project.video} controls loop muted className="modal-video">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        ) : project.image && (
           <div className="modal-image-container">
             <img src={project.image} alt={project.title} className="modal-image" />
           </div>

@@ -17,6 +17,7 @@ const projectsData = [
     title: 'KDT 멀티 격투 게임',
     description: 'Node.js와 Socket.IO를 활용한 실시간 웹 기반 멀티플레이어 액션 게임',
     image: '/FirstProject.png',
+    video: '/FirstProjectGamePlay.mp4',
     tech: ['Node.js', 'Express', 'Socket.IO', 'JavaScript', 'HTML5'],
     details: [
       '실시간 멀티플레이어 환경 (Socket.IO 기반)',
