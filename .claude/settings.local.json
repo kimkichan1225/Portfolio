@@ -15,7 +15,8 @@
       "Bash(git remote set-url:*)",
       "Bash(git config:*)",
       "Bash(dir:*)",
-      "Bash(copy:*)"
+      "Bash(copy:*)",
+      "Bash(powershell:*)"
     ],
     "deny": [],
     "ask": []
