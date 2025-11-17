@@ -139,7 +139,7 @@ function WebModeContent({ onToggleMode }) {
 
         <section id="about" className="section">
           <div ref={aboutRef} className={`fade-in ${aboutVisible ? 'visible' : ''}`} style={{ width: '100%', maxWidth: '1200px' }}>
-            <div style={{ display: 'flex', gap: '3rem', alignItems: 'center', marginBottom: '4rem' }}>
+            <div style={{ display: 'flex', gap: '3rem', alignItems: 'center', marginBottom: '4rem', marginLeft: '4rem' }}>
               <div style={{ textAlign: 'center' }}>
                 <div className="profile-image-container" style={{ border: 'none', boxShadow: 'none', borderRadius: '10px', flexShrink: 0 }}>
                   <img src="/Kimkichan.png" alt="김기찬" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px', border: 'none' }} />
