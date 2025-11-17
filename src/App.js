@@ -62,7 +62,21 @@ const projectsData = [
       }
     ],
     github: 'https://github.com/kimkichan1225/KDTWebGame',
-    demo: 'https://kdtwebgame.onrender.com/'
+    demo: 'https://kdtwebgame.onrender.com/',
+    reports: [
+      {
+        title: '계획 보고서',
+        file: '/FirstProjectPlanReport.pdf'
+      },
+      {
+        title: '완료 보고서',
+        file: '/FirstProjectFinishReport.pdf'
+      },
+      {
+        title: '발표 PPT',
+        file: '/FirstProjectPowerPoint.pdf'
+      }
+    ]
   },
   {
     id: 2,
