@@ -149,16 +149,16 @@ function WebModeContent({ onToggleMode }) {
 
               <div style={{ flex: 1, textAlign: 'left' }}>
                 <h3 style={{ fontSize: '1.8rem', marginBottom: '1.5rem', textAlign: 'left' }}>안녕하세요, 김기찬입니다!</h3>
-                <p style={{ lineHeight: '1.7', color: '#666', marginBottom: '1rem', textAlign: 'left' }}>
+                <p style={{ lineHeight: '1.7', color: '#666', marginBottom: '1rem', textAlign: 'justify', wordBreak: 'keep-all' }}>
                   "어떻게 하면 더 재미있는 경험을 만들 수 있을까?"라는 질문에서 시작해, 웹과 게임 개발의 경계를 넘나드는 프로젝트들을 만들어왔습니다.
                 </p>
-                <p style={{ lineHeight: '1.7', color: '#666', marginBottom: '1rem', textAlign: 'left' }}>
+                <p style={{ lineHeight: '1.7', color: '#666', marginBottom: '1rem', textAlign: 'justify', wordBreak: 'keep-all' }}>
                   Socket.IO로 구현한 멀티플레이어 액션 게임에서는 수십 명이 동시에 플레이하며 실시간으로 상호작용하는 시스템을, React 19과 Supabase를 활용한 편의점 솔루션에서는 실무에 바로 적용 가능한 통합 관리 시스템을 구축했습니다. Unity로 제작한 2D RPG에서는 턴제 전투와 주사위 메커니즘이라는 독특한 조합을 시도했죠.
                 </p>
-                <p style={{ lineHeight: '1.7', color: '#666', marginBottom: '1rem', textAlign: 'left' }}>
+                <p style={{ lineHeight: '1.7', color: '#666', marginBottom: '1rem', textAlign: 'justify', wordBreak: 'keep-all' }}>
                   지금 보고 계신 이 포트폴리오 역시 단순한 소개 페이지가 아닌, Three.js 기반의 3D 게임 세계를 직접 탐험할 수 있는 인터랙티브 경험입니다. TypeScript, React Three Fiber, 커스텀 GLSL 셰이더까지 활용해 웹에서도 몰입감 있는 3D 환경을 구현했습니다.
                 </p>
-                <p style={{ lineHeight: '1.7', color: '#666', textAlign: 'left' }}>
+                <p style={{ lineHeight: '1.7', color: '#666', textAlign: 'justify', wordBreak: 'keep-all' }}>
                   AI 개발 도구를 단순히 '사용'하는 것을 넘어, 이를 통해 개발 워크플로우 자체를 재설계하고 있습니다. 빠른 프로토타이핑과 반복적인 개선 사이클로 아이디어를 현실로 만드는 속도를 높이고, 더 많은 시간을 창의적인 문제 해결에 투자합니다.
                 </p>
               </div>
