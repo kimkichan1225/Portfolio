@@ -108,6 +108,9 @@ function WebModeContent({ onToggleMode }) {
                 다양한 기술 스택으로 창의적인 아이디어를<br />
                 실제 동작하는 서비스로 구현하는 개발자입니다.
               </p>
+              <p style={{ marginTop: '1.5rem', lineHeight: '1.8', color: '#5B7FFF', fontWeight: '500' }}>
+                매일 1%씩 성장하며, 경험을 통해 더 나은 답을 찾아갑니다.
+              </p>
 
               <div style={{
                 marginTop: '3rem',
