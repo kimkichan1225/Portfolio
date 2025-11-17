@@ -92,7 +92,7 @@ function WebModeContent({ onToggleMode }) {
             ))}
           </div>
 
-          <div ref={homeRef} className={`fade-in ${homeVisible ? 'visible' : ''}`} style={{ textAlign: 'center', maxWidth: '800px', position: 'relative', zIndex: 1 }}>
+          <div ref={homeRef} className={`fade-in ${homeVisible ? 'visible' : ''}`} style={{ textAlign: 'center', maxWidth: '900px', position: 'relative', zIndex: 1 }}>
             <h2 style={{ fontSize: '3rem', marginBottom: '1rem' }}>
               <span className="highlight">
                 <TypingAnimation
@@ -103,12 +103,33 @@ function WebModeContent({ onToggleMode }) {
             </h2>
             <div style={{ fontSize: '1rem', color: '#666', lineHeight: '1.6' }}>
               <p><strong>Full-stack & Game Developer</strong></p>
-              <p>Birth: 2001.12.25</p>
               <p style={{ marginTop: '1.5rem', lineHeight: '1.8' }}>
                 실시간 웹 애플리케이션부터 3D 인터랙티브 경험까지,<br />
                 다양한 기술 스택으로 창의적인 아이디어를<br />
                 실제 동작하는 서비스로 구현하는 개발자입니다.
               </p>
+
+              <div style={{
+                marginTop: '3rem',
+                padding: '2rem',
+                background: 'rgba(255, 255, 255, 0.7)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '20px',
+                border: '1px solid rgba(91, 127, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+              }}>
+                <h3 style={{ color: '#5B7FFF', marginBottom: '1rem', fontSize: '1.3rem' }}>
+                  🎮 인터랙티브 포트폴리오
+                </h3>
+                <p style={{ lineHeight: '1.8', color: '#555' }}>
+                  이 포트폴리오는 <strong>웹 모드</strong>와 <strong>게임 모드</strong> 두 가지로 구성되어 있습니다.<br />
+                  <span style={{ color: '#667eea', fontWeight: '500' }}>웹 모드</span>에서는 프로젝트와 정보를 편리하게 탐색하고,<br />
+                  <span style={{ color: '#667eea', fontWeight: '500' }}>게임 모드</span>에서는 3D 환경에서 직접 캐릭터를 조작하며 인터랙티브하게 경험할 수 있습니다.
+                </p>
+                <p style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#888' }}>
+                  💡 상단 우측의 <strong>🎮 버튼</strong>을 클릭하여 게임 모드로 전환해보세요!
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -125,6 +146,7 @@ function WebModeContent({ onToggleMode }) {
               <div className="profile-image-container">
                 <span className="profile-image-placeholder">👨‍💻</span>
               </div>
+              <p style={{ marginTop: '1rem', fontSize: '1rem', color: '#666' }}>Birth: 2001.12.25</p>
             </div>
           </div>
         </section>
