@@ -9,7 +9,7 @@ import { PortalVortex, PortalVortexLevel3 } from './PortalVortex';
 import { TypingAnimation } from './TypingAnimation';
 import { useScrollAnimation } from './useScrollAnimation';
 import { ProjectModal } from './ProjectModal';
-import { Physics, RigidBody } from '@react-three/rapier';
+import { Physics, RigidBody, CapsuleCollider } from '@react-three/rapier';
 
 // 프로젝트 데이터
 const projectsData = [
@@ -1438,12 +1438,13 @@ function Model({ characterRef, gameState, setGameState }) {
     <RigidBody
       ref={rigidBodyRef}
       type="dynamic"
-      colliders="ball"
+      colliders={false}
       mass={1}
       linearDamping={0.5}
       enabledRotations={[false, true, false]} // Y축 회전만 허용
       position={[0, 2, 0]} // 시작 위치
     >
+      <CapsuleCollider args={[2, 1.3]} position={[0, 3.2, 0]} />
       <primitive
         ref={characterRef}
         object={scene}
