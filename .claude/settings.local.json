@@ -16,7 +16,8 @@
       "Bash(git config:*)",
       "Bash(dir:*)",
       "Bash(copy:*)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

@@ -9,6 +9,7 @@ import { PortalVortex, PortalVortexLevel3 } from './PortalVortex';
 import { TypingAnimation } from './TypingAnimation';
 import { useScrollAnimation } from './useScrollAnimation';
 import { ProjectModal } from './ProjectModal';
+import { Physics, RigidBody } from '@react-three/rapier';
 
 // 프로젝트 데이터
 const projectsData = [
@@ -765,7 +766,7 @@ const level3PortalFrontPosition = new THREE.Vector3(20, 0, -15); // Level3 포�
 function CameraController({ gameState, characterRef }) {
   const { camera } = useThree();
   const cameraOffset = new THREE.Vector3(-0.00, 28.35, 19.76); // 고정된 카메라 오프셋
-  
+
   // 이전 카메라 상태를 추적하기 위한 useRef
   const prevCameraState = useRef({
     isInCar: false,
@@ -773,47 +774,50 @@ function CameraController({ gameState, characterRef }) {
   });
 
   useFrame((state, delta) => {
-    if (!characterRef.current || !characterRef.current.position) return;
+    if (!characterRef.current) return;
+
+    // 월드 position 가져오기
+    const worldPosition = new THREE.Vector3();
+    characterRef.current.getWorldPosition(worldPosition);
 
     if (gameState === 'entering_portal' || gameState === 'entering_portal_level3') {
-      const characterPosition = characterRef.current.position;
-      const targetPosition = characterPosition.clone().add(new THREE.Vector3(0, 3, 5));
+      const targetPosition = worldPosition.clone().add(new THREE.Vector3(0, 3, 5));
       camera.position.lerp(targetPosition, delta * 2.0);
-      camera.lookAt(characterPosition);
+      camera.lookAt(worldPosition);
       return;
     }
 
     if (gameState === 'playing_level1' || gameState === 'playing_level2' || gameState === 'playing_level3') {
       let targetPosition;
       let currentTargetType = 'character';
-      
+
       // 자동차에 탑승한 상태인지 확인하고 타겟 위치 결정
-      if (characterRef.current?.isInCar && 
+      if (characterRef.current?.isInCar &&
           characterRef.current?.safeCarRef?.current) {
-        // 자동차에 탑승한 경우: 캐릭터 위치 사용 (자동차와 동기화됨)
-        targetPosition = characterRef.current.position;
+        // 자동차에 탑승한 경우: 월드 위치 사용
+        targetPosition = worldPosition;
         currentTargetType = 'car';
-        
+
         // 자동차 상태 확인 완료
       } else {
-        // 일반 상태: 캐릭터 위치 사용
-        targetPosition = characterRef.current.position;
+        // 일반 상태: 월드 위치 사용
+        targetPosition = worldPosition;
         currentTargetType = 'character';
       }
-      
+
       // 상태 변화 추적
       if (prevCameraState.current.targetType !== currentTargetType) {
         prevCameraState.current.targetType = currentTargetType;
       }
-      
+
       // 타겟 위치에 고정된 오프셋을 더해서 카메라 위치 계산
       const targetCameraPosition = targetPosition.clone().add(cameraOffset);
-      
+
       // 자동차 위치 변화 감지 로그 제거
-      
+
       // 부드러운 카메라 이동 (X, Z만 따라가고 Y는 고정)
       camera.position.lerp(targetCameraPosition, delta * 5.0);
-      
+
       // 타겟을 바라보도록 설정
       camera.lookAt(targetPosition);
     }
@@ -851,6 +855,8 @@ function Model({ characterRef, gameState, setGameState }) {
   // 안전한 참조를 위한 useRef
   const safeCharacterRef = useRef();
   const safeCarRef = useRef();
+  const rigidBodyRef = useRef(); // Rapier RigidBody 참조
+  const currentRotationRef = useRef(new THREE.Quaternion()); // 현재 회전 저장
   
   // 발걸음 소리 로드 및 재생 함수
   useEffect(() => {
@@ -1148,30 +1154,35 @@ function Model({ characterRef, gameState, setGameState }) {
   useFrame((state, delta) => {
     // 자동차 상호작용 처리
     handleCarInteraction();
-    
+
     // characterRef.current 손실 시 safeCharacterRef.current 사용
     const currentCharacter = characterRef.current || safeCharacterRef.current;
     if (!currentCharacter) return;
+
+    // characterRef의 로컬 position을 (0,0,0)으로 유지 (RigidBody 중심에 위치)
+    if (characterRef.current) {
+      characterRef.current.position.set(0, 0, 0);
+    }
 
     if (gameState === 'entering_portal') {
       const portalCenter = portalPosition.clone();
       currentCharacter.position.lerp(portalCenter, delta * 2.0);
       currentCharacter.scale.lerp(new THREE.Vector3(0.01, 0.01, 0.01), delta * 2);
 
-      if (currentCharacter.scale.x < 0.05) { 
+      if (currentCharacter.scale.x < 0.05) {
         if (gameState !== 'switched') {
           setGameState('playing_level2');
         }
       }
       return;
     }
-    
+
     if (gameState === 'entering_portal_level3') {
       const portalCenter = portalLevel3Position.clone();
       currentCharacter.position.lerp(portalCenter, delta * 2.0);
       currentCharacter.scale.lerp(new THREE.Vector3(0.01, 0.01, 0.01), delta * 2);
 
-      if (currentCharacter.scale.x < 0.05) { 
+      if (currentCharacter.scale.x < 0.05) {
         if (gameState !== 'switched_level3') {
           setGameState('playing_level3');
         }
@@ -1194,13 +1205,13 @@ function Model({ characterRef, gameState, setGameState }) {
       setGameState('playing_level1');
       return;
     }
-    
+
     const isPlaying = gameState === 'playing_level1' || gameState === 'playing_level2' || gameState === 'playing_level3';
     if (!isPlaying) return;
 
-    const speed = shift ? 0.3 : 0.1;
+    const speed = shift ? 18 : 8; // 물리 기반 속도 (걷기: 8, 뛰기: 18)
     const direction = new THREE.Vector3();
-    
+
     if (forward) direction.z -= 1;
     if (backward) direction.z += 1;
     if (left) direction.x -= 1;
@@ -1208,12 +1219,35 @@ function Model({ characterRef, gameState, setGameState }) {
 
     if (direction.length() > 0) {
       direction.normalize();
+
+      // 회전 처리 - 부드럽게 회전
       const targetAngle = Math.atan2(direction.x, direction.z);
       const targetQuaternion = new THREE.Quaternion();
       targetQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), targetAngle);
-      currentCharacter.quaternion.slerp(targetQuaternion, 0.25);
-      currentCharacter.position.add(direction.multiplyScalar(speed));
-      
+
+      // 현재 회전에서 목표 회전으로 부드럽게 보간 (slerp)
+      currentRotationRef.current.slerp(targetQuaternion, 0.25);
+
+      if (rigidBodyRef.current) {
+        // 보간된 회전을 RigidBody에 적용
+        rigidBodyRef.current.setRotation({
+          x: currentRotationRef.current.x,
+          y: currentRotationRef.current.y,
+          z: currentRotationRef.current.z,
+          w: currentRotationRef.current.w
+        }, true);
+      }
+
+      // 물리 기반 이동 (setLinvel 사용)
+      if (rigidBodyRef.current) {
+        const currentVel = rigidBodyRef.current.linvel();
+        rigidBodyRef.current.setLinvel({
+          x: direction.x * speed,
+          y: currentVel.y, // Y축은 중력 유지
+          z: direction.z * speed
+        });
+      }
+
       // 발걸음 소리 재생
       if (!isInCar && (currentAnimation === 'Walk' || currentAnimation === 'Run')) {
         const currentTime = Date.now();
@@ -1221,6 +1255,12 @@ function Model({ characterRef, gameState, setGameState }) {
           playStepSound();
           lastStepTimeRef.current = currentTime;
         }
+      }
+    } else {
+      // 정지 시 속도 0
+      if (rigidBodyRef.current) {
+        const currentVel = rigidBodyRef.current.linvel();
+        rigidBodyRef.current.setLinvel({ x: 0, y: currentVel.y, z: 0 });
       }
     }
 
@@ -1395,16 +1435,24 @@ function Model({ characterRef, gameState, setGameState }) {
   });
 
   return (
-    <>
-    <primitive 
-      ref={characterRef} 
-      object={scene} 
-      scale={2} 
-      castShadow 
-      receiveShadow 
+    <RigidBody
+      ref={rigidBodyRef}
+      type="dynamic"
+      colliders="ball"
+      mass={1}
+      linearDamping={0.5}
+      enabledRotations={[false, true, false]} // Y축 회전만 허용
+      position={[0, 2, 0]} // 시작 위치
+    >
+      <primitive
+        ref={characterRef}
+        object={scene}
+        scale={2}
+        castShadow
+        receiveShadow
         visible={!isInCar} // 자동차 탑승 시 투명하게
       />
-    </>
+    </RigidBody>
   );
 }
 
@@ -2452,7 +2500,11 @@ function Level1Map(props) {
     return cloned;
   }, [scene]);
 
-  return <primitive object={clonedScene} {...props} />;
+  return (
+    <RigidBody type="fixed" colliders="trimesh">
+      <primitive object={clonedScene} {...props} />
+    </RigidBody>
+  );
 }
 
 useGLTF.preload('/resources/GameView/Level1Map.glb');
@@ -2483,12 +2535,6 @@ function Level1({ characterRef }) {
       >
         첫번쨰 프로젝트에 오신걸 환영합니다! 🎉
       </Text>
-
-      {/* Floor */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
-        <planeGeometry args={[500, 500]} />
-        <meshStandardMaterial color="#808080" />
-      </mesh>
     </>
   );
 }
@@ -2705,15 +2751,17 @@ function App() {
         </mesh>
 
         <Suspense fallback={null}>
-          <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} />
-          <CameraController gameState={gameState} characterRef={characterRef} />
-          <CameraLogger />
-          {gameState === 'playing_level2' ? <Level2 onCarRef={(ref) => {
-            if (characterRef.current?.handleSetCarRef) {
-              characterRef.current.handleSetCarRef(ref);
-            }
-          }} characterRef={characterRef} /> : 
-           gameState === 'playing_level3' ? <Level3 characterRef={characterRef} /> : <Level1 characterRef={characterRef} />}
+          <Physics gravity={[0, -40, 0]} debug>
+            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} />
+            <CameraController gameState={gameState} characterRef={characterRef} />
+            <CameraLogger />
+            {gameState === 'playing_level2' ? <Level2 onCarRef={(ref) => {
+              if (characterRef.current?.handleSetCarRef) {
+                characterRef.current.handleSetCarRef(ref);
+              }
+            }} characterRef={characterRef} /> :
+             gameState === 'playing_level3' ? <Level3 characterRef={characterRef} /> : <Level1 characterRef={characterRef} />}
+          </Physics>
         </Suspense>
         </Canvas>
       )}
