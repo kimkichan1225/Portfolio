@@ -1452,7 +1452,7 @@ function Model({ characterRef, gameState, setGameState }) {
   );
 }
 
-useGLTF.preload('/resources/Ultimate Animated Character Pack - Nov 2019/glTF/Casual_Male.gltf');
+useGLTF.preload('/resources/Ultimate Animated Character Pack - Nov 2019/glTF/OldClassy_Male.gltf');
 
 function SpeechBubble({ position, text, ...props }) {
   const meshRef = useRef();
@@ -1507,7 +1507,7 @@ function SpeechBubble({ position, text, ...props }) {
 
 function NPCCharacter({ position, playerRef, ...props }) {
   const npcRef = useRef();
-  const { scene, animations } = useGLTF('/resources/Ultimate Animated Character Pack - Nov 2019/glTF/Casual_Male.gltf');
+  const { scene, animations } = useGLTF('/resources/Ultimate Animated Character Pack - Nov 2019/glTF/OldClassy_Male.gltf');
   const { actions } = useAnimations(animations, npcRef);
 
   const [isPlayerNear, setIsPlayerNear] = useState(false);
