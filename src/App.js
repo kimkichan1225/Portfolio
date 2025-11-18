@@ -1556,25 +1556,28 @@ function NPCCharacter({ position, playerRef, ...props }) {
       if (isPlayerNear) {
         // 플레이어가 가까이 있을 때: 플레이어를 바라봄
         const npcPos = npcRef.current.position;
-        const playerPos = playerRef.current.position;
-        
+
+        // 플레이어의 월드 좌표 가져오기 (RigidBody 사용 시 필수)
+        const playerWorldPos = new THREE.Vector3();
+        playerRef.current.getWorldPosition(playerWorldPos);
+
         // Y축만 회전하도록 설정 (좌우 회전만)
         const direction = new THREE.Vector3();
-        direction.subVectors(playerPos, npcPos);
+        direction.subVectors(playerWorldPos, npcPos);
         direction.y = 0; // Y축 성분 제거 (위아래 회전 방지)
         direction.normalize();
-        
+
         targetAngle = Math.atan2(direction.x, direction.z);
       } else {
         // 플레이어가 멀리 있을 때: 원래 각도로 돌아감
         targetAngle = initialRotationY.current;
       }
-      
+
       // 각도 차이 계산 (최단 경로로 회전)
       let angleDiff = targetAngle - currentAngle;
       if (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
       if (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
-      
+
       // 부드러운 회전 (lerp)
       npcRef.current.rotation.y += angleDiff * 0.1;
     }
@@ -1582,13 +1585,17 @@ function NPCCharacter({ position, playerRef, ...props }) {
     // 2. 플레이어와의 거리 체크
     if (playerRef.current) {
       const npcPos = npcRef.current.position;
-      const playerPos = playerRef.current.position;
-      const distance = npcPos.distanceTo(playerPos);
-      
+
+      // 플레이어의 월드 좌표 가져오기 (RigidBody 사용 시 필수)
+      const playerWorldPos = new THREE.Vector3();
+      playerRef.current.getWorldPosition(playerWorldPos);
+
+      const distance = npcPos.distanceTo(playerWorldPos);
+
       const nearDistance = 8;
       const wasNear = isPlayerNear;
       const nowNear = distance < nearDistance;
-      
+
       if (wasNear !== nowNear) {
         setIsPlayerNear(nowNear);
       }
