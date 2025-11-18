@@ -2437,126 +2437,43 @@ useGLTF.preload('/mailbox.glb');
 useGLTF.preload('/instagramlogo.glb');
 useGLTF.preload('/toolbox.glb');
 
+function Level1Map(props) {
+  const { scene } = useGLTF('/resources/GameView/Level1Map.glb');
+
+  // Level1Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
+  const clonedScene = useMemo(() => {
+    const cloned = scene.clone();
+    cloned.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+    return cloned;
+  }, [scene]);
+
+  return <primitive object={clonedScene} {...props} />;
+}
+
+useGLTF.preload('/resources/GameView/Level1Map.glb');
+
 function Level1({ characterRef }) {
-  // 돌들의 위치와 속성을 배열로 정의
-  const stones = [
-    { position: [-17, 0.1, -7], scale: 8, rotation: [0, 0, 0] },
-    { position: [-22, 0.3, -2], scale: 8, rotation: [0, 0.5, 0] },
-    { position: [-16, 0.25, 2], scale: 8, rotation: [0, -0.3, 0] },
-    { position: [-22, 0.2, 6], scale: 8, rotation: [0, 0.2, 0] },
-    { position: [-16, 0.2, 10], scale: 8, rotation: [0, -0.2, 0] },
-    { position: [-22, 0.15, 14], scale: 8, rotation: [0, 0.1, 0] },
-
-    { position: [23, 0.1, -7], scale: 8, rotation: [0, 0, 0] },
-    { position: [18, 0.1, -2], scale: 8, rotation: [0, 0.5, 0] },
-    { position: [24, 0.15, 2], scale: 8, rotation: [0, -0.3, 0] },
-    { position: [18, 0.1, 6], scale: 8, rotation: [0, 0.2, 0] },
-    { position: [24, 0.1, 10], scale: 8, rotation: [0, -0.2, 0] },
-    { position: [18, 0.1, 14], scale: 8, rotation: [0, 0.1, 0] },
-  ];
-
-  // 팜트리들의 위치와 속성을 배열로 정의
-  const palmTrees = [
-    { position: [-30, 0, -10], scale: 0.05, rotation: [0, 0, 0] },
-    { position: [30, 0, -10], scale: 0.05, rotation: [0, 0, 0] },
-  ];
-
-  // 그라데이션 텍스처 생성
-  const gradientTexture = useMemo(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 512;
-    const context = canvas.getContext('2d');
-    
-    // 대각선 그라데이션 생성 (왼쪽 위에서 오른쪽 아래로)
-    const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
-    gradient.addColorStop(0, '#50AA50'); // 훨씬 더 어두운 연두색 시작
-    gradient.addColorStop(1, '#E0FFE0'); // 밝은 연두색 끝
-    
-    context.fillStyle = gradient;
-    context.fillRect(0, 0, canvas.width, canvas.height);
-    
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(1, 1);
-    
-    return texture;
-  }, []);
-
   return (
     <>
       <Sky />
-      <PortalBase position={portalPosition} scale={20} castShadow receiveShadow />
-      <PortalVortex position={[-19.7, 8, -22]} scale={[7, 9.8, 1]} castShadow receiveShadow />
-      
-      {/* Level3 Portal */}
-      <PortalBase position={portalLevel3Position} scale={20} castShadow receiveShadow />
-      <PortalVortexLevel3 position={[20.3, 8, -22]} scale={[7, 9.8, 1]} castShadow receiveShadow />
-      
-      {/* Path stones leading to the portal */}
-      <PathStone position={[-22, 0.2, -13]} scale={7} rotation={[0, -0.2, 0]} castShadow receiveShadow />
-      
-      {/* Small stones scattered around the level */}
-      {stones.map((stone, index) => (
-        <SmallStoneFlatA 
-          key={index} 
-          position={stone.position} 
-          scale={stone.scale} 
-          rotation={stone.rotation}
-          castShadow
-          receiveShadow
-        />
-      ))}
 
-      {/* Palm trees scattered around the level */}
-      {palmTrees.map((tree, index) => (
-        <PalmTree 
-          key={index} 
-          position={tree.position} 
-          scale={tree.scale} 
-          rotation={tree.rotation}
-          castShadow
-          receiveShadow
-        />
-      ))}
+      {/* Level1 Map - 크리스마스 마을 */}
+      <Level1Map
+        position={[0, 0, 0]}
+        scale={1.5}
+        rotation={[0, 0, 0]}
+        castShadow
+        receiveShadow
+      />
 
       {/* NPC Character */}
-      <NPCCharacter position={[-27, 0, -8]} playerRef={characterRef} />
-      
-      {/* GitHub Cat 그룹 (둥근 정육면체 + GitHub Cat) */}
-      <GitHubCatGroup 
-        position={[-6, 0.2, 20]}
-        characterRef={characterRef}
-        castShadow
-        receiveShadow
-      />
-      
-      {/* Mailbox 그룹 (둥근 정육면체 + Mailbox) */}
-      <MailboxGroup 
-        position={[0, 0.2, 20]}
-        characterRef={characterRef}
-        castShadow
-        receiveShadow
-      />
-      
-      {/* Instagram 그룹 (둥근 정육면체 + Instagram Logo) */}
-      <InstagramGroup 
-        position={[6, 0.2, 20]}
-        characterRef={characterRef}
-        castShadow
-        receiveShadow
-      />
-      
-      {/* 도구상자 추가 */}
-      <Toolbox 
-        position={[-12, 1.2, 25]} 
-        scale={[1.5, 1.5, 1.5]} 
-        rotation={[0, Math.PI / 4, 0]}
-        castShadow
-        receiveShadow
-      />
-      
+      <NPCCharacter position={[0, 0, 0]} playerRef={characterRef} />
+
       {/* 숨겨진 텍스트로 프리로드 - 화면 밖에 배치 */}
       <Text
         position={[1000, 1000, 1000]}
@@ -2566,11 +2483,11 @@ function Level1({ characterRef }) {
       >
         첫번쨰 프로젝트에 오신걸 환영합니다! 🎉
       </Text>
-      
-      {/* Floor with gradient green color */}
+
+      {/* Floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
         <planeGeometry args={[500, 500]} />
-        <meshStandardMaterial map={gradientTexture} />
+        <meshStandardMaterial color="#808080" />
       </mesh>
     </>
   );

@@ -96,21 +96,25 @@ Keyboard controls via `useKeyboardControls.js`:
 - Auto-hide in Game Mode: navigation bar appears when mouse moves to top 80px of screen
 - Always visible in Web Mode
 - Mode toggle button switches between 🎮 (Game) and 🌐 (Web) icons
+- Dark mode toggle button switches between ☀️ (Light) and 🌙 (Dark) icons
 - Web Mode is the default state on initial load
 - Contains navigation links (About, Projects, Contact) that work in Web Mode
 
 **WebModeContent Component** (`src/App.js` - `WebModeContent` component)
 - Traditional portfolio website layout
-- Three main sections: About, Projects, Contact
+- Four main sections: Home, About, Projects, Contact & Skills
 - Scroll-based animations using `useScrollAnimation` hook
-- Project cards displayed in grid layout
+- Project cards displayed in grid layout with image or video preview
 - Clicking project cards opens detailed modal via `ProjectModal` component
 - Typing animation effect for name using `TypingAnimation` component
+- Email copy-to-clipboard feature in Contact section with custom popup notification
+- Floating particle background animations
 
 **ProjectModal Component** (`src/ProjectModal.js`)
 - Modal overlay for displaying project details
-- Displays project title, description, tech stack, and detailed features
-- Links to GitHub and live demo (when available)
+- Displays project title, description, tech stack, overview, achievements, and challenges
+- Video preview support with fallback to image
+- Links to GitHub, live demo, and downloadable reports (PDF)
 - Closes on ESC key or clicking outside modal
 - Prevents body scroll when open
 
@@ -142,7 +146,9 @@ Assets are located in `public/` directory:
 - **Nature**: `resources/Nature-Kit/Models/GLTF-format/` (stones, paths, etc.)
 - **Trees**: `resources/Ultimate Nature Pack/FBX/PalmTree_4.fbx`
 - **Custom Models**: Portal bases, game maps, decorative elements (githubcat.glb, mailbox.glb, toolbox.glb, etc.)
-- **Audio**: `sounds/` (footsteps, car sounds)
+- **Audio**:
+  - `/sounds/` - Car sounds (opencar.mp3, closecar.mp3)
+  - `/resources/Sounds/` - Footstep sounds (Step2.wav, step2.mp3)
 
 Models use `useGLTF.preload()` or `useFBX()` for loading. All meshes should have `castShadow` and `receiveShadow` enabled via `traverse()`.
 
@@ -229,16 +235,26 @@ Projects are stored in `projectsData` array at top of App.js with structure:
   title: string,
   description: string,
   image: string | null,
+  video: string | null,
   tech: string[],
-  details: string[],
+  overview: string[],
+  achievements: string[],
+  challenges: Array<{
+    title: string,
+    description: string
+  }>,
   github: string | null,
-  demo: string | null
+  demo: string | null,
+  reports: Array<{
+    title: string,
+    file: string
+  }>
 }
 ```
 
 ## Important Constants and Positions
 
-Portal positions and radii are defined at the top of App.js (~line 225):
+Portal positions and radii are defined at the top of App.js (~line 754):
 - `portalPosition`: Level 1 to Level 2 portal at `(-20, 7.5, -20)`
 - `portalLevel3Position`: Level 1 to Level 3 portal at `(20, 7.5, -20)`
 - `portalLevel2ToLevel1Position`: Return portal in Level 2 at `(0, 7.5, 23.5)`
@@ -248,7 +264,7 @@ Portal positions and radii are defined at the top of App.js (~line 225):
 - Portal radii: 2 units for all portals
 - Character spawn positions: Level 2 at `(0, 0, 10)`, Level 3 at `(0, 0, 15)`
 
-Camera offset: `new THREE.Vector3(-0.00, 28.35, 19.76)` (defined at line ~238)
+Camera offset: `new THREE.Vector3(-0.00, 28.35, 19.76)` (defined at line ~767)
 
 ## Shadow System
 
@@ -308,10 +324,11 @@ portfolio-game/
 ## Common Development Tasks
 
 **Adding a new project to Web Mode:**
-1. Add project object to `projectsData` array in App.js
-2. Include all required fields: id, title, description, tech, details
-3. Optional: Add project image to public folder and reference in image field
+1. Add project object to `projectsData` array in App.js (starts at line ~14)
+2. Include all required fields: id, title, description, tech, overview, achievements, challenges
+3. Optional: Add project image or video to public folder and reference in image/video field
 4. Optional: Add GitHub and demo URLs
+5. Optional: Add PDF reports to public folder and reference in reports array
 
 **Adding a new 3D object:**
 1. Place asset file in appropriate `public/resources/` subdirectory
@@ -328,15 +345,17 @@ portfolio-game/
 5. Add `PortalBase` model beneath vortex
 
 **Modifying character movement:**
-- Speed values are in `useFrame` within `Model` component (~line 500-700)
+- Speed values are in `useFrame` within `Model` component (~line 825+)
 - Walking speed: ~0.1, running speed: ~0.2
 - Rotation speed: delta * 3.0
 
 **Adding new audio:**
-1. Place audio file in `public/sounds/`
+1. Place audio file in `public/sounds/` or `public/resources/Sounds/`
 2. Create `useRef()` for audio element
 3. Load in `useEffect()` with `new Audio(path)`
-4. Trigger playback with `.play()` at appropriate event
+4. Set volume with `.volume` property (0.0 to 1.0)
+5. Trigger playback with `.play()` at appropriate event
+6. Consider multiple fallback paths for audio files
 
 **Modifying Web Mode animations:**
 - Adjust `useScrollAnimation` options (threshold, rootMargin) for trigger points
