@@ -4,6 +4,7 @@ import { useGLTF, useAnimations, shaderMaterial, useFBX, Text } from '@react-thr
 import { extend } from '@react-three/fiber';
 import * as THREE from 'three';
 import './App.css';
+import './TutorialPopup.css';
 import { useKeyboardControls } from './useKeyboardControls';
 import { PortalVortex, PortalVortexLevel3 } from './PortalVortex';
 import { TypingAnimation } from './TypingAnimation';
@@ -2695,18 +2696,70 @@ function Level3({ characterRef }) {
   );
 }
 
+// 튜토리얼 팝업 컴포넌트
+function TutorialPopup({ onClose, onDoNotShowAgain }) {
+  return (
+    <div className="tutorial-overlay">
+      <div className="tutorial-popup">
+        <h2>🎮 포트폴리오 마을에 오신 것을 환영합니다!</h2>
+
+        <div className="tutorial-content">
+          <h3>조작법:</h3>
+          <ul>
+            <li><strong>WASD</strong>: 이동</li>
+            <li><strong>Shift</strong>: 달리기</li>
+            <li><strong>E</strong>: 상호작용</li>
+          </ul>
+
+          <p className="tutorial-description">
+            마을을 돌아다니며 프로젝트를 탐험해보세요!
+          </p>
+        </div>
+
+        <div className="tutorial-buttons">
+          <button className="tutorial-btn tutorial-btn-primary" onClick={onClose}>
+            시작하기
+          </button>
+          <button className="tutorial-btn tutorial-btn-secondary" onClick={onDoNotShowAgain}>
+            다시 보지 않기
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [gameState, setGameState] = useState('playing_level1'); // playing_level1, entering_portal, playing_level2
   const characterRef = useRef();
   const [isWebMode, setIsWebMode] = useState(true); // 웹/게임 모드 상태 - 웹 모드로 시작
   const [isDarkMode, setIsDarkMode] = useState(false); // 다크 모드 상태
+  const [showTutorial, setShowTutorial] = useState(false); // 튜토리얼 팝업 상태
 
   const toggleMode = () => {
-    setIsWebMode(!isWebMode);
+    const newMode = !isWebMode;
+    setIsWebMode(newMode);
+
+    // 웹 모드에서 게임 모드로 전환 시 튜토리얼 팝업 확인
+    if (!newMode) { // 게임 모드로 전환
+      const doNotShow = localStorage.getItem('hideGameTutorial');
+      if (!doNotShow) {
+        setShowTutorial(true);
+      }
+    }
   };
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
+  };
+
+  const handleCloseTutorial = () => {
+    setShowTutorial(false);
+  };
+
+  const handleDoNotShowAgain = () => {
+    localStorage.setItem('hideGameTutorial', 'true');
+    setShowTutorial(false);
   };
 
   // 다크 모드 클래스 적용
@@ -2721,6 +2774,14 @@ function App() {
   return (
     <div className={`App ${isDarkMode ? 'dark-mode' : ''}`}>
       <NavigationBar isWebMode={isWebMode} onToggleMode={toggleMode} isDarkMode={isDarkMode} onToggleDarkMode={toggleDarkMode} />
+
+      {/* 튜토리얼 팝업 */}
+      {showTutorial && !isWebMode && (
+        <TutorialPopup
+          onClose={handleCloseTutorial}
+          onDoNotShowAgain={handleDoNotShowAgain}
+        />
+      )}
 
       {isWebMode ? (
         // 웹 모드: 포트폴리오 웹사이트
