@@ -2698,32 +2698,87 @@ function Level3({ characterRef }) {
 
 // 튜토리얼 팝업 컴포넌트
 function TutorialPopup({ onClose, onDoNotShowAgain }) {
+  const [currentPage, setCurrentPage] = useState(0); // 0: 조작법, 1: 미니맵
+
+  const nextPage = () => {
+    if (currentPage < 1) setCurrentPage(currentPage + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 0) setCurrentPage(currentPage - 1);
+  };
+
   return (
     <div className="tutorial-overlay">
       <div className="tutorial-popup">
         <h2>🎮 포트폴리오 마을에 오신 것을 환영합니다!</h2>
 
-        <div className="tutorial-content">
-          <h3>조작법:</h3>
-          <ul>
-            <li><strong>WASD</strong>: 이동</li>
-            <li><strong>Shift</strong>: 달리기</li>
-            <li><strong>E</strong>: 상호작용</li>
-          </ul>
-
-          <p className="tutorial-description">
-            마을을 돌아다니며 프로젝트를 탐험해보세요!
-          </p>
+        {/* 페이지 인디케이터 */}
+        <div className="tutorial-page-indicator">
+          <span className={currentPage === 0 ? 'active' : ''}>●</span>
+          <span className={currentPage === 1 ? 'active' : ''}>●</span>
         </div>
 
-        <div className="tutorial-buttons">
-          <button className="tutorial-btn tutorial-btn-primary" onClick={onClose}>
-            시작하기
-          </button>
-          <button className="tutorial-btn tutorial-btn-secondary" onClick={onDoNotShowAgain}>
-            다시 보지 않기
-          </button>
-        </div>
+        {/* 좌우 화살표 */}
+        <button
+          className={`tutorial-arrow tutorial-arrow-left ${currentPage === 0 ? 'disabled' : ''}`}
+          onClick={prevPage}
+          disabled={currentPage === 0}
+        >
+          ←
+        </button>
+        <button
+          className={`tutorial-arrow tutorial-arrow-right ${currentPage === 1 ? 'disabled' : ''}`}
+          onClick={nextPage}
+          disabled={currentPage === 1}
+        >
+          →
+        </button>
+
+        {/* 페이지 1: 조작법 */}
+        {currentPage === 0 && (
+          <div className="tutorial-content tutorial-page">
+            <h3>조작법:</h3>
+            <ul>
+              <li><strong>WASD</strong>: 이동</li>
+              <li><strong>Shift</strong>: 달리기</li>
+              <li><strong>E</strong>: 상호작용</li>
+            </ul>
+
+            <p className="tutorial-description">
+              마을을 돌아다니며 프로젝트를 탐험해보세요!
+            </p>
+          </div>
+        )}
+
+        {/* 페이지 2: 미니맵 */}
+        {currentPage === 1 && (
+          <div className="tutorial-content tutorial-page">
+            <h3>마을 지도:</h3>
+            <div className="tutorial-minimap">
+              <img
+                src="/resources/GameView/Level1Map.png"
+                alt="Level 1 Map"
+                className="minimap-image"
+              />
+            </div>
+            <p className="tutorial-description">
+              지도를 참고하여 마을을 탐험해보세요!
+            </p>
+          </div>
+        )}
+
+        {/* 버튼은 2페이지(미니맵)에서만 표시 */}
+        {currentPage === 1 && (
+          <div className="tutorial-buttons">
+            <button className="tutorial-btn tutorial-btn-primary" onClick={onClose}>
+              시작하기
+            </button>
+            <button className="tutorial-btn tutorial-btn-secondary" onClick={onDoNotShowAgain}>
+              다시 보지 않기
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
