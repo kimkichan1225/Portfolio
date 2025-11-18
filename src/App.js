@@ -1159,11 +1159,6 @@ function Model({ characterRef, gameState, setGameState }) {
     const currentCharacter = characterRef.current || safeCharacterRef.current;
     if (!currentCharacter) return;
 
-    // characterRef의 로컬 position을 (0,0,0)으로 유지 (RigidBody 중심에 위치)
-    if (characterRef.current) {
-      characterRef.current.position.set(0, 0, 0);
-    }
-
     if (gameState === 'entering_portal') {
       const portalCenter = portalPosition.clone();
       currentCharacter.position.lerp(portalCenter, delta * 2.0);
