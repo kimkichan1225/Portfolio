@@ -828,7 +828,7 @@ function CameraController({ gameState, characterRef }) {
 }
 
 function Model({ characterRef, gameState, setGameState }) {
-  const { scene, animations } = useGLTF('/resources/Ultimate Animated Character Pack - Nov 2019/glTF/Worker_Male.gltf');
+  const { scene, animations } = useGLTF('/resources/GameView/Worker.glb');
   const { actions } = useAnimations(animations, characterRef);
   
   const { forward, backward, left, right, shift, e } = useKeyboardControls();
@@ -2511,6 +2511,7 @@ function Level1Map(props) {
   );
 }
 
+useGLTF.preload('/resources/GameView/Worker.glb');
 useGLTF.preload('/resources/GameView/Level1Map.glb');
 
 function Level1({ characterRef }) {
