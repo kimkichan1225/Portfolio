@@ -788,7 +788,7 @@ function CameraController({ gameState, characterRef }) {
     const worldPosition = new THREE.Vector3();
     characterRef.current.getWorldPosition(worldPosition);
 
-    if (gameState === 'playing_level1' || gameState === 'playing_level2' || gameState === 'returning_to_level1') {
+    if (gameState === 'playing_level1' || gameState === 'playing_level2' || gameState === 'playing_level3' || gameState === 'playing_level4' || gameState === 'returning_to_level1' || gameState === 'returning_to_level1_from_level3' || gameState === 'returning_to_level3_from_level4') {
       // 타겟 위치를 부드럽게 보간 (떨림 방지)
       targetPositionRef.current.lerp(worldPosition, delta * 12.0);
 
@@ -806,7 +806,7 @@ function CameraController({ gameState, characterRef }) {
   return null;
 }
 
-function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor, doorPositionLevel2, setIsNearDoorLevel2 }) {
+function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor, door2Position, setIsNearDoor2, door3Position, setIsNearDoor3, doorPositionLevel2, setIsNearDoorLevel2, doorPositionLevel3, setIsNearDoorLevel3, doorPositionLevel4, setIsNearDoorLevel4 }) {
   const { scene, animations } = useGLTF('/resources/GameView/Suit.glb');
   const { actions } = useAnimations(animations, characterRef);
 
@@ -829,7 +829,8 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
   const rigidBodyRef = useRef(); // Rapier RigidBody 참조
   const currentRotationRef = useRef(new THREE.Quaternion()); // 현재 회전 저장 (모델용)
   const modelGroupRef = useRef(); // 캐릭터 모델 그룹 참조
-  
+  const returnSpawnPosRef = useRef(null); // Level1 복귀 시 스폰 위치 저장
+
   // 발걸음 소리 로드 및 재생 함수
   useEffect(() => {
     // 발걸음 소리 로드 (여러 경로 시도, .wav 파일 우선)
@@ -919,35 +920,132 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       const prevState = prevGameStateRef.current;
 
       if (gameState === 'playing_level2') {
-        // Level2로 전환 시 캐릭터 위치 리셋 (다음 프레임에)
-        requestAnimationFrame(() => {
-          if (rigidBodyRef.current) {
-            rigidBodyRef.current.setTranslation({ x: 0, y: 2, z: 0 }, true);
-            rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-          }
-        });
+        // Level2로 전환 시 캐릭터 위치 리셋
+        console.log('=== Level2 초기 스폰 ===');
+        setTimeout(() => {
+          requestAnimationFrame(() => {
+            if (rigidBodyRef.current) {
+              rigidBodyRef.current.setTranslation({ x: 0, y: 2, z: 0 }, true);
+              rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+            }
+          });
+        }, 150);
+      } else if (gameState === 'playing_level3') {
+        // Level3 진입 시 위치 설정
+        if (prevState === 'returning_to_level3_from_level4') {
+          // Level4에서 복귀하는 경우 - 저장된 복귀 위치 사용
+          const spawnPos = returnSpawnPosRef.current || { x: 0, y: 2, z: 0 };
+          console.log('=== Level3 복귀 완료 (from Level4) ===');
+          console.log('실제 스폰 위치:', spawnPos);
+
+          // 물리 엔진이 완전히 준비될 때까지 충분한 시간 대기
+          setTimeout(() => {
+            requestAnimationFrame(() => {
+              if (rigidBodyRef.current) {
+                rigidBodyRef.current.setTranslation(spawnPos, true);
+                rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+                console.log('위치 설정 완료');
+              }
+            });
+          }, 150);
+
+          // 복귀 위치 초기화
+          returnSpawnPosRef.current = null;
+        } else if (prevState !== 'playing_level3') {
+          // Level3로 처음 진입 시에만 캐릭터 위치 리셋
+          console.log('=== Level3 초기 스폰 (이전 상태:', prevState, ') ===');
+          setTimeout(() => {
+            requestAnimationFrame(() => {
+              if (rigidBodyRef.current) {
+                rigidBodyRef.current.setTranslation({ x: 0, y: 2, z: 0 }, true);
+                rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+              }
+            });
+          }, 150);
+        }
+      } else if (gameState === 'playing_level4') {
+        // Level4로 전환 시 캐릭터 위치 리셋
+        console.log('=== Level4 초기 스폰 ===');
+        setTimeout(() => {
+          requestAnimationFrame(() => {
+            if (rigidBodyRef.current) {
+              rigidBodyRef.current.setTranslation({ x: 0, y: 2, z: 0 }, true);
+              rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+            }
+          });
+        }, 150);
+      } else if (gameState === 'returning_to_level3_from_level4') {
+        // Level4에서 Level3로 돌아갈 때 - 상태 전환만 먼저 하고 위치는 playing_level3에서 설정
+        const spawnPos = { x: -40.51, y: 0.32, z: -16.39 };
+        console.log('=== Level3 복귀 시작 (from Level4) ===');
+        console.log('목표 스폰 위치:', spawnPos);
+
+        // 복귀 위치를 ref에 저장
+        returnSpawnPosRef.current = spawnPos;
+
+        // 충분한 딜레이 후 playing_level3로 전환
+        setTimeout(() => {
+          setGameState('playing_level3');
+        }, 150);
       } else if (gameState === 'returning_to_level1') {
-        // Level2에서 Level1로 돌아갈 때 - 지정된 복귀 위치로 스폰 (다음 프레임에)
+        // Level2에서 Level1로 돌아갈 때 - 상태 전환만 먼저 하고 위치는 playing_level1에서 설정
         const spawnPos = { x: 10.12, y: 0.29, z: -62.64 };
-        console.log('=== Level1 복귀 스폰 ===');
-        console.log('스폰 위치:', spawnPos);
-        requestAnimationFrame(() => {
-          if (rigidBodyRef.current) {
-            rigidBodyRef.current.setTranslation(spawnPos, true);
-            rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-          }
-        });
-        // 스폰 후 바로 playing_level1 상태로 전환
-        setTimeout(() => setGameState('playing_level1'), 50);
-      } else if (gameState === 'playing_level1' && prevState !== 'returning_to_level1') {
-        // Level1로 처음 진입 시에만 캐릭터 위치 리셋 (다음 프레임에)
-        console.log('=== Level1 초기 스폰 (이전 상태:', prevState, ') ===');
-        requestAnimationFrame(() => {
-          if (rigidBodyRef.current) {
-            rigidBodyRef.current.setTranslation({ x: 0, y: 2, z: 0 }, true);
-            rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-          }
-        });
+        console.log('=== Level1 복귀 시작 (from Level2) ===');
+        console.log('목표 스폰 위치:', spawnPos);
+
+        // 복귀 위치를 ref에 저장
+        returnSpawnPosRef.current = spawnPos;
+
+        // 충분한 딜레이 후 playing_level1로 전환
+        setTimeout(() => {
+          setGameState('playing_level1');
+        }, 150);
+      } else if (gameState === 'returning_to_level1_from_level3') {
+        // Level3에서 Level1로 돌아갈 때 - 상태 전환만 먼저 하고 위치는 playing_level1에서 설정
+        const spawnPos = { x: -41.85, y: 0.29, z: -25.70 };
+        console.log('=== Level1 복귀 시작 (from Level3) ===');
+        console.log('목표 스폰 위치:', spawnPos);
+
+        // 복귀 위치를 ref에 저장
+        returnSpawnPosRef.current = spawnPos;
+
+        // 충분한 딜레이 후 playing_level1로 전환
+        setTimeout(() => {
+          setGameState('playing_level1');
+        }, 150);
+      } else if (gameState === 'playing_level1') {
+        // Level1 진입 시 위치 설정
+        if (prevState === 'returning_to_level1' || prevState === 'returning_to_level1_from_level3') {
+          // Level2/3에서 복귀하는 경우 - 저장된 복귀 위치 사용
+          const spawnPos = returnSpawnPosRef.current || { x: 0, y: 2, z: 0 };
+          console.log('=== Level1 복귀 완료 (from', prevState === 'returning_to_level1' ? 'Level2' : 'Level3', ') ===');
+          console.log('실제 스폰 위치:', spawnPos);
+
+          // 물리 엔진이 완전히 준비될 때까지 충분한 시간 대기
+          setTimeout(() => {
+            requestAnimationFrame(() => {
+              if (rigidBodyRef.current) {
+                rigidBodyRef.current.setTranslation(spawnPos, true);
+                rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+                console.log('위치 설정 완료');
+              }
+            });
+          }, 150);
+
+          // 복귀 위치 초기화
+          returnSpawnPosRef.current = null;
+        } else if (prevState !== 'playing_level1') {
+          // Level1로 처음 진입 시에만 캐릭터 위치 리셋
+          console.log('=== Level1 초기 스폰 (이전 상태:', prevState, ') ===');
+          setTimeout(() => {
+            requestAnimationFrame(() => {
+              if (rigidBodyRef.current) {
+                rigidBodyRef.current.setTranslation({ x: 0, y: 2, z: 0 }, true);
+                rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+              }
+            });
+          }, 150);
+        }
       }
 
       // 이전 상태 업데이트
@@ -958,7 +1056,7 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
 
   useEffect(() => {
     let animToPlay = 'Idle';
-    if (gameState === 'playing_level1' || gameState === 'playing_level2' || gameState === 'returning_to_level1') {
+    if (gameState === 'playing_level1' || gameState === 'playing_level2' || gameState === 'playing_level3' || gameState === 'playing_level4' || gameState === 'returning_to_level1' || gameState === 'returning_to_level1_from_level3' || gameState === 'returning_to_level3_from_level4') {
       if (forward || backward || left || right) {
         animToPlay = shift ? 'Run' : 'Walk';
       }
@@ -984,7 +1082,7 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
   useFrame((state, delta) => {
     if (!rigidBodyRef.current || !modelGroupRef.current) return;
 
-    if (gameState !== 'playing_level1' && gameState !== 'playing_level2') return;
+    if (gameState !== 'playing_level1' && gameState !== 'playing_level2' && gameState !== 'playing_level3' && gameState !== 'playing_level4') return;
 
     const speed = shift ? 18 : 8; // 물리 기반 속도 (걷기: 8, 뛰기: 18)
     const direction = new THREE.Vector3();
@@ -1059,6 +1157,31 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       setIsNearDoor(false);
     }
 
+    // door 상호작용 감지 (Level1에서만 - Level3로 가는 문)
+    if (gameState === 'playing_level1' && door2Position) {
+      const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
+      const distance = charPos.distanceTo(door2Position);
+
+      // 문 근처에 있는지 UI에 알림
+      if (distance < doorInteractionDistance) {
+        setIsNearDoor2(true);
+
+        // E키를 눌렀을 때만 상호작용
+        if (e && !hasInteractedWithDoorRef.current) {
+          // 문 열림 소리 재생
+          playDoorSound();
+
+          // Level3로 전환 (페이드 효과 포함)
+          setGameStateWithFade('playing_level3');
+          hasInteractedWithDoorRef.current = true; // 중복 방지
+        }
+      } else {
+        setIsNearDoor2(false);
+      }
+    } else {
+      setIsNearDoor2(false);
+    }
+
     // door001 상호작용 감지 (Level2에서만)
     if (gameState === 'playing_level2' && doorPositionLevel2) {
       const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
@@ -1082,6 +1205,81 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       }
     } else {
       setIsNearDoorLevel2(false);
+    }
+
+    // door 상호작용 감지 (Level3에서만 - Level1로 돌아가는 문)
+    if (gameState === 'playing_level3' && doorPositionLevel3) {
+      const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
+      const distance = charPos.distanceTo(doorPositionLevel3);
+
+      // 문 근처에 있는지 UI에 알림
+      if (distance < doorInteractionDistance) {
+        setIsNearDoorLevel3(true);
+
+        // E키를 눌렀을 때만 상호작용
+        if (e && !hasInteractedWithDoorRef.current) {
+          // 문 열림 소리 재생
+          playDoorSound();
+
+          // Level1로 돌아가기 (페이드 효과 포함)
+          setGameStateWithFade('returning_to_level1_from_level3');
+          hasInteractedWithDoorRef.current = true; // 중복 방지
+        }
+      } else {
+        setIsNearDoorLevel3(false);
+      }
+    } else {
+      setIsNearDoorLevel3(false);
+    }
+
+    // door002 상호작용 감지 (Level3에서만 - Level4로 가는 문)
+    if (gameState === 'playing_level3' && door3Position) {
+      const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
+      const distance = charPos.distanceTo(door3Position);
+
+      // 문 근처에 있는지 UI에 알림
+      if (distance < doorInteractionDistance) {
+        setIsNearDoor3(true);
+
+        // E키를 눌렀을 때만 상호작용
+        if (e && !hasInteractedWithDoorRef.current) {
+          // 문 열림 소리 재생
+          playDoorSound();
+
+          // Level4로 전환 (페이드 효과 포함)
+          setGameStateWithFade('playing_level4');
+          hasInteractedWithDoorRef.current = true; // 중복 방지
+        }
+      } else {
+        setIsNearDoor3(false);
+      }
+    } else {
+      setIsNearDoor3(false);
+    }
+
+    // door002 상호작용 감지 (Level4에서만 - Level3로 돌아가는 문)
+    if (gameState === 'playing_level4' && doorPositionLevel4) {
+      const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
+      const distance = charPos.distanceTo(doorPositionLevel4);
+
+      // 문 근처에 있는지 UI에 알림
+      if (distance < doorInteractionDistance) {
+        setIsNearDoorLevel4(true);
+
+        // E키를 눌렀을 때만 상호작용
+        if (e && !hasInteractedWithDoorRef.current) {
+          // 문 열림 소리 재생
+          playDoorSound();
+
+          // Level3로 돌아가기 (페이드 효과 포함)
+          setGameStateWithFade('returning_to_level3_from_level4');
+          hasInteractedWithDoorRef.current = true; // 중복 방지
+        }
+      } else {
+        setIsNearDoorLevel4(false);
+      }
+    } else {
+      setIsNearDoorLevel4(false);
     }
 
     // C키로 캐릭터 위치 로그 (디버그)
@@ -1119,7 +1317,7 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       </RigidBody>
 
       {/* 캐릭터 모델 (RigidBody와 분리) */}
-      <group ref={modelGroupRef} visible={gameState !== 'returning_to_level1'}>
+      <group ref={modelGroupRef} visible={gameState !== 'returning_to_level1' && gameState !== 'returning_to_level1_from_level3' && gameState !== 'returning_to_level3_from_level4'}>
         <primitive
           ref={characterRef}
           object={scene}
@@ -1915,7 +2113,7 @@ useGLTF.preload('/mailbox.glb');
 useGLTF.preload('/instagramlogo.glb');
 useGLTF.preload('/toolbox.glb');
 
-function Level1Map({ onDoorPositionFound, ...props }) {
+function Level1Map({ onDoorPositionFound, onDoor2PositionFound, ...props }) {
   const { scene } = useGLTF('/resources/GameView/Level1Map.glb');
 
   // Level1Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
@@ -1926,7 +2124,7 @@ function Level1Map({ onDoorPositionFound, ...props }) {
         child.castShadow = true;
         child.receiveShadow = true;
       }
-      // door001 오브젝트 찾기
+      // door001 오브젝트 찾기 (Level2로 가는 문)
       if (child.name === 'door001') {
         const worldPos = new THREE.Vector3();
         child.getWorldPosition(worldPos);
@@ -1934,9 +2132,17 @@ function Level1Map({ onDoorPositionFound, ...props }) {
           onDoorPositionFound(worldPos);
         }
       }
+      // door 오브젝트 찾기 (Level3로 가는 문)
+      if (child.name === 'door') {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        if (onDoor2PositionFound) {
+          onDoor2PositionFound(worldPos);
+        }
+      }
     });
     return cloned;
-  }, [scene, onDoorPositionFound]);
+  }, [scene, onDoorPositionFound, onDoor2PositionFound]);
 
   return (
     <RigidBody type="fixed" colliders="trimesh">
@@ -1980,19 +2186,92 @@ function Level2Map({ onDoorPositionFound, ...props }) {
 
 useGLTF.preload('/resources/GameView/Level2Map.glb');
 
-function Level1({ characterRef, onDoorPositionFound }) {
+function Level3Map({ onDoorPositionFound, onDoor2PositionFound, ...props }) {
+  const { scene } = useGLTF('/resources/GameView/Level3Map.glb');
+
+  // Level3Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
+  const clonedScene = useMemo(() => {
+    const cloned = scene.clone();
+    cloned.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+      // door 오브젝트 찾기 (Level1로 돌아가는 문)
+      if (child.name === 'door') {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        if (onDoorPositionFound) {
+          onDoorPositionFound(worldPos);
+        }
+      }
+      // door002 오브젝트 찾기 (Level4로 가는 문)
+      if (child.name === 'door002') {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        if (onDoor2PositionFound) {
+          onDoor2PositionFound(worldPos);
+        }
+      }
+    });
+    return cloned;
+  }, [scene, onDoorPositionFound, onDoor2PositionFound]);
+
+  return (
+    <RigidBody type="fixed" colliders="trimesh">
+      <primitive object={clonedScene} {...props} />
+    </RigidBody>
+  );
+}
+
+useGLTF.preload('/resources/GameView/Level3Map.glb');
+
+function Level4Map({ onDoorPositionFound, ...props }) {
+  const { scene } = useGLTF('/resources/GameView/Level4Map.glb');
+
+  // Level4Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
+  const clonedScene = useMemo(() => {
+    const cloned = scene.clone();
+    cloned.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+      // door002 오브젝트 찾기 (Level3로 돌아가는 문)
+      if (child.name === 'door002') {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        if (onDoorPositionFound) {
+          onDoorPositionFound(worldPos);
+        }
+      }
+    });
+    return cloned;
+  }, [scene, onDoorPositionFound]);
+
+  return (
+    <RigidBody type="fixed" colliders="trimesh">
+      <primitive object={clonedScene} {...props} />
+    </RigidBody>
+  );
+}
+
+useGLTF.preload('/resources/GameView/Level4Map.glb');
+
+function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound }) {
   return (
     <>
       <Sky />
 
       {/* Level1 Map - 크리스마스 마을 */}
       <Level1Map
+        onDoorPositionFound={onDoorPositionFound}
+        onDoor2PositionFound={onDoor2PositionFound}
         position={[0, 0, 0]}
         scale={1}
         rotation={[0, 0, 0]}
         castShadow
         receiveShadow
-        onDoorPositionFound={onDoorPositionFound}
       />
 
       {/* 숨겨진 텍스트로 프리로드 - 화면 밖에 배치 */}
@@ -2064,6 +2343,129 @@ function Level2({ characterRef, onDoorPositionFound }) {
         visible={false}
       >
         Level 2에 오신걸 환영합니다! 🎉
+      </Text>
+    </>
+  );
+}
+
+function Level3({ characterRef, onDoorPositionFound, onDoor2PositionFound }) {
+  const { scene } = useThree();
+
+  // Level3 배경을 검정색으로 설정
+  useEffect(() => {
+    scene.background = new THREE.Color('#000000');
+
+    // cleanup: Level3를 벗어날 때 배경 제거
+    return () => {
+      scene.background = null;
+    };
+  }, [scene]);
+
+  return (
+    <>
+      {/* Level3 중앙 태양 - 위에서 비추는 조명 */}
+      <directionalLight
+        position={[0, 50, 0]}
+        intensity={3}
+        castShadow
+        shadow-mapSize-width={8192}
+        shadow-mapSize-height={8192}
+        shadow-camera-far={1000}
+        shadow-camera-left={-500}
+        shadow-camera-right={500}
+        shadow-camera-top={500}
+        shadow-camera-bottom={-500}
+        shadow-bias={-0.0001}
+        shadow-normalBias={0.02}
+        shadow-radius={4}
+      />
+
+      {/* 태양 시각화 - 중앙 위 */}
+      <mesh position={[0, 50, 0]}>
+        <sphereGeometry args={[3, 16, 16]} />
+        <meshBasicMaterial color="#FDB813" />
+      </mesh>
+
+      {/* Level3 Map */}
+      <Level3Map
+        onDoorPositionFound={onDoorPositionFound}
+        onDoor2PositionFound={onDoor2PositionFound}
+        position={[0, 0, 0]}
+        scale={1}
+        rotation={[0, 0, 0]}
+        castShadow
+        receiveShadow
+      />
+
+      {/* 숨겨진 텍스트로 프리로드 - 화면 밖에 배치 */}
+      <Text
+        position={[1000, 1000, 1000]}
+        fontSize={0.4}
+        color="black"
+        visible={false}
+      >
+        Level 3에 오신걸 환영합니다! 🎉
+      </Text>
+    </>
+  );
+}
+
+function Level4({ characterRef, onDoorPositionFound }) {
+  const { scene } = useThree();
+
+  // Level4 배경을 검정색으로 설정
+  useEffect(() => {
+    scene.background = new THREE.Color('#000000');
+
+    // cleanup: Level4를 벗어날 때 배경 제거
+    return () => {
+      scene.background = null;
+    };
+  }, [scene]);
+
+  return (
+    <>
+      {/* Level4 중앙 태양 - 위에서 비추는 조명 */}
+      <directionalLight
+        position={[0, 50, 0]}
+        intensity={3}
+        castShadow
+        shadow-mapSize-width={8192}
+        shadow-mapSize-height={8192}
+        shadow-camera-far={1000}
+        shadow-camera-left={-500}
+        shadow-camera-right={500}
+        shadow-camera-top={500}
+        shadow-camera-bottom={-500}
+        shadow-bias={-0.0001}
+        shadow-normalBias={0.02}
+        shadow-radius={4}
+      />
+
+      {/* 태양 시각화 - 중앙 위 */}
+      <mesh position={[0, 50, 0]}>
+        <sphereGeometry args={[3, 16, 16]} />
+        <meshBasicMaterial color="#FDB813" />
+      </mesh>
+
+      {/* Level4 Map */}
+      <Level4Map
+        onDoorPositionFound={onDoorPositionFound}
+        position={[0, 0, 0]}
+        scale={1}
+        rotation={[0, 0, 0]}
+        castShadow
+        receiveShadow
+      />
+
+      {/* 숨겨진 텍스트로 프리로드 - 화면 밖에 배치 */}
+      <Text
+        position={[1000, 1000, 1000]}
+        fontSize={0.4}
+        color="black"
+        visible={false}
+      >
+        Level 4에 오신걸 환영합니다! 🎉
       </Text>
     </>
   );
@@ -2163,10 +2565,18 @@ function App() {
   const [isWebMode, setIsWebMode] = useState(true); // 웹/게임 모드 상태 - 웹 모드로 시작
   const [isDarkMode, setIsDarkMode] = useState(false); // 다크 모드 상태
   const [showTutorial, setShowTutorial] = useState(false); // 튜토리얼 팝업 상태
-  const [doorPosition, setDoorPosition] = useState(null); // Level1 door001 위치
+  const [doorPosition, setDoorPosition] = useState(null); // Level1 door001 위치 (Level2로 가는 문)
+  const [door2Position, setDoor2Position] = useState(null); // Level1 door 위치 (Level3로 가는 문)
+  const [door3Position, setDoor3Position] = useState(null); // Level3 door002 위치 (Level4로 가는 문)
   const [doorPositionLevel2, setDoorPositionLevel2] = useState(null); // Level2 door001 위치
-  const [isNearDoor, setIsNearDoor] = useState(false); // Level1 문 근처에 있는지 여부
+  const [doorPositionLevel3, setDoorPositionLevel3] = useState(null); // Level3 door 위치
+  const [doorPositionLevel4, setDoorPositionLevel4] = useState(null); // Level4 door002 위치
+  const [isNearDoor, setIsNearDoor] = useState(false); // Level1 door001 근처에 있는지 여부
+  const [isNearDoor2, setIsNearDoor2] = useState(false); // Level1 door 근처에 있는지 여부
+  const [isNearDoor3, setIsNearDoor3] = useState(false); // Level3 door002 근처에 있는지 여부
   const [isNearDoorLevel2, setIsNearDoorLevel2] = useState(false); // Level2 문 근처에 있는지 여부
+  const [isNearDoorLevel3, setIsNearDoorLevel3] = useState(false); // Level3 문 근처에 있는지 여부
+  const [isNearDoorLevel4, setIsNearDoorLevel4] = useState(false); // Level4 문 근처에 있는지 여부
   const [isFading, setIsFading] = useState(false); // 페이드 전환 상태
 
   // 페이드 효과와 함께 레벨 전환
@@ -2243,7 +2653,7 @@ function App() {
         <ambientLight intensity={0.5} />
 
         {/* Level1 전용 태양 */}
-        {(gameState === 'playing_level1' || gameState === 'returning_to_level1') && (
+        {gameState === 'playing_level1' && (
           <>
             <directionalLight
               position={[50, 50, 25]}
@@ -2270,24 +2680,38 @@ function App() {
 
         <Suspense fallback={null}>
           <Physics gravity={[0, -40, 0]} debug>
-            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} />
+            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} door2Position={door2Position} setIsNearDoor2={setIsNearDoor2} door3Position={door3Position} setIsNearDoor3={setIsNearDoor3} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} doorPositionLevel3={doorPositionLevel3} setIsNearDoorLevel3={setIsNearDoorLevel3} doorPositionLevel4={doorPositionLevel4} setIsNearDoorLevel4={setIsNearDoorLevel4} />
             <CameraController gameState={gameState} characterRef={characterRef} />
             <CameraLogger />
-            {(gameState === 'playing_level1' || gameState === 'returning_to_level1') && (
-              <Level1 characterRef={characterRef} onDoorPositionFound={setDoorPosition} />
+            {gameState === 'playing_level1' && (
+              <Level1 characterRef={characterRef} onDoorPositionFound={setDoorPosition} onDoor2PositionFound={setDoor2Position} />
             )}
             {gameState === 'playing_level2' && (
               <Level2 characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel2} />
             )}
+            {gameState === 'playing_level3' && (
+              <Level3 characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel3} onDoor2PositionFound={setDoor3Position} />
+            )}
+            {gameState === 'playing_level4' && (
+              <Level4 characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel4} />
+            )}
+            {/* 복귀 상태에서는 아무 레벨도 렌더링하지 않음 (검은 화면) */}
           </Physics>
         </Suspense>
         </Canvas>
       )}
 
-      {/* 문 상호작용 UI - Level1 */}
+      {/* 문 상호작용 UI - Level1 door001 (Level2로) */}
       {!isWebMode && isNearDoor && gameState === 'playing_level1' && (
         <div className="door-interaction-ui">
-          🚪 E키를 눌러 문 열기
+          🚪 E키를 눌러 Level2로 이동
+        </div>
+      )}
+
+      {/* 문 상호작용 UI - Level1 door (Level3로) */}
+      {!isWebMode && isNearDoor2 && gameState === 'playing_level1' && (
+        <div className="door-interaction-ui">
+          🚪 E키를 눌러 Level3로 이동
         </div>
       )}
 
@@ -2295,6 +2719,27 @@ function App() {
       {!isWebMode && isNearDoorLevel2 && gameState === 'playing_level2' && (
         <div className="door-interaction-ui">
           🚪 E키를 눌러 Level1로 돌아가기
+        </div>
+      )}
+
+      {/* 문 상호작용 UI - Level3 door (Level1로) */}
+      {!isWebMode && isNearDoorLevel3 && gameState === 'playing_level3' && (
+        <div className="door-interaction-ui">
+          🚪 E키를 눌러 Level1로 돌아가기
+        </div>
+      )}
+
+      {/* 문 상호작용 UI - Level3 door002 (Level4로) */}
+      {!isWebMode && isNearDoor3 && gameState === 'playing_level3' && (
+        <div className="door-interaction-ui">
+          🚪 E키를 눌러 Level4로 이동
+        </div>
+      )}
+
+      {/* 문 상호작용 UI - Level4 */}
+      {!isWebMode && isNearDoorLevel4 && gameState === 'playing_level4' && (
+        <div className="door-interaction-ui">
+          🚪 E키를 눌러 Level3로 돌아가기
         </div>
       )}
 
