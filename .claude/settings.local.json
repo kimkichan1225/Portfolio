@@ -21,7 +21,8 @@
       "Bash(nul)",
       "Bash(del nul 2)",
       "Bash(NUL)",
-      "Bash(.gitignore)"
+      "Bash(.gitignore)",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": [],
     "ask": []

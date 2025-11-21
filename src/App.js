@@ -2097,12 +2097,12 @@ function App() {
     // 페이드 아웃 후 레벨 전환
     setTimeout(() => {
       setGameState(newState);
-
-      // 페이드 인 시작
-      setTimeout(() => {
-        setIsFading(false);
-      }, 100); // 짧은 딜레이 후 페이드 인
     }, 500); // 0.5초 페이드 아웃
+
+    // 전체 애니메이션 완료 후 오버레이 제거
+    setTimeout(() => {
+      setIsFading(false);
+    }, 1100); // 1.1초 애니메이션 완료 후
   };
 
   const toggleMode = () => {
