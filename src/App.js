@@ -755,6 +755,7 @@ function CameraLogger() {
 function CameraController({ gameState, characterRef }) {
   const { camera } = useThree();
   const cameraOffset = new THREE.Vector3(-0.00, 28.35, 19.76); // 고정된 카메라 오프셋
+  const targetPositionRef = useRef(new THREE.Vector3());
 
   useFrame((state, delta) => {
     if (!characterRef.current) return;
@@ -764,14 +765,17 @@ function CameraController({ gameState, characterRef }) {
     characterRef.current.getWorldPosition(worldPosition);
 
     if (gameState === 'playing_level1') {
-      // 타겟 위치에 고정된 오프셋을 더해서 카메라 위치 계산
-      const targetCameraPosition = worldPosition.clone().add(cameraOffset);
+      // 타겟 위치를 부드럽게 보간 (떨림 방지)
+      targetPositionRef.current.lerp(worldPosition, delta * 12.0);
 
-      // 부드러운 카메라 이동
-      camera.position.lerp(targetCameraPosition, delta * 5.0);
+      // 타겟 위치에 고정된 오프셋을 더해서 카메라 위치 계산
+      const targetCameraPosition = targetPositionRef.current.clone().add(cameraOffset);
+
+      // 부드러운 카메라 이동 (속도 감소)
+      camera.position.lerp(targetCameraPosition, delta * 2.0);
 
       // 타겟을 바라보도록 설정
-      camera.lookAt(worldPosition);
+      camera.lookAt(targetPositionRef.current);
     }
   });
 
@@ -793,7 +797,8 @@ function Model({ characterRef, gameState, setGameState }) {
   // 안전한 참조를 위한 useRef
   const safeCharacterRef = useRef();
   const rigidBodyRef = useRef(); // Rapier RigidBody 참조
-  const currentRotationRef = useRef(new THREE.Quaternion()); // 현재 회전 저장
+  const currentRotationRef = useRef(new THREE.Quaternion()); // 현재 회전 저장 (모델용)
+  const modelGroupRef = useRef(); // 캐릭터 모델 그룹 참조
   
   // 발걸음 소리 로드 및 재생 함수
   useEffect(() => {
@@ -855,6 +860,11 @@ function Model({ characterRef, gameState, setGameState }) {
         }
       });
     }
+
+    // characterRef를 modelGroupRef로 설정 (카메라가 추적할 수 있도록)
+    if (modelGroupRef.current) {
+      characterRef.current = modelGroupRef.current;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState]);
 
@@ -884,8 +894,7 @@ function Model({ characterRef, gameState, setGameState }) {
   }, [forward, backward, left, right, shift, actions, currentAnimation, gameState]);
 
   useFrame((state, delta) => {
-    const currentCharacter = characterRef.current || safeCharacterRef.current;
-    if (!currentCharacter) return;
+    if (!rigidBodyRef.current || !modelGroupRef.current) return;
 
     if (gameState !== 'playing_level1') return;
 
@@ -900,7 +909,7 @@ function Model({ characterRef, gameState, setGameState }) {
     if (direction.length() > 0) {
       direction.normalize();
 
-      // 회전 처리 - 부드럽게 회전
+      // 회전 처리 - 부드럽게 회전 (모델만)
       const targetAngle = Math.atan2(direction.x, direction.z);
       const targetQuaternion = new THREE.Quaternion();
       targetQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), targetAngle);
@@ -908,25 +917,13 @@ function Model({ characterRef, gameState, setGameState }) {
       // 현재 회전에서 목표 회전으로 부드럽게 보간 (slerp)
       currentRotationRef.current.slerp(targetQuaternion, 0.25);
 
-      if (rigidBodyRef.current) {
-        // 보간된 회전을 RigidBody에 적용
-        rigidBodyRef.current.setRotation({
-          x: currentRotationRef.current.x,
-          y: currentRotationRef.current.y,
-          z: currentRotationRef.current.z,
-          w: currentRotationRef.current.w
-        }, true);
-      }
-
       // 물리 기반 이동 (setLinvel 사용)
-      if (rigidBodyRef.current) {
-        const currentVel = rigidBodyRef.current.linvel();
-        rigidBodyRef.current.setLinvel({
-          x: direction.x * speed,
-          y: currentVel.y, // Y축은 중력 유지
-          z: direction.z * speed
-        });
-      }
+      const currentVel = rigidBodyRef.current.linvel();
+      rigidBodyRef.current.setLinvel({
+        x: direction.x * speed,
+        y: currentVel.y, // Y축은 중력 유지
+        z: direction.z * speed
+      });
 
       // 발걸음 소리 재생
       if (currentAnimation === 'Walk' || currentAnimation === 'Run') {
@@ -938,32 +935,47 @@ function Model({ characterRef, gameState, setGameState }) {
       }
     } else {
       // 정지 시 속도 0
-      if (rigidBodyRef.current) {
-        const currentVel = rigidBodyRef.current.linvel();
-        rigidBodyRef.current.setLinvel({ x: 0, y: currentVel.y, z: 0 });
-      }
+      const currentVel = rigidBodyRef.current.linvel();
+      rigidBodyRef.current.setLinvel({ x: 0, y: currentVel.y, z: 0 });
     }
+
+    // RigidBody의 위치를 모델에 동기화
+    const rbPosition = rigidBodyRef.current.translation();
+    modelGroupRef.current.position.set(rbPosition.x, rbPosition.y, rbPosition.z);
+
+    // 모델의 회전은 입력에 의한 회전만 적용
+    modelGroupRef.current.quaternion.copy(currentRotationRef.current);
   });
 
   return (
-    <RigidBody
-      ref={rigidBodyRef}
-      type="dynamic"
-      colliders={false}
-      mass={1}
-      linearDamping={0.5}
-      enabledRotations={[false, true, false]} // Y축 회전만 허용
-      position={[0, 2, 0]} // 시작 위치
-    >
-      <CapsuleCollider args={[2, 1.3]} position={[0, 3.2, 0]} />
-      <primitive
-        ref={characterRef}
-        object={scene}
-        scale={2}
-        castShadow
-        receiveShadow
-      />
-    </RigidBody>
+    <>
+      {/* 물리 충돌용 RigidBody (보이지 않음) */}
+      <RigidBody
+        ref={rigidBodyRef}
+        type="dynamic"
+        colliders={false}
+        mass={1}
+        linearDamping={2.0} // 증가: 더 빠르게 감속 (떨림 방지)
+        angularDamping={1.0} // 회전 감쇠 추가
+        enabledRotations={[false, false, false]} // 물리적 회전 완전 잠금
+        position={[0, 2, 0]} // 시작 위치
+        lockRotations={true} // 회전 완전 잠금
+        canSleep={false} // 절대 sleep 상태로 전환되지 않음 (플레이어 캐릭터용)
+      >
+        <CapsuleCollider args={[2, 1.3]} position={[0, 3.2, 0]} />
+      </RigidBody>
+
+      {/* 캐릭터 모델 (RigidBody와 분리) */}
+      <group ref={modelGroupRef}>
+        <primitive
+          ref={characterRef}
+          object={scene}
+          scale={2}
+          castShadow
+          receiveShadow
+        />
+      </group>
+    </>
   );
 }
 
