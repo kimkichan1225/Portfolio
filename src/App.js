@@ -822,7 +822,8 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
   // 문 열림 소리를 위한 오디오 시스템
   const doorAudioRef = useRef(null);
   const doorInteractionDistance = 8; // 문과 상호작용 가능한 거리
-  const hasInteractedWithDoorRef = useRef(false); // E키 중복 방지
+  const lastDoorInteractionTimeRef = useRef(0); // E키 쿨다운 (5초)
+  const doorCooldownDuration = 5000; // 5초 쿨다운 (밀리초)
 
   // 안전한 참조를 위한 useRef
   const safeCharacterRef = useRef();
@@ -1103,13 +1104,18 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       // 현재 회전에서 목표 회전으로 부드럽게 보간 (slerp)
       currentRotationRef.current.slerp(targetQuaternion, 0.25);
 
-      // 물리 기반 이동 (setLinvel 사용)
-      const currentVel = rigidBodyRef.current.linvel();
-      rigidBodyRef.current.setLinvel({
-        x: direction.x * speed,
-        y: currentVel.y, // Y축은 중력 유지
-        z: direction.z * speed
-      });
+      // 물리 기반 이동 (setLinvel 사용) - 안전하게 처리
+      try {
+        const currentVel = rigidBodyRef.current.linvel();
+        rigidBodyRef.current.setLinvel({
+          x: direction.x * speed,
+          y: currentVel.y, // Y축은 중력 유지
+          z: direction.z * speed
+        });
+      } catch (error) {
+        // Rapier 물리 엔진이 처리 중일 때 발생하는 에러 무시
+        return;
+      }
 
       // 발걸음 소리 재생
       if (currentAnimation === 'Walk' || currentAnimation === 'Run') {
@@ -1120,14 +1126,25 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
         }
       }
     } else {
-      // 정지 시 속도 0
-      const currentVel = rigidBodyRef.current.linvel();
-      rigidBodyRef.current.setLinvel({ x: 0, y: currentVel.y, z: 0 });
+      // 정지 시 속도 0 - 안전하게 처리
+      try {
+        const currentVel = rigidBodyRef.current.linvel();
+        rigidBodyRef.current.setLinvel({ x: 0, y: currentVel.y, z: 0 });
+      } catch (error) {
+        // Rapier 물리 엔진이 처리 중일 때 발생하는 에러 무시
+        return;
+      }
     }
 
-    // RigidBody의 위치를 모델에 동기화
-    const rbPosition = rigidBodyRef.current.translation();
-    modelGroupRef.current.position.set(rbPosition.x, rbPosition.y, rbPosition.z);
+    // RigidBody의 위치를 모델에 동기화 (안전하게 처리)
+    let rbPosition;
+    try {
+      rbPosition = rigidBodyRef.current.translation();
+      modelGroupRef.current.position.set(rbPosition.x, rbPosition.y, rbPosition.z);
+    } catch (error) {
+      // Rapier 물리 엔진이 처리 중일 때 발생하는 에러 무시
+      return;
+    }
 
     // 모델의 회전은 입력에 의한 회전만 적용
     modelGroupRef.current.quaternion.copy(currentRotationRef.current);
@@ -1141,14 +1158,15 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       if (distance < doorInteractionDistance) {
         setIsNearDoor(true);
 
-        // E키를 눌렀을 때만 상호작용
-        if (e && !hasInteractedWithDoorRef.current) {
+        // E키를 눌렀을 때만 상호작용 (5초 쿨다운)
+        const currentTime = Date.now();
+        if (e && (currentTime - lastDoorInteractionTimeRef.current) > doorCooldownDuration) {
           // 문 열림 소리 재생
           playDoorSound();
 
           // Level2로 전환 (페이드 효과 포함)
           setGameStateWithFade('playing_level2');
-          hasInteractedWithDoorRef.current = true; // 중복 방지
+          lastDoorInteractionTimeRef.current = currentTime; // 쿨다운 시작
         }
       } else {
         setIsNearDoor(false);
@@ -1166,14 +1184,15 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       if (distance < doorInteractionDistance) {
         setIsNearDoor2(true);
 
-        // E키를 눌렀을 때만 상호작용
-        if (e && !hasInteractedWithDoorRef.current) {
+        // E키를 눌렀을 때만 상호작용 (5초 쿨다운)
+        const currentTime = Date.now();
+        if (e && (currentTime - lastDoorInteractionTimeRef.current) > doorCooldownDuration) {
           // 문 열림 소리 재생
           playDoorSound();
 
           // Level3로 전환 (페이드 효과 포함)
           setGameStateWithFade('playing_level3');
-          hasInteractedWithDoorRef.current = true; // 중복 방지
+          lastDoorInteractionTimeRef.current = currentTime; // 쿨다운 시작
         }
       } else {
         setIsNearDoor2(false);
@@ -1191,14 +1210,15 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       if (distance < doorInteractionDistance) {
         setIsNearDoorLevel2(true);
 
-        // E키를 눌렀을 때만 상호작용
-        if (e && !hasInteractedWithDoorRef.current) {
+        // E키를 눌렀을 때만 상호작용 (5초 쿨다운)
+        const currentTime = Date.now();
+        if (e && (currentTime - lastDoorInteractionTimeRef.current) > doorCooldownDuration) {
           // 문 열림 소리 재생
           playDoorSound();
 
           // Level1로 돌아가기 (페이드 효과 포함)
           setGameStateWithFade('returning_to_level1');
-          hasInteractedWithDoorRef.current = true; // 중복 방지
+          lastDoorInteractionTimeRef.current = currentTime; // 쿨다운 시작
         }
       } else {
         setIsNearDoorLevel2(false);
@@ -1216,14 +1236,15 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       if (distance < doorInteractionDistance) {
         setIsNearDoorLevel3(true);
 
-        // E키를 눌렀을 때만 상호작용
-        if (e && !hasInteractedWithDoorRef.current) {
+        // E키를 눌렀을 때만 상호작용 (5초 쿨다운)
+        const currentTime = Date.now();
+        if (e && (currentTime - lastDoorInteractionTimeRef.current) > doorCooldownDuration) {
           // 문 열림 소리 재생
           playDoorSound();
 
           // Level1로 돌아가기 (페이드 효과 포함)
           setGameStateWithFade('returning_to_level1_from_level3');
-          hasInteractedWithDoorRef.current = true; // 중복 방지
+          lastDoorInteractionTimeRef.current = currentTime; // 쿨다운 시작
         }
       } else {
         setIsNearDoorLevel3(false);
@@ -1241,14 +1262,15 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       if (distance < doorInteractionDistance) {
         setIsNearDoor3(true);
 
-        // E키를 눌렀을 때만 상호작용
-        if (e && !hasInteractedWithDoorRef.current) {
+        // E키를 눌렀을 때만 상호작용 (5초 쿨다운)
+        const currentTime = Date.now();
+        if (e && (currentTime - lastDoorInteractionTimeRef.current) > doorCooldownDuration) {
           // 문 열림 소리 재생
           playDoorSound();
 
           // Level4로 전환 (페이드 효과 포함)
           setGameStateWithFade('playing_level4');
-          hasInteractedWithDoorRef.current = true; // 중복 방지
+          lastDoorInteractionTimeRef.current = currentTime; // 쿨다운 시작
         }
       } else {
         setIsNearDoor3(false);
@@ -1266,14 +1288,15 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       if (distance < doorInteractionDistance) {
         setIsNearDoorLevel4(true);
 
-        // E키를 눌렀을 때만 상호작용
-        if (e && !hasInteractedWithDoorRef.current) {
+        // E키를 눌렀을 때만 상호작용 (5초 쿨다운)
+        const currentTime = Date.now();
+        if (e && (currentTime - lastDoorInteractionTimeRef.current) > doorCooldownDuration) {
           // 문 열림 소리 재생
           playDoorSound();
 
           // Level3로 돌아가기 (페이드 효과 포함)
           setGameStateWithFade('returning_to_level3_from_level4');
-          hasInteractedWithDoorRef.current = true; // 중복 방지
+          lastDoorInteractionTimeRef.current = currentTime; // 쿨다운 시작
         }
       } else {
         setIsNearDoorLevel4(false);
@@ -1282,20 +1305,21 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       setIsNearDoorLevel4(false);
     }
 
-    // C키로 캐릭터 위치 로그 (디버그)
+    // C키로 캐릭터 위치 로그 (디버그) - 안전하게 처리
     if (log) {
-      const rbPosition = rigidBodyRef.current.translation();
-      console.log('=== 캐릭터 위치 ===');
-      console.log(`Position: x=${rbPosition.x.toFixed(2)}, y=${rbPosition.y.toFixed(2)}, z=${rbPosition.z.toFixed(2)}`);
-      console.log(`GameState: ${gameState}`);
-      console.log('Level1 doorPosition:', doorPosition);
-      console.log('Level2 doorPosition:', doorPositionLevel2);
+      try {
+        const debugPosition = rigidBodyRef.current.translation();
+        console.log('=== 캐릭터 위치 ===');
+        console.log(`Position: x=${debugPosition.x.toFixed(2)}, y=${debugPosition.y.toFixed(2)}, z=${debugPosition.z.toFixed(2)}`);
+        console.log(`GameState: ${gameState}`);
+        console.log('Level1 doorPosition:', doorPosition);
+        console.log('Level2 doorPosition:', doorPositionLevel2);
+      } catch (error) {
+        console.log('디버그 로그 실패: Rapier 물리 엔진이 처리 중입니다.');
+      }
     }
 
-    // E키를 떼면 다시 상호작용 가능하도록
-    if (!e) {
-      hasInteractedWithDoorRef.current = false;
-    }
+    // E키 쿨다운은 시간 기반으로 처리됨 (5초)
   });
 
   return (
