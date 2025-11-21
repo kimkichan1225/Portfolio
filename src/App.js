@@ -788,7 +788,7 @@ function CameraController({ gameState, characterRef }) {
     const worldPosition = new THREE.Vector3();
     characterRef.current.getWorldPosition(worldPosition);
 
-    if (gameState === 'playing_level1' || gameState === 'playing_level2') {
+    if (gameState === 'playing_level1' || gameState === 'playing_level2' || gameState === 'returning_to_level1') {
       // 타겟 위치를 부드럽게 보간 (떨림 방지)
       targetPositionRef.current.lerp(worldPosition, delta * 12.0);
 
@@ -806,12 +806,13 @@ function CameraController({ gameState, characterRef }) {
   return null;
 }
 
-function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor }) {
+function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor, doorPositionLevel2, setIsNearDoorLevel2 }) {
   const { scene, animations } = useGLTF('/resources/GameView/Suit.glb');
   const { actions } = useAnimations(animations, characterRef);
 
-  const { forward, backward, left, right, shift, e } = useKeyboardControls();
+  const { forward, backward, left, right, shift, e, log } = useKeyboardControls();
   const [currentAnimation, setCurrentAnimation] = useState('none');
+  const prevGameStateRef = useRef(gameState); // 이전 게임 상태 추적
 
   // 발걸음 소리를 위한 오디오 시스템
   const stepAudioRef = useRef(null);
@@ -915,22 +916,49 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
 
     // 레벨 전환 시 캐릭터 위치 리셋
     if (rigidBodyRef.current) {
+      const prevState = prevGameStateRef.current;
+
       if (gameState === 'playing_level2') {
-        // Level2로 전환 시 캐릭터 위치 리셋
-        rigidBodyRef.current.setTranslation({ x: 0, y: 2, z: 0 }, true);
-        rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-      } else if (gameState === 'playing_level1') {
-        // Level1로 돌아갈 때 캐릭터 위치 리셋
-        rigidBodyRef.current.setTranslation({ x: 0, y: 2, z: 0 }, true);
-        rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+        // Level2로 전환 시 캐릭터 위치 리셋 (다음 프레임에)
+        requestAnimationFrame(() => {
+          if (rigidBodyRef.current) {
+            rigidBodyRef.current.setTranslation({ x: 0, y: 2, z: 0 }, true);
+            rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+          }
+        });
+      } else if (gameState === 'returning_to_level1') {
+        // Level2에서 Level1로 돌아갈 때 - 지정된 복귀 위치로 스폰 (다음 프레임에)
+        const spawnPos = { x: 10.12, y: 0.29, z: -62.64 };
+        console.log('=== Level1 복귀 스폰 ===');
+        console.log('스폰 위치:', spawnPos);
+        requestAnimationFrame(() => {
+          if (rigidBodyRef.current) {
+            rigidBodyRef.current.setTranslation(spawnPos, true);
+            rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+          }
+        });
+        // 스폰 후 바로 playing_level1 상태로 전환
+        setTimeout(() => setGameState('playing_level1'), 50);
+      } else if (gameState === 'playing_level1' && prevState !== 'returning_to_level1') {
+        // Level1로 처음 진입 시에만 캐릭터 위치 리셋 (다음 프레임에)
+        console.log('=== Level1 초기 스폰 (이전 상태:', prevState, ') ===');
+        requestAnimationFrame(() => {
+          if (rigidBodyRef.current) {
+            rigidBodyRef.current.setTranslation({ x: 0, y: 2, z: 0 }, true);
+            rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+          }
+        });
       }
+
+      // 이전 상태 업데이트
+      prevGameStateRef.current = gameState;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState]);
 
   useEffect(() => {
     let animToPlay = 'Idle';
-    if (gameState === 'playing_level1' || gameState === 'playing_level2') {
+    if (gameState === 'playing_level1' || gameState === 'playing_level2' || gameState === 'returning_to_level1') {
       if (forward || backward || left || right) {
         animToPlay = shift ? 'Run' : 'Walk';
       }
@@ -1031,6 +1059,41 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       setIsNearDoor(false);
     }
 
+    // door001 상호작용 감지 (Level2에서만)
+    if (gameState === 'playing_level2' && doorPositionLevel2) {
+      const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
+      const distance = charPos.distanceTo(doorPositionLevel2);
+
+      // 문 근처에 있는지 UI에 알림
+      if (distance < doorInteractionDistance) {
+        setIsNearDoorLevel2(true);
+
+        // E키를 눌렀을 때만 상호작용
+        if (e && !hasInteractedWithDoorRef.current) {
+          // 문 열림 소리 재생
+          playDoorSound();
+
+          // Level1로 돌아가기 (페이드 효과 포함)
+          setGameStateWithFade('returning_to_level1');
+          hasInteractedWithDoorRef.current = true; // 중복 방지
+        }
+      } else {
+        setIsNearDoorLevel2(false);
+      }
+    } else {
+      setIsNearDoorLevel2(false);
+    }
+
+    // C키로 캐릭터 위치 로그 (디버그)
+    if (log) {
+      const rbPosition = rigidBodyRef.current.translation();
+      console.log('=== 캐릭터 위치 ===');
+      console.log(`Position: x=${rbPosition.x.toFixed(2)}, y=${rbPosition.y.toFixed(2)}, z=${rbPosition.z.toFixed(2)}`);
+      console.log(`GameState: ${gameState}`);
+      console.log('Level1 doorPosition:', doorPosition);
+      console.log('Level2 doorPosition:', doorPositionLevel2);
+    }
+
     // E키를 떼면 다시 상호작용 가능하도록
     if (!e) {
       hasInteractedWithDoorRef.current = false;
@@ -1056,7 +1119,7 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       </RigidBody>
 
       {/* 캐릭터 모델 (RigidBody와 분리) */}
-      <group ref={modelGroupRef}>
+      <group ref={modelGroupRef} visible={gameState !== 'returning_to_level1'}>
         <primitive
           ref={characterRef}
           object={scene}
@@ -1885,7 +1948,7 @@ function Level1Map({ onDoorPositionFound, ...props }) {
 useGLTF.preload('/resources/GameView/Suit.glb');
 useGLTF.preload('/resources/GameView/Level1Map.glb');
 
-function Level2Map(props) {
+function Level2Map({ onDoorPositionFound, ...props }) {
   const { scene } = useGLTF('/resources/GameView/Level2Map.glb');
 
   // Level2Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
@@ -1896,9 +1959,17 @@ function Level2Map(props) {
         child.castShadow = true;
         child.receiveShadow = true;
       }
+      // door001 오브젝트 찾기
+      if (child.name === 'door001') {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        if (onDoorPositionFound) {
+          onDoorPositionFound(worldPos);
+        }
+      }
     });
     return cloned;
-  }, [scene]);
+  }, [scene, onDoorPositionFound]);
 
   return (
     <RigidBody type="fixed" colliders="trimesh">
@@ -1937,7 +2008,7 @@ function Level1({ characterRef, onDoorPositionFound }) {
   );
 }
 
-function Level2({ characterRef }) {
+function Level2({ characterRef, onDoorPositionFound }) {
   const { scene } = useThree();
 
   // Level2 배경을 검정색으로 설정
@@ -1977,6 +2048,7 @@ function Level2({ characterRef }) {
 
       {/* Level2 Map */}
       <Level2Map
+        onDoorPositionFound={onDoorPositionFound}
         position={[0, 0, 0]}
         scale={1}
         rotation={[0, 0, 0]}
@@ -2091,8 +2163,10 @@ function App() {
   const [isWebMode, setIsWebMode] = useState(true); // 웹/게임 모드 상태 - 웹 모드로 시작
   const [isDarkMode, setIsDarkMode] = useState(false); // 다크 모드 상태
   const [showTutorial, setShowTutorial] = useState(false); // 튜토리얼 팝업 상태
-  const [doorPosition, setDoorPosition] = useState(null); // door001 위치
-  const [isNearDoor, setIsNearDoor] = useState(false); // 문 근처에 있는지 여부
+  const [doorPosition, setDoorPosition] = useState(null); // Level1 door001 위치
+  const [doorPositionLevel2, setDoorPositionLevel2] = useState(null); // Level2 door001 위치
+  const [isNearDoor, setIsNearDoor] = useState(false); // Level1 문 근처에 있는지 여부
+  const [isNearDoorLevel2, setIsNearDoorLevel2] = useState(false); // Level2 문 근처에 있는지 여부
   const [isFading, setIsFading] = useState(false); // 페이드 전환 상태
 
   // 페이드 효과와 함께 레벨 전환
@@ -2102,12 +2176,12 @@ function App() {
     // 페이드 아웃 후 레벨 전환
     setTimeout(() => {
       setGameState(newState);
-    }, 500); // 0.5초 페이드 아웃
+    }, 400); // 0.4초 페이드 아웃
 
     // 전체 애니메이션 완료 후 오버레이 제거
     setTimeout(() => {
       setIsFading(false);
-    }, 1100); // 1.1초 애니메이션 완료 후
+    }, 1800); // 1.8초 애니메이션 완료 후
   };
 
   const toggleMode = () => {
@@ -2169,7 +2243,7 @@ function App() {
         <ambientLight intensity={0.5} />
 
         {/* Level1 전용 태양 */}
-        {gameState === 'playing_level1' && (
+        {(gameState === 'playing_level1' || gameState === 'returning_to_level1') && (
           <>
             <directionalLight
               position={[50, 50, 25]}
@@ -2196,24 +2270,31 @@ function App() {
 
         <Suspense fallback={null}>
           <Physics gravity={[0, -40, 0]} debug>
-            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} />
+            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} />
             <CameraController gameState={gameState} characterRef={characterRef} />
             <CameraLogger />
-            {gameState === 'playing_level1' && (
+            {(gameState === 'playing_level1' || gameState === 'returning_to_level1') && (
               <Level1 characterRef={characterRef} onDoorPositionFound={setDoorPosition} />
             )}
             {gameState === 'playing_level2' && (
-              <Level2 characterRef={characterRef} />
+              <Level2 characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel2} />
             )}
           </Physics>
         </Suspense>
         </Canvas>
       )}
 
-      {/* 문 상호작용 UI */}
+      {/* 문 상호작용 UI - Level1 */}
       {!isWebMode && isNearDoor && gameState === 'playing_level1' && (
         <div className="door-interaction-ui">
           🚪 E키를 눌러 문 열기
+        </div>
+      )}
+
+      {/* 문 상호작용 UI - Level2 */}
+      {!isWebMode && isNearDoorLevel2 && gameState === 'playing_level2' && (
+        <div className="door-interaction-ui">
+          🚪 E키를 눌러 Level1로 돌아가기
         </div>
       )}
 
