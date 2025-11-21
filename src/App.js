@@ -802,7 +802,7 @@ function CameraController({ gameState, characterRef }) {
 }
 
 function Model({ characterRef, gameState, setGameState, doorPosition, setIsNearDoor }) {
-  const { scene, animations } = useGLTF('/resources/GameView/Worker.glb');
+  const { scene, animations } = useGLTF('/resources/GameView/Suit.glb');
   const { actions } = useAnimations(animations, characterRef);
 
   const { forward, backward, left, right, shift, e } = useKeyboardControls();
@@ -2010,7 +2010,7 @@ function Level1Map({ onDoorPositionFound, ...props }) {
   );
 }
 
-useGLTF.preload('/resources/GameView/Worker.glb');
+useGLTF.preload('/resources/GameView/Suit.glb');
 useGLTF.preload('/resources/GameView/Level1Map.glb');
 
 function Level2Map(props) {
@@ -2083,6 +2083,29 @@ function Level2({ characterRef }) {
 
   return (
     <>
+      {/* Level2 중앙 태양 - 위에서 비추는 조명 */}
+      <directionalLight
+        position={[0, 50, 0]}
+        intensity={3}
+        castShadow
+        shadow-mapSize-width={8192}
+        shadow-mapSize-height={8192}
+        shadow-camera-far={1000}
+        shadow-camera-left={-500}
+        shadow-camera-right={500}
+        shadow-camera-top={500}
+        shadow-camera-bottom={-500}
+        shadow-bias={-0.0001}
+        shadow-normalBias={0.02}
+        shadow-radius={4}
+      />
+
+      {/* 태양 시각화 - 중앙 위 */}
+      <mesh position={[0, 50, 0]}>
+        <sphereGeometry args={[3, 16, 16]} />
+        <meshBasicMaterial color="#FDB813" />
+      </mesh>
+
       {/* Level2 Map */}
       <Level2Map
         position={[0, 0, 0]}
@@ -2262,26 +2285,32 @@ function App() {
           shadows
         >
         <ambientLight intensity={0.5} />
-        <directionalLight 
-          position={[50, 50, 25]} 
-          intensity={6} 
-          castShadow
-          shadow-mapSize-width={8192}
-          shadow-mapSize-height={8192}
-          shadow-camera-far={1000}
-          shadow-camera-left={-500}
-          shadow-camera-right={500}
-          shadow-camera-top={500}
-          shadow-camera-bottom={-500}
-          shadow-bias={-0.0001}
-          shadow-normalBias={0.02}
-          shadow-radius={4}
-        />
-        {/* Sun visual */}
-        <mesh position={[50, 50, 25]}>
-          <sphereGeometry args={[3, 16, 16]} />
-          <meshBasicMaterial color="#FDB813" />
-        </mesh>
+
+        {/* Level1 전용 태양 */}
+        {gameState === 'playing_level1' && (
+          <>
+            <directionalLight
+              position={[50, 50, 25]}
+              intensity={6}
+              castShadow
+              shadow-mapSize-width={8192}
+              shadow-mapSize-height={8192}
+              shadow-camera-far={1000}
+              shadow-camera-left={-500}
+              shadow-camera-right={500}
+              shadow-camera-top={500}
+              shadow-camera-bottom={-500}
+              shadow-bias={-0.0001}
+              shadow-normalBias={0.02}
+              shadow-radius={4}
+            />
+            {/* Sun visual */}
+            <mesh position={[50, 50, 25]}>
+              <sphereGeometry args={[3, 16, 16]} />
+              <meshBasicMaterial color="#FDB813" />
+            </mesh>
+          </>
+        )}
 
         <Suspense fallback={null}>
           <Physics gravity={[0, -40, 0]} debug>
