@@ -801,7 +801,7 @@ function CameraController({ gameState, characterRef }) {
   return null;
 }
 
-function Model({ characterRef, gameState, setGameState, doorPosition, setIsNearDoor }) {
+function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor }) {
   const { scene, animations } = useGLTF('/resources/GameView/Suit.glb');
   const { actions } = useAnimations(animations, characterRef);
 
@@ -1064,8 +1064,6 @@ function Model({ characterRef, gameState, setGameState, doorPosition, setIsNearD
   );
 }
 
-useGLTF.preload('/resources/Ultimate Animated Character Pack - Nov 2019/glTF/OldClassy_Male.gltf');
-
 function SpeechBubble({ position, text, ...props }) {
   const meshRef = useRef();
   const { camera } = useThree();
@@ -1114,137 +1112,6 @@ function SpeechBubble({ position, text, ...props }) {
         </Suspense>
       )}
     </group>
-  );
-}
-
-function NPCCharacter({ position, playerRef, ...props }) {
-  const npcRef = useRef();
-  const { scene, animations } = useGLTF('/resources/Ultimate Animated Character Pack - Nov 2019/glTF/OldClassy_Male.gltf');
-  const { actions } = useAnimations(animations, npcRef);
-
-  const [isPlayerNear, setIsPlayerNear] = useState(false);
-  // const { camera } = useThree(); // 미사용
-  const initialRotationY = useRef(0); // 초기 Y 회전각 저장
-
-  // NPC 모델을 복사해서 독립적으로 작동하도록 함
-  const clonedScene = useMemo(() => {
-    const cloned = scene.clone();
-    cloned.traverse((child) => {
-      if (child.isMesh) {
-        child.castShadow = true;
-        child.receiveShadow = true;
-      }
-    });
-    return cloned;
-  }, [scene]);
-
-  // 현재 애니메이션 상태 추적
-  const [currentAnim, setCurrentAnim] = useState(null);
-
-  // 통합된 useFrame - 위치, 애니메이션, 거리 체크
-  useFrame(() => {
-    if (!npcRef.current) return;
-
-    // 1. NPC 위치 강제 설정
-    const currentPos = npcRef.current.position;
-    const targetPos = new THREE.Vector3(...position);
-    
-    if (currentPos.distanceTo(targetPos) > 0.1) {
-      npcRef.current.position.copy(targetPos);
-    }
-
-    // 1.1. 초기 회전각 설정 및 저장 (첫 번째 프레임에서만)
-    if (initialRotationY.current === 0) {
-      const initialAngle = Math.PI / 4; // 45도 (π/4 라디안)
-      npcRef.current.rotation.y = initialAngle;
-      initialRotationY.current = initialAngle;
-    }
-
-    // 1.5. NPC 회전 로직
-    if (playerRef.current) {
-      const currentAngle = npcRef.current.rotation.y;
-      let targetAngle;
-
-      if (isPlayerNear) {
-        // 플레이어가 가까이 있을 때: 플레이어를 바라봄
-        const npcPos = npcRef.current.position;
-
-        // 플레이어의 월드 좌표 가져오기 (RigidBody 사용 시 필수)
-        const playerWorldPos = new THREE.Vector3();
-        playerRef.current.getWorldPosition(playerWorldPos);
-
-        // Y축만 회전하도록 설정 (좌우 회전만)
-        const direction = new THREE.Vector3();
-        direction.subVectors(playerWorldPos, npcPos);
-        direction.y = 0; // Y축 성분 제거 (위아래 회전 방지)
-        direction.normalize();
-
-        targetAngle = Math.atan2(direction.x, direction.z);
-      } else {
-        // 플레이어가 멀리 있을 때: 원래 각도로 돌아감
-        targetAngle = initialRotationY.current;
-      }
-
-      // 각도 차이 계산 (최단 경로로 회전)
-      let angleDiff = targetAngle - currentAngle;
-      if (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
-      if (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
-
-      // 부드러운 회전 (lerp)
-      npcRef.current.rotation.y += angleDiff * 0.1;
-    }
-
-    // 2. 플레이어와의 거리 체크
-    if (playerRef.current) {
-      const npcPos = npcRef.current.position;
-
-      // 플레이어의 월드 좌표 가져오기 (RigidBody 사용 시 필수)
-      const playerWorldPos = new THREE.Vector3();
-      playerRef.current.getWorldPosition(playerWorldPos);
-
-      const distance = npcPos.distanceTo(playerWorldPos);
-
-      const nearDistance = 8;
-      const wasNear = isPlayerNear;
-      const nowNear = distance < nearDistance;
-
-      if (wasNear !== nowNear) {
-        setIsPlayerNear(nowNear);
-      }
-    }
-
-    // 3. 애니메이션 관리
-    if (actions && Object.keys(actions).length > 0) {
-      const targetAnim = isPlayerNear ? 'Victory' : 'Idle';
-      
-      if (currentAnim !== targetAnim && actions[targetAnim]) {
-        // 이전 애니메이션 정지
-        if (currentAnim && actions[currentAnim]) {
-          actions[currentAnim].stop();
-        }
-        
-        // 새 애니메이션 시작
-        actions[targetAnim].reset().setLoop(THREE.LoopRepeat).play();
-        setCurrentAnim(targetAnim);
-      }
-    }
-  });
-
-  return (
-    <>
-      <primitive 
-        ref={npcRef} 
-        object={scene} 
-        scale={2} 
-        castShadow 
-        receiveShadow 
-        {...props}
-      />
-      {/* 말풍선 */}
-      {isPlayerNear && (
-        <SpeechBubble position={[position[0], position[1] + 8.5, position[2]]} text="첫번쨰 프로젝트에 오신걸 환영합니다! 🎉" />
-      )}
-    </>
   );
 }
 
@@ -2052,9 +1919,6 @@ function Level1({ characterRef, onDoorPositionFound }) {
         onDoorPositionFound={onDoorPositionFound}
       />
 
-      {/* NPC Character */}
-      <NPCCharacter position={[0, 0, 0]} playerRef={characterRef} />
-
       {/* 숨겨진 텍스트로 프리로드 - 화면 밖에 배치 */}
       <Text
         position={[1000, 1000, 1000]}
@@ -2114,9 +1978,6 @@ function Level2({ characterRef }) {
         castShadow
         receiveShadow
       />
-
-      {/* NPC Character */}
-      <NPCCharacter position={[0, 0, 0]} playerRef={characterRef} />
 
       {/* 숨겨진 텍스트로 프리로드 - 화면 밖에 배치 */}
       <Text
@@ -2227,6 +2088,22 @@ function App() {
   const [showTutorial, setShowTutorial] = useState(false); // 튜토리얼 팝업 상태
   const [doorPosition, setDoorPosition] = useState(null); // door001 위치
   const [isNearDoor, setIsNearDoor] = useState(false); // 문 근처에 있는지 여부
+  const [isFading, setIsFading] = useState(false); // 페이드 전환 상태
+
+  // 페이드 효과와 함께 레벨 전환
+  const setGameStateWithFade = (newState) => {
+    setIsFading(true); // 페이드 아웃 시작
+
+    // 페이드 아웃 후 레벨 전환
+    setTimeout(() => {
+      setGameState(newState);
+
+      // 페이드 인 시작
+      setTimeout(() => {
+        setIsFading(false);
+      }, 100); // 짧은 딜레이 후 페이드 인
+    }, 500); // 0.5초 페이드 아웃
+  };
 
   const toggleMode = () => {
     const newMode = !isWebMode;
@@ -2314,7 +2191,7 @@ function App() {
 
         <Suspense fallback={null}>
           <Physics gravity={[0, -40, 0]} debug>
-            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} />
+            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} />
             <CameraController gameState={gameState} characterRef={characterRef} />
             <CameraLogger />
             {gameState === 'playing_level1' && (

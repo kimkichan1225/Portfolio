@@ -17,7 +17,11 @@
       "Bash(dir:*)",
       "Bash(copy:*)",
       "Bash(powershell:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(nul)",
+      "Bash(del nul 2)",
+      "Bash(NUL)",
+      "Bash(.gitignore)"
     ],
     "deny": [],
     "ask": []
