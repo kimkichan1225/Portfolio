@@ -1928,7 +1928,7 @@ function Level1({ characterRef }) {
       {/* Level1 Map - 크리스마스 마을 */}
       <Level1Map
         position={[0, 0, 0]}
-        scale={1.5}
+        scale={1}
         rotation={[0, 0, 0]}
         castShadow
         receiveShadow
