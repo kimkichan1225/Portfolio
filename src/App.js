@@ -1015,8 +1015,8 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
           // 문 열림 소리 재생
           playDoorSound();
 
-          // Level2로 전환
-          setGameState('playing_level2');
+          // Level2로 전환 (페이드 효과 포함)
+          setGameStateWithFade('playing_level2');
           hasInteractedWithDoorRef.current = true; // 중복 방지
         }
       } else {
@@ -2210,6 +2210,11 @@ function App() {
         <div className="door-interaction-ui">
           🚪 E키를 눌러 문 열기
         </div>
+      )}
+
+      {/* 페이드 전환 오버레이 */}
+      {isFading && (
+        <div className="fade-overlay" />
       )}
     </div>
   );
