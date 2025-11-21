@@ -761,16 +761,21 @@ function CameraController({ gameState, characterRef }) {
   // 레벨 전환 시 카메라 즉시 리셋
   useEffect(() => {
     if (prevGameStateRef.current !== gameState && characterRef.current) {
-      const worldPosition = new THREE.Vector3();
-      characterRef.current.getWorldPosition(worldPosition);
+      // 캐릭터 위치가 업데이트된 후 카메라 리셋
+      requestAnimationFrame(() => {
+        if (!characterRef.current) return;
 
-      // 타겟 위치 즉시 설정
-      targetPositionRef.current.copy(worldPosition);
+        const worldPosition = new THREE.Vector3();
+        characterRef.current.getWorldPosition(worldPosition);
 
-      // 카메라 위치 즉시 설정
-      const targetCameraPosition = worldPosition.clone().add(cameraOffset);
-      camera.position.copy(targetCameraPosition);
-      camera.lookAt(worldPosition);
+        // 타겟 위치 즉시 설정
+        targetPositionRef.current.copy(worldPosition);
+
+        // 카메라 위치 즉시 설정
+        const targetCameraPosition = worldPosition.clone().add(cameraOffset);
+        camera.position.copy(targetCameraPosition);
+        camera.lookAt(worldPosition);
+      });
 
       prevGameStateRef.current = gameState;
     }
