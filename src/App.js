@@ -756,6 +756,25 @@ function CameraController({ gameState, characterRef }) {
   const { camera } = useThree();
   const cameraOffset = new THREE.Vector3(-0.00, 28.35, 19.76); // 고정된 카메라 오프셋
   const targetPositionRef = useRef(new THREE.Vector3());
+  const prevGameStateRef = useRef(gameState);
+
+  // 레벨 전환 시 카메라 즉시 리셋
+  useEffect(() => {
+    if (prevGameStateRef.current !== gameState && characterRef.current) {
+      const worldPosition = new THREE.Vector3();
+      characterRef.current.getWorldPosition(worldPosition);
+
+      // 타겟 위치 즉시 설정
+      targetPositionRef.current.copy(worldPosition);
+
+      // 카메라 위치 즉시 설정
+      const targetCameraPosition = worldPosition.clone().add(cameraOffset);
+      camera.position.copy(targetCameraPosition);
+      camera.lookAt(worldPosition);
+
+      prevGameStateRef.current = gameState;
+    }
+  }, [gameState, characterRef, camera, cameraOffset]);
 
   useFrame((state, delta) => {
     if (!characterRef.current) return;
@@ -764,7 +783,7 @@ function CameraController({ gameState, characterRef }) {
     const worldPosition = new THREE.Vector3();
     characterRef.current.getWorldPosition(worldPosition);
 
-    if (gameState === 'playing_level1') {
+    if (gameState === 'playing_level1' || gameState === 'playing_level2') {
       // 타겟 위치를 부드럽게 보간 (떨림 방지)
       targetPositionRef.current.lerp(worldPosition, delta * 12.0);
 
@@ -782,17 +801,22 @@ function CameraController({ gameState, characterRef }) {
   return null;
 }
 
-function Model({ characterRef, gameState, setGameState }) {
+function Model({ characterRef, gameState, setGameState, doorPosition, setIsNearDoor }) {
   const { scene, animations } = useGLTF('/resources/GameView/Worker.glb');
   const { actions } = useAnimations(animations, characterRef);
 
-  const { forward, backward, left, right, shift } = useKeyboardControls();
+  const { forward, backward, left, right, shift, e } = useKeyboardControls();
   const [currentAnimation, setCurrentAnimation] = useState('none');
-  
+
   // 발걸음 소리를 위한 오디오 시스템
   const stepAudioRef = useRef(null);
   const lastStepTimeRef = useRef(0);
   const stepIntervalRef = useRef(0.5); // 발걸음 간격 (초)
+
+  // 문 열림 소리를 위한 오디오 시스템
+  const doorAudioRef = useRef(null);
+  const doorInteractionDistance = 8; // 문과 상호작용 가능한 거리
+  const hasInteractedWithDoorRef = useRef(false); // E키 중복 방지
 
   // 안전한 참조를 위한 useRef
   const safeCharacterRef = useRef();
@@ -840,12 +864,30 @@ function Model({ characterRef, gameState, setGameState }) {
     });
   }, []);
 
+  // 문 열림 소리 로드
+  useEffect(() => {
+    const doorAudioPath = '/sounds/opendoor.mp3';
+    doorAudioRef.current = new Audio(doorAudioPath);
+    doorAudioRef.current.volume = 0.8;
+    doorAudioRef.current.preload = 'auto';
+  }, []);
+
   // 발걸음 소리 재생 함수
   const playStepSound = () => {
     if (stepAudioRef.current) {
       stepAudioRef.current.currentTime = 0; // 처음부터 재생
       stepAudioRef.current.play().catch(e => {
         // 발걸음 소리 재생 실패
+      });
+    }
+  };
+
+  // 문 열림 소리 재생 함수
+  const playDoorSound = () => {
+    if (doorAudioRef.current) {
+      doorAudioRef.current.currentTime = 0;
+      doorAudioRef.current.play().catch(e => {
+        console.error('문 열림 소리 재생 실패:', e);
       });
     }
   };
@@ -865,12 +907,25 @@ function Model({ characterRef, gameState, setGameState }) {
     if (modelGroupRef.current) {
       characterRef.current = modelGroupRef.current;
     }
+
+    // 레벨 전환 시 캐릭터 위치 리셋
+    if (rigidBodyRef.current) {
+      if (gameState === 'playing_level2') {
+        // Level2로 전환 시 캐릭터 위치 리셋
+        rigidBodyRef.current.setTranslation({ x: 0, y: 2, z: 0 }, true);
+        rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+      } else if (gameState === 'playing_level1') {
+        // Level1로 돌아갈 때 캐릭터 위치 리셋
+        rigidBodyRef.current.setTranslation({ x: 0, y: 2, z: 0 }, true);
+        rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState]);
 
   useEffect(() => {
     let animToPlay = 'Idle';
-    if (gameState === 'playing_level1') {
+    if (gameState === 'playing_level1' || gameState === 'playing_level2') {
       if (forward || backward || left || right) {
         animToPlay = shift ? 'Run' : 'Walk';
       }
@@ -896,7 +951,7 @@ function Model({ characterRef, gameState, setGameState }) {
   useFrame((state, delta) => {
     if (!rigidBodyRef.current || !modelGroupRef.current) return;
 
-    if (gameState !== 'playing_level1') return;
+    if (gameState !== 'playing_level1' && gameState !== 'playing_level2') return;
 
     const speed = shift ? 18 : 8; // 물리 기반 속도 (걷기: 8, 뛰기: 18)
     const direction = new THREE.Vector3();
@@ -945,6 +1000,36 @@ function Model({ characterRef, gameState, setGameState }) {
 
     // 모델의 회전은 입력에 의한 회전만 적용
     modelGroupRef.current.quaternion.copy(currentRotationRef.current);
+
+    // door001 상호작용 감지 (Level1에서만)
+    if (gameState === 'playing_level1' && doorPosition) {
+      const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
+      const distance = charPos.distanceTo(doorPosition);
+
+      // 문 근처에 있는지 UI에 알림
+      if (distance < doorInteractionDistance) {
+        setIsNearDoor(true);
+
+        // E키를 눌렀을 때만 상호작용
+        if (e && !hasInteractedWithDoorRef.current) {
+          // 문 열림 소리 재생
+          playDoorSound();
+
+          // Level2로 전환
+          setGameState('playing_level2');
+          hasInteractedWithDoorRef.current = true; // 중복 방지
+        }
+      } else {
+        setIsNearDoor(false);
+      }
+    } else {
+      setIsNearDoor(false);
+    }
+
+    // E키를 떼면 다시 상호작용 가능하도록
+    if (!e) {
+      hasInteractedWithDoorRef.current = false;
+    }
   });
 
   return (
@@ -1895,10 +1980,43 @@ useGLTF.preload('/mailbox.glb');
 useGLTF.preload('/instagramlogo.glb');
 useGLTF.preload('/toolbox.glb');
 
-function Level1Map(props) {
+function Level1Map({ onDoorPositionFound, ...props }) {
   const { scene } = useGLTF('/resources/GameView/Level1Map.glb');
 
   // Level1Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
+  const clonedScene = useMemo(() => {
+    const cloned = scene.clone();
+    cloned.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+      // door001 오브젝트 찾기
+      if (child.name === 'door001') {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        if (onDoorPositionFound) {
+          onDoorPositionFound(worldPos);
+        }
+      }
+    });
+    return cloned;
+  }, [scene, onDoorPositionFound]);
+
+  return (
+    <RigidBody type="fixed" colliders="trimesh">
+      <primitive object={clonedScene} {...props} />
+    </RigidBody>
+  );
+}
+
+useGLTF.preload('/resources/GameView/Worker.glb');
+useGLTF.preload('/resources/GameView/Level1Map.glb');
+
+function Level2Map(props) {
+  const { scene } = useGLTF('/resources/GameView/Level2Map.glb');
+
+  // Level2Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
   const clonedScene = useMemo(() => {
     const cloned = scene.clone();
     cloned.traverse((child) => {
@@ -1917,16 +2035,56 @@ function Level1Map(props) {
   );
 }
 
-useGLTF.preload('/resources/GameView/Worker.glb');
-useGLTF.preload('/resources/GameView/Level1Map.glb');
+useGLTF.preload('/resources/GameView/Level2Map.glb');
 
-function Level1({ characterRef }) {
+function Level1({ characterRef, onDoorPositionFound }) {
   return (
     <>
       <Sky />
 
       {/* Level1 Map - 크리스마스 마을 */}
       <Level1Map
+        position={[0, 0, 0]}
+        scale={1}
+        rotation={[0, 0, 0]}
+        castShadow
+        receiveShadow
+        onDoorPositionFound={onDoorPositionFound}
+      />
+
+      {/* NPC Character */}
+      <NPCCharacter position={[0, 0, 0]} playerRef={characterRef} />
+
+      {/* 숨겨진 텍스트로 프리로드 - 화면 밖에 배치 */}
+      <Text
+        position={[1000, 1000, 1000]}
+        fontSize={0.4}
+        color="black"
+        visible={false}
+      >
+        첫번쨰 프로젝트에 오신걸 환영합니다! 🎉
+      </Text>
+    </>
+  );
+}
+
+function Level2({ characterRef }) {
+  const { scene } = useThree();
+
+  // Level2 배경을 검정색으로 설정
+  useEffect(() => {
+    scene.background = new THREE.Color('#000000');
+
+    // cleanup: Level2를 벗어날 때 배경 제거
+    return () => {
+      scene.background = null;
+    };
+  }, [scene]);
+
+  return (
+    <>
+      {/* Level2 Map */}
+      <Level2Map
         position={[0, 0, 0]}
         scale={1}
         rotation={[0, 0, 0]}
@@ -1944,7 +2102,7 @@ function Level1({ characterRef }) {
         color="black"
         visible={false}
       >
-        첫번쨰 프로젝트에 오신걸 환영합니다! 🎉
+        Level 2에 오신걸 환영합니다! 🎉
       </Text>
     </>
   );
@@ -2044,6 +2202,8 @@ function App() {
   const [isWebMode, setIsWebMode] = useState(true); // 웹/게임 모드 상태 - 웹 모드로 시작
   const [isDarkMode, setIsDarkMode] = useState(false); // 다크 모드 상태
   const [showTutorial, setShowTutorial] = useState(false); // 튜토리얼 팝업 상태
+  const [doorPosition, setDoorPosition] = useState(null); // door001 위치
+  const [isNearDoor, setIsNearDoor] = useState(false); // 문 근처에 있는지 여부
 
   const toggleMode = () => {
     const newMode = !isWebMode;
@@ -2125,13 +2285,25 @@ function App() {
 
         <Suspense fallback={null}>
           <Physics gravity={[0, -40, 0]} debug>
-            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} />
+            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} />
             <CameraController gameState={gameState} characterRef={characterRef} />
             <CameraLogger />
-            <Level1 characterRef={characterRef} />
+            {gameState === 'playing_level1' && (
+              <Level1 characterRef={characterRef} onDoorPositionFound={setDoorPosition} />
+            )}
+            {gameState === 'playing_level2' && (
+              <Level2 characterRef={characterRef} />
+            )}
           </Physics>
         </Suspense>
         </Canvas>
+      )}
+
+      {/* 문 상호작용 UI */}
+      {!isWebMode && isNearDoor && gameState === 'playing_level1' && (
+        <div className="door-interaction-ui">
+          🚪 E키를 눌러 문 열기
+        </div>
       )}
     </div>
   );
