@@ -1041,3 +1041,31 @@
     transform: translateX(-50%) translateY(0);
   }
 }
+
+/* 페이드 전환 오버레이 */
+.fade-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  z-index: 9999;
+  pointer-events: none;
+  animation: fadeInOut 1.1s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  45% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
