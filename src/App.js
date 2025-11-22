@@ -2614,42 +2614,42 @@ function App() {
       {/* 문 상호작용 UI - Level1 door001 (Level2로) */}
       {!isWebMode && isNearDoor && gameState === 'playing_level1' && (
         <div className="door-interaction-ui">
-          🚪 E키를 눌러 Level2로 이동
+          🚪 E키를 눌러 프로젝트 갤러리로 입장
         </div>
       )}
 
       {/* 문 상호작용 UI - Level1 door (Level3로) */}
       {!isWebMode && isNearDoor2 && gameState === 'playing_level1' && (
         <div className="door-interaction-ui">
-          🚪 E키를 눌러 Level3로 이동
+          🚪 E키를 눌러 기술 스택 사무실로 입장
         </div>
       )}
 
       {/* 문 상호작용 UI - Level2 */}
       {!isWebMode && isNearDoorLevel2 && gameState === 'playing_level2' && (
         <div className="door-interaction-ui">
-          🚪 E키를 눌러 Level1로 돌아가기
+          🚪 E키를 눌러 마을로 돌아가기
         </div>
       )}
 
       {/* 문 상호작용 UI - Level3 door (Level1로) */}
       {!isWebMode && isNearDoorLevel3 && gameState === 'playing_level3' && (
         <div className="door-interaction-ui">
-          🚪 E키를 눌러 Level1로 돌아가기
+          🚪 E키를 눌러 마을로 돌아가기
         </div>
       )}
 
       {/* 문 상호작용 UI - Level3 door002 (Level4로) */}
       {!isWebMode && isNearDoor3 && gameState === 'playing_level3' && (
         <div className="door-interaction-ui">
-          🚪 E키를 눌러 Level4로 이동
+          🚪 E키를 눌러 개인 작업실로 이동
         </div>
       )}
 
       {/* 문 상호작용 UI - Level4 */}
       {!isWebMode && isNearDoorLevel4 && gameState === 'playing_level4' && (
         <div className="door-interaction-ui">
-          🚪 E키를 눌러 Level3로 돌아가기
+          🚪 E키를 눌러 사무실로 돌아가기
         </div>
       )}
 

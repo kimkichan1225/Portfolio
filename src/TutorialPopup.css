@@ -292,7 +292,6 @@
   height: auto;
   display: block;
   object-fit: contain;
-  max-height: 300px;
 }
 
 /* 다크 모드 페이지네이션 */
