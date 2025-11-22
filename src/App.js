@@ -1056,24 +1056,24 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
     // 모델의 회전은 입력에 의한 회전만 적용
     modelGroupRef.current.quaternion.copy(currentRotationRef.current);
 
+    const currentTime = Date.now();
+    const onCooldown = (currentTime - lastDoorInteractionTimeRef.current) < doorCooldownDuration;
+
     // door001 상호작용 감지 (Level1에서만)
     if (gameState === 'playing_level1' && doorPosition) {
       const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
       const distance = charPos.distanceTo(doorPosition);
 
-      // 문 근처에 있는지 UI에 알림
       if (distance < doorInteractionDistance) {
-        setIsNearDoor(true);
-
-        // E키를 눌렀을 때만 상호작용 (5초 쿨다운)
-        const currentTime = Date.now();
-        if (e && (currentTime - lastDoorInteractionTimeRef.current) > doorCooldownDuration) {
-          // 문 열림 소리 재생
-          playDoorSound();
-
-          // Level2로 전환 (페이드 효과 포함)
-          setGameStateWithFade('playing_level2');
-          lastDoorInteractionTimeRef.current = currentTime; // 쿨다운 시작
+        if (onCooldown) {
+          setIsNearDoor(false);
+        } else {
+          setIsNearDoor(true);
+          if (e) {
+            playDoorSound();
+            setGameStateWithFade('playing_level2');
+            lastDoorInteractionTimeRef.current = currentTime;
+          }
         }
       } else {
         setIsNearDoor(false);
@@ -1087,19 +1087,16 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
       const distance = charPos.distanceTo(door2Position);
 
-      // 문 근처에 있는지 UI에 알림
       if (distance < doorInteractionDistance) {
-        setIsNearDoor2(true);
-
-        // E키를 눌렀을 때만 상호작용 (5초 쿨다운)
-        const currentTime = Date.now();
-        if (e && (currentTime - lastDoorInteractionTimeRef.current) > doorCooldownDuration) {
-          // 문 열림 소리 재생
-          playDoorSound();
-
-          // Level3로 전환 (페이드 효과 포함)
-          setGameStateWithFade('playing_level3');
-          lastDoorInteractionTimeRef.current = currentTime; // 쿨다운 시작
+        if (onCooldown) {
+          setIsNearDoor2(false);
+        } else {
+          setIsNearDoor2(true);
+          if (e) {
+            playDoorSound();
+            setGameStateWithFade('playing_level3');
+            lastDoorInteractionTimeRef.current = currentTime;
+          }
         }
       } else {
         setIsNearDoor2(false);
@@ -1113,19 +1110,16 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
       const distance = charPos.distanceTo(doorPositionLevel2);
 
-      // 문 근처에 있는지 UI에 알림
       if (distance < doorInteractionDistance) {
-        setIsNearDoorLevel2(true);
-
-        // E키를 눌렀을 때만 상호작용 (5초 쿨다운)
-        const currentTime = Date.now();
-        if (e && (currentTime - lastDoorInteractionTimeRef.current) > doorCooldownDuration) {
-          // 문 열림 소리 재생
-          playDoorSound();
-
-          // Level1로 돌아가기 (페이드 효과 포함)
-          setGameStateWithFade('returning_to_level1');
-          lastDoorInteractionTimeRef.current = currentTime; // 쿨다운 시작
+        if (onCooldown) {
+          setIsNearDoorLevel2(false);
+        } else {
+          setIsNearDoorLevel2(true);
+          if (e) {
+            playDoorSound();
+            setGameStateWithFade('returning_to_level1');
+            lastDoorInteractionTimeRef.current = currentTime;
+          }
         }
       } else {
         setIsNearDoorLevel2(false);
@@ -1139,19 +1133,16 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
       const distance = charPos.distanceTo(doorPositionLevel3);
 
-      // 문 근처에 있는지 UI에 알림
       if (distance < doorInteractionDistance) {
-        setIsNearDoorLevel3(true);
-
-        // E키를 눌렀을 때만 상호작용 (5초 쿨다운)
-        const currentTime = Date.now();
-        if (e && (currentTime - lastDoorInteractionTimeRef.current) > doorCooldownDuration) {
-          // 문 열림 소리 재생
-          playDoorSound();
-
-          // Level1로 돌아가기 (페이드 효과 포함)
-          setGameStateWithFade('returning_to_level1_from_level3');
-          lastDoorInteractionTimeRef.current = currentTime; // 쿨다운 시작
+        if (onCooldown) {
+          setIsNearDoorLevel3(false);
+        } else {
+          setIsNearDoorLevel3(true);
+          if (e) {
+            playDoorSound();
+            setGameStateWithFade('returning_to_level1_from_level3');
+            lastDoorInteractionTimeRef.current = currentTime;
+          }
         }
       } else {
         setIsNearDoorLevel3(false);
@@ -1165,19 +1156,16 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
       const distance = charPos.distanceTo(door3Position);
 
-      // 문 근처에 있는지 UI에 알림
       if (distance < doorInteractionDistance) {
-        setIsNearDoor3(true);
-
-        // E키를 눌렀을 때만 상호작용 (5초 쿨다운)
-        const currentTime = Date.now();
-        if (e && (currentTime - lastDoorInteractionTimeRef.current) > doorCooldownDuration) {
-          // 문 열림 소리 재생
-          playDoorSound();
-
-          // Level4로 전환 (페이드 효과 포함)
-          setGameStateWithFade('playing_level4');
-          lastDoorInteractionTimeRef.current = currentTime; // 쿨다운 시작
+        if (onCooldown) {
+          setIsNearDoor3(false);
+        } else {
+          setIsNearDoor3(true);
+          if (e) {
+            playDoorSound();
+            setGameStateWithFade('playing_level4');
+            lastDoorInteractionTimeRef.current = currentTime;
+          }
         }
       } else {
         setIsNearDoor3(false);
@@ -1191,19 +1179,16 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
       const distance = charPos.distanceTo(doorPositionLevel4);
 
-      // 문 근처에 있는지 UI에 알림
       if (distance < doorInteractionDistance) {
-        setIsNearDoorLevel4(true);
-
-        // E키를 눌렀을 때만 상호작용 (5초 쿨다운)
-        const currentTime = Date.now();
-        if (e && (currentTime - lastDoorInteractionTimeRef.current) > doorCooldownDuration) {
-          // 문 열림 소리 재생
-          playDoorSound();
-
-          // Level3로 돌아가기 (페이드 효과 포함)
-          setGameStateWithFade('returning_to_level3_from_level4');
-          lastDoorInteractionTimeRef.current = currentTime; // 쿨다운 시작
+        if (onCooldown) {
+          setIsNearDoorLevel4(false);
+        } else {
+          setIsNearDoorLevel4(true);
+          if (e) {
+            playDoorSound();
+            setGameStateWithFade('returning_to_level3_from_level4');
+            lastDoorInteractionTimeRef.current = currentTime;
+          }
         }
       } else {
         setIsNearDoorLevel4(false);
