@@ -826,11 +826,11 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
   const doorCooldownDuration = 5000; // 5초 쿨다운 (밀리초)
 
   // 안전한 참조를 위한 useRef
-  const safeCharacterRef = useRef();
   const rigidBodyRef = useRef(); // Rapier RigidBody 참조
   const currentRotationRef = useRef(new THREE.Quaternion()); // 현재 회전 저장 (모델용)
   const modelGroupRef = useRef(); // 캐릭터 모델 그룹 참조
   const returnSpawnPosRef = useRef(null); // Level1 복귀 시 스폰 위치 저장
+  const teleportRequest = useRef(null); // 위치 변경 요청을 위한 큐
 
   // 발걸음 소리 로드 및 재생 함수
   useEffect(() => {
@@ -921,131 +921,47 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       const prevState = prevGameStateRef.current;
 
       if (gameState === 'playing_level2') {
-        // Level2로 전환 시 캐릭터 위치 리셋
-        console.log('=== Level2 초기 스폰 ===');
-        setTimeout(() => {
-          requestAnimationFrame(() => {
-            if (rigidBodyRef.current) {
-              rigidBodyRef.current.setTranslation({ x: 0, y: 2, z: 0 }, true);
-              rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-            }
-          });
-        }, 150);
+        console.log('=== Level2 초기 스폰 요청 ===');
+        teleportRequest.current = { x: 0, y: 2, z: 0 };
       } else if (gameState === 'playing_level3') {
-        // Level3 진입 시 위치 설정
         if (prevState === 'returning_to_level3_from_level4') {
-          // Level4에서 복귀하는 경우 - 저장된 복귀 위치 사용
           const spawnPos = returnSpawnPosRef.current || { x: 0, y: 2, z: 0 };
-          console.log('=== Level3 복귀 완료 (from Level4) ===');
-          console.log('실제 스폰 위치:', spawnPos);
-
-          // 물리 엔진이 완전히 준비될 때까지 충분한 시간 대기
-          setTimeout(() => {
-            requestAnimationFrame(() => {
-              if (rigidBodyRef.current) {
-                rigidBodyRef.current.setTranslation(spawnPos, true);
-                rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-                console.log('위치 설정 완료');
-              }
-            });
-          }, 150);
-
-          // 복귀 위치 초기화
+          console.log('=== Level3 복귀 요청 (from Level4) ===');
+          console.log('목표 스폰 위치:', spawnPos);
+          teleportRequest.current = spawnPos;
           returnSpawnPosRef.current = null;
         } else if (prevState !== 'playing_level3') {
-          // Level3로 처음 진입 시에만 캐릭터 위치 리셋
-          console.log('=== Level3 초기 스폰 (이전 상태:', prevState, ') ===');
-          setTimeout(() => {
-            requestAnimationFrame(() => {
-              if (rigidBodyRef.current) {
-                rigidBodyRef.current.setTranslation({ x: 0, y: 2, z: 0 }, true);
-                rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-              }
-            });
-          }, 150);
+          console.log('=== Level3 초기 스폰 요청 (이전 상태:', prevState, ') ===');
+          teleportRequest.current = { x: 0, y: 2, z: 0 };
         }
       } else if (gameState === 'playing_level4') {
-        // Level4로 전환 시 캐릭터 위치 리셋
-        console.log('=== Level4 초기 스폰 ===');
-        setTimeout(() => {
-          requestAnimationFrame(() => {
-            if (rigidBodyRef.current) {
-              rigidBodyRef.current.setTranslation({ x: 0, y: 2, z: 0 }, true);
-              rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-            }
-          });
-        }, 150);
+        console.log('=== Level4 초기 스폰 요청 ===');
+        teleportRequest.current = { x: 0, y: 2, z: 0 };
       } else if (gameState === 'returning_to_level3_from_level4') {
-        // Level4에서 Level3로 돌아갈 때 - 상태 전환만 먼저 하고 위치는 playing_level3에서 설정
         const spawnPos = { x: -40.51, y: 0.32, z: -16.39 };
         console.log('=== Level3 복귀 시작 (from Level4) ===');
-        console.log('목표 스폰 위치:', spawnPos);
-
-        // 복귀 위치를 ref에 저장
         returnSpawnPosRef.current = spawnPos;
-
-        // 충분한 딜레이 후 playing_level3로 전환
-        setTimeout(() => {
-          setGameState('playing_level3');
-        }, 150);
+        setTimeout(() => setGameState('playing_level3'), 150);
       } else if (gameState === 'returning_to_level1') {
-        // Level2에서 Level1로 돌아갈 때 - 상태 전환만 먼저 하고 위치는 playing_level1에서 설정
         const spawnPos = { x: 10.12, y: 0.29, z: -62.64 };
         console.log('=== Level1 복귀 시작 (from Level2) ===');
-        console.log('목표 스폰 위치:', spawnPos);
-
-        // 복귀 위치를 ref에 저장
         returnSpawnPosRef.current = spawnPos;
-
-        // 충분한 딜레이 후 playing_level1로 전환
-        setTimeout(() => {
-          setGameState('playing_level1');
-        }, 150);
+        setTimeout(() => setGameState('playing_level1'), 150);
       } else if (gameState === 'returning_to_level1_from_level3') {
-        // Level3에서 Level1로 돌아갈 때 - 상태 전환만 먼저 하고 위치는 playing_level1에서 설정
         const spawnPos = { x: -41.85, y: 0.29, z: -25.70 };
         console.log('=== Level1 복귀 시작 (from Level3) ===');
-        console.log('목표 스폰 위치:', spawnPos);
-
-        // 복귀 위치를 ref에 저장
         returnSpawnPosRef.current = spawnPos;
-
-        // 충분한 딜레이 후 playing_level1로 전환
-        setTimeout(() => {
-          setGameState('playing_level1');
-        }, 150);
+        setTimeout(() => setGameState('playing_level1'), 150);
       } else if (gameState === 'playing_level1') {
-        // Level1 진입 시 위치 설정
         if (prevState === 'returning_to_level1' || prevState === 'returning_to_level1_from_level3') {
-          // Level2/3에서 복귀하는 경우 - 저장된 복귀 위치 사용
           const spawnPos = returnSpawnPosRef.current || { x: 0, y: 2, z: 0 };
-          console.log('=== Level1 복귀 완료 (from', prevState === 'returning_to_level1' ? 'Level2' : 'Level3', ') ===');
-          console.log('실제 스폰 위치:', spawnPos);
-
-          // 물리 엔진이 완전히 준비될 때까지 충분한 시간 대기
-          setTimeout(() => {
-            requestAnimationFrame(() => {
-              if (rigidBodyRef.current) {
-                rigidBodyRef.current.setTranslation(spawnPos, true);
-                rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-                console.log('위치 설정 완료');
-              }
-            });
-          }, 150);
-
-          // 복귀 위치 초기화
+          console.log('=== Level1 복귀 요청 (from', prevState === 'returning_to_level1' ? 'Level2' : 'Level3', ') ===');
+          console.log('목표 스폰 위치:', spawnPos);
+          teleportRequest.current = spawnPos;
           returnSpawnPosRef.current = null;
         } else if (prevState !== 'playing_level1') {
-          // Level1로 처음 진입 시에만 캐릭터 위치 리셋
-          console.log('=== Level1 초기 스폰 (이전 상태:', prevState, ') ===');
-          setTimeout(() => {
-            requestAnimationFrame(() => {
-              if (rigidBodyRef.current) {
-                rigidBodyRef.current.setTranslation({ x: 0, y: 2, z: 0 }, true);
-                rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-              }
-            });
-          }, 150);
+          console.log('=== Level1 초기 스폰 요청 (이전 상태:', prevState, ') ===');
+          teleportRequest.current = { x: 0, y: 2, z: 0 };
         }
       }
 
@@ -1083,6 +999,13 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
   useFrame((state, delta) => {
     if (!rigidBodyRef.current || !modelGroupRef.current) return;
 
+    // 위치 변경 요청 처리
+    if (teleportRequest.current) {
+      rigidBodyRef.current.setTranslation(teleportRequest.current, true);
+      rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+      teleportRequest.current = null; // 요청 처리 후 초기화
+    }
+    
     if (gameState !== 'playing_level1' && gameState !== 'playing_level2' && gameState !== 'playing_level3' && gameState !== 'playing_level4') return;
 
     const speed = shift ? 18 : 8; // 물리 기반 속도 (걷기: 8, 뛰기: 18)
@@ -1104,18 +1027,13 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       // 현재 회전에서 목표 회전으로 부드럽게 보간 (slerp)
       currentRotationRef.current.slerp(targetQuaternion, 0.25);
 
-      // 물리 기반 이동 (setLinvel 사용) - 안전하게 처리
-      try {
-        const currentVel = rigidBodyRef.current.linvel();
-        rigidBodyRef.current.setLinvel({
-          x: direction.x * speed,
-          y: currentVel.y, // Y축은 중력 유지
-          z: direction.z * speed
-        });
-      } catch (error) {
-        // Rapier 물리 엔진이 처리 중일 때 발생하는 에러 무시
-        return;
-      }
+      // 물리 기반 이동 (setLinvel 사용)
+      const currentVel = rigidBodyRef.current.linvel();
+      rigidBodyRef.current.setLinvel({
+        x: direction.x * speed,
+        y: currentVel.y, // Y축은 중력 유지
+        z: direction.z * speed
+      });
 
       // 발걸음 소리 재생
       if (currentAnimation === 'Walk' || currentAnimation === 'Run') {
@@ -1126,26 +1044,15 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
         }
       }
     } else {
-      // 정지 시 속도 0 - 안전하게 처리
-      try {
-        const currentVel = rigidBodyRef.current.linvel();
-        rigidBodyRef.current.setLinvel({ x: 0, y: currentVel.y, z: 0 });
-      } catch (error) {
-        // Rapier 물리 엔진이 처리 중일 때 발생하는 에러 무시
-        return;
-      }
+      // 정지 시 속도 0
+      const currentVel = rigidBodyRef.current.linvel();
+      rigidBodyRef.current.setLinvel({ x: 0, y: currentVel.y, z: 0 });
     }
 
-    // RigidBody의 위치를 모델에 동기화 (안전하게 처리)
-    let rbPosition;
-    try {
-      rbPosition = rigidBodyRef.current.translation();
-      modelGroupRef.current.position.set(rbPosition.x, rbPosition.y, rbPosition.z);
-    } catch (error) {
-      // Rapier 물리 엔진이 처리 중일 때 발생하는 에러 무시
-      return;
-    }
-
+    // RigidBody의 위치를 모델에 동기화
+    const rbPosition = rigidBodyRef.current.translation();
+    modelGroupRef.current.position.set(rbPosition.x, rbPosition.y, rbPosition.z);
+    
     // 모델의 회전은 입력에 의한 회전만 적용
     modelGroupRef.current.quaternion.copy(currentRotationRef.current);
 
@@ -1305,21 +1212,15 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       setIsNearDoorLevel4(false);
     }
 
-    // C키로 캐릭터 위치 로그 (디버그) - 안전하게 처리
+    // C키로 캐릭터 위치 로그 (디버그)
     if (log) {
-      try {
-        const debugPosition = rigidBodyRef.current.translation();
-        console.log('=== 캐릭터 위치 ===');
-        console.log(`Position: x=${debugPosition.x.toFixed(2)}, y=${debugPosition.y.toFixed(2)}, z=${debugPosition.z.toFixed(2)}`);
-        console.log(`GameState: ${gameState}`);
-        console.log('Level1 doorPosition:', doorPosition);
-        console.log('Level2 doorPosition:', doorPositionLevel2);
-      } catch (error) {
-        console.log('디버그 로그 실패: Rapier 물리 엔진이 처리 중입니다.');
-      }
+      const debugPosition = rigidBodyRef.current.translation();
+      console.log('=== 캐릭터 위치 ===');
+      console.log(`Position: x=${debugPosition.x.toFixed(2)}, y=${debugPosition.y.toFixed(2)}, z=${debugPosition.z.toFixed(2)}`);
+      console.log(`GameState: ${gameState}`);
+      console.log('Level1 doorPosition:', doorPosition);
+      console.log('Level2 doorPosition:', doorPositionLevel2);
     }
-
-    // E키 쿨다운은 시간 기반으로 처리됨 (5초)
   });
 
   return (
