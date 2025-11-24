@@ -2442,7 +2442,7 @@ function TutorialPopup({ onClose, onDoNotShowAgain }) {
             <h3>마을 지도:</h3>
             <div className="tutorial-minimap">
               <img
-                src="/resources/GameView/Level1Map.png"
+                src="/resources/GameView/Level1Map-v2.png"
                 alt="Level 1 Map"
                 className="minimap-image"
               />
