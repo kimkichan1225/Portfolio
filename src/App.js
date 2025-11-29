@@ -2167,8 +2167,29 @@ function Level4Map({ onDoorPositionFound, ...props }) {
     return cloned;
   }, [scene, onDoorPositionFound]);
 
+  // Cleanup 함수 추가
+  useEffect(() => {
+    return () => {
+      // 컴포넌트 언마운트 시 리소스 정리
+      if (clonedScene) {
+        clonedScene.traverse((child) => {
+          if (child.isMesh) {
+            if (child.geometry) child.geometry.dispose();
+            if (child.material) {
+              if (Array.isArray(child.material)) {
+                child.material.forEach(material => material.dispose());
+              } else {
+                child.material.dispose();
+              }
+            }
+          }
+        });
+      }
+    };
+  }, [clonedScene]);
+
   return (
-    <RigidBody type="fixed" colliders="trimesh">
+    <RigidBody type="fixed" colliders="trimesh" key="level4-map-rigidbody">
       <primitive object={clonedScene} {...props} />
     </RigidBody>
   );
@@ -2547,6 +2568,39 @@ function App() {
     }
   }, [isDarkMode]);
 
+  // 레벨 전환 시 문 위치 리셋 (물리 엔진 메모리 안전성을 위해)
+  useEffect(() => {
+    // Level4를 벗어날 때 문 위치 리셋
+    if (gameState === 'returning_to_level3_from_level4') {
+      setDoorPositionLevel4(null);
+    }
+    // Level3를 벗어날 때 문 위치 리셋
+    if (gameState === 'returning_to_level1_from_level3' || gameState === 'playing_level4') {
+      setDoor3Position(null);
+    }
+    // Level2를 벗어날 때 문 위치 리셋
+    if (gameState === 'returning_to_level1') {
+      setDoorPositionLevel2(null);
+    }
+    // Level1를 벗어날 때 문 위치 리셋
+    if (gameState === 'playing_level2' || gameState === 'playing_level3') {
+      setDoorPosition(null);
+      setDoor2Position(null);
+    }
+  }, [gameState]);
+
+  // Physics key - 전환 상태에서 목적지 레벨 사용
+  const getPhysicsKey = () => {
+    if (gameState === 'playing_level1') return 'level1';
+    if (gameState === 'playing_level2') return 'level2';
+    if (gameState === 'playing_level3') return 'level3';
+    if (gameState === 'playing_level4') return 'level4';
+    // 전환 상태에서는 목적지 레벨로 즉시 전환 (물리 엔진 재생성)
+    if (gameState === 'returning_to_level1' || gameState === 'returning_to_level1_from_level3') return 'level1-return';
+    if (gameState === 'returning_to_level3_from_level4') return 'level3-return';
+    return gameState; // gameState를 그대로 사용하여 매번 재생성
+  };
+
   return (
     <div className={`App ${isDarkMode ? 'dark-mode' : ''}`}>
       <NavigationBar isWebMode={isWebMode} onToggleMode={toggleMode} isDarkMode={isDarkMode} onToggleDarkMode={toggleDarkMode} />
@@ -2597,21 +2651,21 @@ function App() {
         )}
 
         <Suspense fallback={null}>
-          <Physics gravity={[0, -40, 0]}>
+          <Physics key={getPhysicsKey()} gravity={[0, -40, 0]}>
             <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} door2Position={door2Position} setIsNearDoor2={setIsNearDoor2} door3Position={door3Position} setIsNearDoor3={setIsNearDoor3} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} doorPositionLevel3={doorPositionLevel3} setIsNearDoorLevel3={setIsNearDoorLevel3} doorPositionLevel4={doorPositionLevel4} setIsNearDoorLevel4={setIsNearDoorLevel4} />
             <CameraController gameState={gameState} characterRef={characterRef} />
             <CameraLogger />
             {gameState === 'playing_level1' && (
-              <Level1 characterRef={characterRef} onDoorPositionFound={setDoorPosition} onDoor2PositionFound={setDoor2Position} />
+              <Level1 key="level1" characterRef={characterRef} onDoorPositionFound={setDoorPosition} onDoor2PositionFound={setDoor2Position} />
             )}
             {gameState === 'playing_level2' && (
-              <Level2 characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel2} />
+              <Level2 key="level2" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel2} />
             )}
             {gameState === 'playing_level3' && (
-              <Level3 characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel3} onDoor2PositionFound={setDoor3Position} />
+              <Level3 key="level3" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel3} onDoor2PositionFound={setDoor3Position} />
             )}
             {gameState === 'playing_level4' && (
-              <Level4 characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel4} />
+              <Level4 key="level4" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel4} />
             )}
             {/* 복귀 상태에서는 아무 레벨도 렌더링하지 않음 (검은 화면) */}
           </Physics>

@@ -25,7 +25,9 @@
       "mcp__ide__getDiagnostics",
       "Bash(if exist build rmdir /s /q build)",
       "Bash(netlify deploy:*)",
-      "Bash(netlify link:*)"
+      "Bash(netlify link:*)",
+      "Bash(tasklist:*)",
+      "Bash(npm run build:check:*)"
     ],
     "deny": [],
     "ask": []
