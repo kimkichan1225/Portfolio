@@ -45,20 +45,25 @@ The application has two primary modes controlled by `isWebMode` state:
 
 ### Game State Management
 Within Game Mode, a state machine pattern manages level transitions:
-- `playing_level1`: Natural environment with palm trees, NPC, and portals
-- `entering_portal`: Transition state when entering Level 2 portal
+- `playing_level1`: Natural environment with doors to Level 2 and Level 3
 - `playing_level2`: Urban racing environment with drivable car
-- `entering_portal_level3`: Transition state when entering Level 3 portal
-- `playing_level3`: Architectural/building environment
+- `playing_level3`: Architectural/building environment with door to Level 4
+- `playing_level4`: Dark space environment with return door to Level 3
+
+Level transitions use a fade effect system (`isFading` state) with door interaction:
+- E key near doors triggers `setGameStateWithFade()` function
+- Fade out (400ms) → State change + spawn position update → Fade in (1800ms total)
+- Physics engine is recreated on each level transition using dynamic `key` prop
 
 ### Key System Components
 
 **Character System** (`src/App.js` - `Model` component)
-- Uses GLTF animated character from Ultimate Animated Character Pack
+- Uses GLTF animated character from Ultimate Animated Character Pack (Suit.glb)
 - Animations: Idle, Walk, Run controlled by `useAnimations` hook
-- Movement speed: ~0.1 units for walking, ~0.2 units for running
+- Physics-based movement using Rapier RigidBody with speed values (walking: 8, running: 18)
 - Position tracking via `characterRef` shared across components
 - Audio integration: footstep sounds synchronized with walk/run animations
+- Spawn position controlled by `spawnPosition` state prop passed to RigidBody
 
 **Vehicle System** (Level 2 only - `RaceFuture` component)
 - Front-wheel steering with rear-wheel drive physics
@@ -74,19 +79,21 @@ Within Game Mode, a state machine pattern manages level transitions:
 - Special behavior during portal transitions: closer follow with lookAt character
 - Camera automatically tracks vehicle when character is in car
 
-**Portal System** (`PortalVortex.js`)
-- Custom GLSL shader-based portal visuals with swirling vortex effect
-- Two portal variants: blue-white for Level 2, white-orange for Level 3
-- Collision detection via distance checking (portalRadius = 2 units)
-- Portal positions defined as constants at top of App.js (e.g., `portalPosition`, `portalLevel3Position`)
+**Door Interaction System**
+- Interactive doors with 3D models positioned in each level
+- Door positions discovered via `onDoorPositionFound` callback from level components
+- Distance-based interaction detection (doorInteractionDistance = 8 units)
+- UI indicator appears when character is near door ("E키를 눌러..." prompts)
+- 5-second cooldown between door interactions to prevent spam (doorCooldownDuration = 5000ms)
+- Door open sound effect plays on interaction
 
 ### Input Handling
 
 Keyboard controls via `useKeyboardControls.js`:
 - WASD: Character movement
 - Shift: Sprint modifier
-- E: Car interaction (Level 2)
-- C: Camera debug logging
+- E: Door interaction (all levels) and car interaction (Level 2 only)
+- C: Character position debug logging
 - Enter: UI interactions
 
 ### UI System
@@ -157,25 +164,30 @@ Models use `useGLTF.preload()` or `useFBX()` for loading. All meshes should have
 Each level is a separate component that receives `characterRef`:
 
 **Level1** (`src/App.js` - `Level1` component)
-- Green gradient floor with natural theme using level1map.png texture
-- NPC character with speech bubble
-- Two portals: one to Level 2 (blue-white vortex), one to Level 3 (white-orange vortex)
-- Palm trees and stone decorations
-- Social media objects (GitHub cat, Instagram logo, mailbox)
-- Toolbox and other decorative elements
+- Natural village/town theme with level1map.png texture
+- Two doors: door001 (to Level 2 - "프로젝트 갤러리"), door (to Level 3 - "기술 스택 사무실")
+- Decorative 3D models and environmental objects
+- Starting level with default spawn at `[0, 2, 0]`
 
 **Level2** (`src/App.js` - `Level2` component)
 - Urban/racing theme with level2map.png texture
 - Drivable car (`RaceFuture` component) at origin with scale 5
-- Return portal to Level 1 (blue-white vortex)
+- Return door001 to Level 1
 - Vehicle physics and interaction system
-- Simpler environment focused on racing experience
+- Spawn position when returning to Level1: `[9.96, 0.29, -61.47]`
 
 **Level3** (`src/App.js` - `Level3` component)
-- Architectural environment with beige floor (#FFE4B5)
+- Office/architectural environment with beige floor (#FFE4B5)
 - Game map models (`GameMap.glb`, `GameMap2.glb`)
-- Return portal to Level 1 (white-orange vortex)
-- Complex building structures for exploration
+- Two doors: door (to Level 1), door002 (to Level 4 - "개인 작업실")
+- Spawn position when returning to Level1: `[-41.16, 0.29, -26.00]`
+- Spawn position when returning from Level4: `[-40.53, 0.32, -16.26]`
+
+**Level4** (`src/App.js` - `Level4` component)
+- Dark space environment with black background (`#000000`)
+- Level4Map component with custom geometry and physics
+- Return door002 to Level 3
+- Overhead directional lighting from `[0, 50, 0]`
 
 ## Utility Hooks
 
@@ -215,12 +227,17 @@ const clonedScene = useMemo(() => {
 }, [scene]);
 ```
 
-**Portal Collision Detection**
-Distance-based checking in `useFrame`:
+**Door Collision Detection**
+Distance-based checking in `useFrame` within Model component:
 ```javascript
-const distance = characterRef.current.position.distanceTo(portalPosition);
-if (distance < portalRadius) {
-  // Trigger portal transition
+const charPos = new THREE.Vector3(posX, posY, posZ);
+const distance = charPos.distanceTo(doorPosition);
+if (distance < doorInteractionDistance) {
+  setIsNearDoor(true);
+  if (e) { // E key pressed
+    playDoorSound();
+    setGameStateWithFade('target_level');
+  }
 }
 ```
 
@@ -254,23 +271,57 @@ Projects are stored in `projectsData` array at top of App.js with structure:
 
 ## Important Constants and Positions
 
-Portal positions and radii are defined at the top of App.js (~line 754):
-- `portalPosition`: Level 1 to Level 2 portal at `(-20, 7.5, -20)`
-- `portalLevel3Position`: Level 1 to Level 3 portal at `(20, 7.5, -20)`
-- `portalLevel2ToLevel1Position`: Return portal in Level 2 at `(0, 7.5, 23.5)`
-- `portalLevel3ToLevel1Position`: Return portal in Level 3 at `(0, 7.5, 23.5)`
-- `level2PortalFrontPosition`: Spawn position after entering Level 2 portal at `(-20, 0, -15)`
-- `level3PortalFrontPosition`: Spawn position after entering Level 3 portal at `(20, 0, -15)`
-- Portal radii: 2 units for all portals
-- Character spawn positions: Level 2 at `(0, 0, 10)`, Level 3 at `(0, 0, 15)`
+**Character Spawn Positions** (controlled by `spawnPosition` state in App component):
+- Level 1 default: `[0, 2, 0]`
+- Level 2 default: `[0, 2, 0]`
+- Level 3 default: `[0, 2, 0]`
+- Level 4 default: `[0, 2, 0]`
+- Return to Level 1 from Level 2: `[9.96, 0.29, -61.47]`
+- Return to Level 1 from Level 3: `[-41.16, 0.29, -26.00]`
+- Return to Level 3 from Level 4: `[-40.53, 0.32, -16.26]`
 
-Camera offset: `new THREE.Vector3(-0.00, 28.35, 19.76)` (defined at line ~767)
+**Door Interaction**:
+- `doorInteractionDistance`: 8 units
+- `doorCooldownDuration`: 5000ms (5 seconds)
+
+**Camera Settings**:
+- Camera offset: `new THREE.Vector3(-0.00, 28.35, 19.76)`
+- Camera follows character via `CameraController` component
+
+## Physics System (@react-three/rapier)
+
+The game uses Rapier physics engine for character movement and collision detection:
+- **Physics Component Key**: Dynamically generated using `${gameState}-${spawnPosition.join(',')}` to force recreation on level/spawn changes
+- **Character RigidBody**: Dynamic type with capsule collider, position controlled by `spawnPosition` prop
+- **Physics Recreation**: When transitioning levels, the entire Physics component unmounts and remounts with a new key, preventing Rust borrow checker violations
+- **Linear/Angular Damping**: Character has linearDamping=2.0 and angularDamping=1.0 to prevent sliding
+- **Rotation Locking**: Character rotations are disabled (`enabledRotations={[false, false, false]}`) to prevent tipping over
+
+**CRITICAL**: Never attempt to mutate Rapier RigidBody positions after the physics world is created. Always use the `spawnPosition` prop approach to set initial positions before Physics component mounts.
+
+### Level Transition Flow
+
+When a door is activated (E key pressed near door):
+
+1. **User Action**: `setGameStateWithFade('target_state')` is called (e.g., `'returning_to_level1'`)
+2. **Fade Out**: `setIsFading(true)` triggers CSS fade overlay (400ms duration)
+3. **State Update** (after 400ms):
+   - `setSpawnPosition([x, y, z])` updates spawn position based on target state
+   - `setGameState('playing_levelX')` changes to target level state
+4. **Physics Regeneration**:
+   - `getPhysicsKey()` returns new key based on `gameState` and `spawnPosition`
+   - React detects key change → Physics component unmounts (destroying Rapier world)
+   - Physics component remounts with clean Rapier world
+   - Model component's RigidBody spawns at new `spawnPosition`
+5. **Fade In**: After 1800ms total, `setIsFading(false)` removes overlay
+
+This architecture avoids Rust borrow checker errors by never mutating existing RigidBody positions; instead, it creates a fresh physics world with the correct initial position.
 
 ## Shadow System
 
 The game uses Three.js shadow mapping:
 - Directional light with shadows enabled
-- Shadow map size: typically 2048x2048
+- Shadow map size: typically 8192x8192 for high quality
 - All meshes should have both `castShadow` and `receiveShadow` set to true
 - Custom shaders must include shadow mapping shader chunks
 
@@ -337,17 +388,21 @@ portfolio-game/
 4. Add `useGLTF.preload()` call after component
 5. Place component in desired level with position/scale/rotation props
 
-**Adding a new portal:**
-1. Define portal position and radius constants at top of App.js
-2. Add portal collision detection in `Model` component's `useFrame`
-3. Create new game state for transition
-4. Add `PortalVortex` visual component at portal location
-5. Add `PortalBase` model beneath vortex
+**Adding a new door/level transition:**
+1. Add new game state to state machine (e.g., `playing_level5`)
+2. Create new level component with `onDoorPositionFound` callback
+3. Add door model to level that calls `onDoorPositionFound` with door position
+4. Add state variable for door position and nearDoor UI state in App component
+5. Add door collision detection in `Model` component's `useFrame`
+6. Add spawn position logic in `setGameStateWithFade` function
+7. Add UI indicator component for door interaction
+8. Render new level conditionally based on `gameState === 'playing_levelX'`
 
 **Modifying character movement:**
-- Speed values are in `useFrame` within `Model` component (~line 825+)
-- Walking speed: ~0.1, running speed: ~0.2
-- Rotation speed: delta * 3.0
+- Speed values are in `useFrame` within `Model` component
+- Walking speed: 8, running speed: 18 (physics-based linear velocity)
+- Movement applies forces to RigidBody using `applyImpulse()`
+- Rotation is controlled separately via `currentRotationRef` quaternion
 
 **Adding new audio:**
 1. Place audio file in `public/sounds/` or `public/resources/Sounds/`

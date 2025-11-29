@@ -806,7 +806,7 @@ function CameraController({ gameState, characterRef }) {
   return null;
 }
 
-function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor, door2Position, setIsNearDoor2, door3Position, setIsNearDoor3, doorPositionLevel2, setIsNearDoorLevel2, doorPositionLevel3, setIsNearDoorLevel3, doorPositionLevel4, setIsNearDoorLevel4, spawnPosition }) {
+function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor, door2Position, setIsNearDoor2, door3Position, setIsNearDoor3, doorPositionLevel2, setIsNearDoorLevel2, doorPositionLevel3, setIsNearDoorLevel3, doorPositionLevel4, setIsNearDoorLevel4, cabinetTVPosition, setIsNearCabinetTV, setShowContactInfo, wallPosition, setIsNearWall, setShowProfile, spawnPosition }) {
   const { scene, animations } = useGLTF('/resources/GameView/Suit.glb');
   const { actions } = useAnimations(animations, characterRef);
 
@@ -822,7 +822,7 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
   const doorAudioRef = useRef(null);
   const doorInteractionDistance = 8; // 문과 상호작용 가능한 거리
   const lastDoorInteractionTimeRef = useRef(0); // E키 쿨다운 (5초)
-  const doorCooldownDuration = 5000; // 5초 쿨다운 (밀리초)
+  const doorCooldownDuration = 500; // 5초 쿨다운 (밀리초)
 
   // 안전한 참조를 위한 useRef
   const rigidBodyRef = useRef(); // Rapier RigidBody 참조
@@ -1136,6 +1136,42 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       }
     } else {
       setIsNearDoorLevel4(false);
+    }
+
+    // cabinetTelevision 상호작용 감지 (Level4에서만)
+    if (gameState === 'playing_level4' && cabinetTVPosition) {
+      const charPos = new THREE.Vector3(posX, posY, posZ);
+      const distance = charPos.distanceTo(cabinetTVPosition);
+
+      if (distance < doorInteractionDistance) {
+        setIsNearCabinetTV(true);
+        if (e && !onCooldown) {
+          setShowContactInfo(true);
+          lastDoorInteractionTimeRef.current = currentTime;
+        }
+      } else {
+        setIsNearCabinetTV(false);
+      }
+    } else {
+      setIsNearCabinetTV(false);
+    }
+
+    // wall 상호작용 감지 (Level4에서만)
+    if (gameState === 'playing_level4' && wallPosition) {
+      const charPos = new THREE.Vector3(posX, posY, posZ);
+      const distance = charPos.distanceTo(wallPosition);
+
+      if (distance < doorInteractionDistance) {
+        setIsNearWall(true);
+        if (e && !onCooldown) {
+          setShowProfile(true);
+          lastDoorInteractionTimeRef.current = currentTime;
+        }
+      } else {
+        setIsNearWall(false);
+      }
+    } else {
+      setIsNearWall(false);
     }
 
     // C키로 캐릭터 위치 로그 (디버그)
@@ -2080,7 +2116,7 @@ function Level3Map({ onDoorPositionFound, onDoor2PositionFound, ...props }) {
 
 useGLTF.preload('/resources/GameView/Level3Map.glb');
 
-function Level4Map({ onDoorPositionFound, ...props }) {
+function Level4Map({ onDoorPositionFound, onCabinetTVPositionFound, onWallPositionFound, ...props }) {
   const { scene } = useGLTF('/resources/GameView/Level4Map.glb');
 
   // Level4Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
@@ -2099,9 +2135,25 @@ function Level4Map({ onDoorPositionFound, ...props }) {
           onDoorPositionFound(worldPos);
         }
       }
+      // cabinetTelevision 오브젝트 찾기
+      if (child.name === 'cabinetTelevision') {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        if (onCabinetTVPositionFound) {
+          onCabinetTVPositionFound(worldPos);
+        }
+      }
+      // wall 오브젝트 찾기
+      if (child.name === 'wall') {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        if (onWallPositionFound) {
+          onWallPositionFound(worldPos);
+        }
+      }
     });
     return cloned;
-  }, [scene, onDoorPositionFound]);
+  }, [scene, onDoorPositionFound, onCabinetTVPositionFound, onWallPositionFound]);
 
   // Cleanup 함수 추가
   useEffect(() => {
@@ -2285,7 +2337,7 @@ function Level3({ characterRef, onDoorPositionFound, onDoor2PositionFound }) {
   );
 }
 
-function Level4({ characterRef, onDoorPositionFound }) {
+function Level4({ characterRef, onDoorPositionFound, onCabinetTVPositionFound, onWallPositionFound }) {
   const { scene } = useThree();
 
   // Level4 배경을 검정색으로 설정
@@ -2326,6 +2378,8 @@ function Level4({ characterRef, onDoorPositionFound }) {
       {/* Level4 Map */}
       <Level4Map
         onDoorPositionFound={onDoorPositionFound}
+        onCabinetTVPositionFound={onCabinetTVPositionFound}
+        onWallPositionFound={onWallPositionFound}
         position={[0, 0, 0]}
         scale={1}
         rotation={[0, 0, 0]}
@@ -2452,6 +2506,12 @@ function App() {
   const [isNearDoorLevel2, setIsNearDoorLevel2] = useState(false); // Level2 문 근처에 있는지 여부
   const [isNearDoorLevel3, setIsNearDoorLevel3] = useState(false); // Level3 문 근처에 있는지 여부
   const [isNearDoorLevel4, setIsNearDoorLevel4] = useState(false); // Level4 문 근처에 있는지 여부
+  const [cabinetTVPosition, setCabinetTVPosition] = useState(null); // Level4 cabinetTelevision 위치
+  const [isNearCabinetTV, setIsNearCabinetTV] = useState(false); // cabinetTelevision 근처에 있는지 여부
+  const [showContactInfo, setShowContactInfo] = useState(false); // 연락처 정보 모달 표시 여부
+  const [wallPosition, setWallPosition] = useState(null); // Level4 wall 위치
+  const [isNearWall, setIsNearWall] = useState(false); // wall 근처에 있는지 여부
+  const [showProfile, setShowProfile] = useState(false); // 프로필 모달 표시 여부
   const [isFading, setIsFading] = useState(false); // 페이드 전환 상태
   const [spawnPosition, setSpawnPosition] = useState([0, 2, 0]); // 캐릭터 스폰 위치
 
@@ -2584,7 +2644,7 @@ function App() {
 
         <Suspense fallback={null}>
           <Physics key={getPhysicsKey()} gravity={[0, -40, 0]}>
-            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} door2Position={door2Position} setIsNearDoor2={setIsNearDoor2} door3Position={door3Position} setIsNearDoor3={setIsNearDoor3} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} doorPositionLevel3={doorPositionLevel3} setIsNearDoorLevel3={setIsNearDoorLevel3} doorPositionLevel4={doorPositionLevel4} setIsNearDoorLevel4={setIsNearDoorLevel4} spawnPosition={spawnPosition} />
+            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} door2Position={door2Position} setIsNearDoor2={setIsNearDoor2} door3Position={door3Position} setIsNearDoor3={setIsNearDoor3} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} doorPositionLevel3={doorPositionLevel3} setIsNearDoorLevel3={setIsNearDoorLevel3} doorPositionLevel4={doorPositionLevel4} setIsNearDoorLevel4={setIsNearDoorLevel4} cabinetTVPosition={cabinetTVPosition} setIsNearCabinetTV={setIsNearCabinetTV} setShowContactInfo={setShowContactInfo} wallPosition={wallPosition} setIsNearWall={setIsNearWall} setShowProfile={setShowProfile} spawnPosition={spawnPosition} />
             <CameraController gameState={gameState} characterRef={characterRef} />
             <CameraLogger />
             {gameState === 'playing_level1' && (
@@ -2597,7 +2657,7 @@ function App() {
               <Level3 key="level3" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel3} onDoor2PositionFound={setDoor3Position} />
             )}
             {gameState === 'playing_level4' && (
-              <Level4 key="level4" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel4} />
+              <Level4 key="level4" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel4} onCabinetTVPositionFound={setCabinetTVPosition} onWallPositionFound={setWallPosition} />
             )}
           </Physics>
         </Suspense>
@@ -2646,9 +2706,124 @@ function App() {
         </div>
       )}
 
+      {/* cabinetTelevision 상호작용 UI - Level4 */}
+      {!isWebMode && isNearCabinetTV && gameState === 'playing_level4' && (
+        <div className="door-interaction-ui">
+          📺 E키를 눌러 연락처 보기
+        </div>
+      )}
+
+      {/* wall 상호작용 UI - Level4 */}
+      {!isWebMode && isNearWall && gameState === 'playing_level4' && (
+        <div className="door-interaction-ui">
+          🖼️ E키를 눌러 프로필 보기
+        </div>
+      )}
+
       {/* 페이드 전환 오버레이 */}
       {isFading && (
         <div className="fade-overlay" />
+      )}
+
+      {/* 연락처 정보 모달 */}
+      {showContactInfo && (
+        <div className="contact-info-modal-overlay" onClick={() => setShowContactInfo(false)}>
+          <div className="contact-info-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="contact-info-close" onClick={() => setShowContactInfo(false)}>
+              ✕
+            </button>
+            <h2>연락처 정보</h2>
+            <div className="contact-info-content">
+              <div className="contact-info-item">
+                <span className="contact-info-icon">📧</span>
+                <div className="contact-info-details">
+                  <div className="contact-info-label">Email</div>
+                  <div className="contact-info-value">kimkichan1225@gmail.com</div>
+                </div>
+              </div>
+              <div className="contact-info-item">
+                <span className="contact-info-icon">📱</span>
+                <div className="contact-info-details">
+                  <div className="contact-info-label">Phone</div>
+                  <div className="contact-info-value">+82 10-4225-5388</div>
+                </div>
+              </div>
+              <div className="contact-info-item">
+                <span className="contact-info-icon">💻</span>
+                <div className="contact-info-details">
+                  <div className="contact-info-label">GitHub</div>
+                  <a href="https://github.com/kimkichan1225" target="_blank" rel="noopener noreferrer" className="contact-info-value contact-info-link">
+                    github.com/kimkichan1225
+                  </a>
+                </div>
+              </div>
+              <div className="contact-info-item">
+                <span className="contact-info-icon">📷</span>
+                <div className="contact-info-details">
+                  <div className="contact-info-label">Instagram</div>
+                  <a href="https://www.instagram.com/kim_kichan/#" target="_blank" rel="noopener noreferrer" className="contact-info-value contact-info-link">
+                    @kim_kichan
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 프로필 모달 */}
+      {showProfile && (
+        <div className="profile-modal-overlay" onClick={() => setShowProfile(false)}>
+          <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="profile-modal-close" onClick={() => setShowProfile(false)}>
+              ✕
+            </button>
+            <h2>About Me</h2>
+            <div className="profile-modal-content">
+              <div className="profile-image-section">
+                <img src="/Kimkichan.png" alt="김기찬" className="profile-modal-image" />
+                <p className="profile-birthday">📅 2001.12.25</p>
+              </div>
+              <div className="profile-text-section">
+                <h3>안녕하세요, 김기찬입니다!</h3>
+                <p>
+                  <strong className="highlight">"어떻게 하면 더 재미있는 경험을 만들 수 있을까?"</strong>라는 질문에서 시작해, <strong>웹과 게임 개발의 경계를 넘나드는</strong> 프로젝트들을 만들어왔습니다.
+                </p>
+                <p>
+                  <strong className="highlight">Socket.IO</strong>로 구현한 <strong>멀티플레이어 액션 게임</strong>에서는 수십 명이 동시에 플레이하며 실시간으로 상호작용하는 시스템을, <strong className="highlight">React 19</strong>과 <strong className="highlight">Supabase</strong>를 활용한 편의점 솔루션에서는 실무에 바로 적용 가능한 <strong>통합 관리 시스템</strong>을 구축했습니다. <strong className="highlight">Unity</strong>로 제작한 <strong>2D RPG</strong>에서는 턴제 전투와 주사위 메커니즘이라는 독특한 조합을 시도했죠.
+                </p>
+                <p>
+                  지금 보고 계신 이 포트폴리오 역시 단순한 소개 페이지가 아닌, <strong className="highlight">Three.js</strong> 기반의 <strong>3D 게임 세계를 직접 탐험할 수 있는 인터랙티브 경험</strong>입니다. <strong className="highlight">TypeScript</strong>, <strong className="highlight">React Three Fiber</strong>, <strong className="highlight">커스텀 GLSL 셰이더</strong>까지 활용해 웹에서도 몰입감 있는 3D 환경을 구현했습니다.
+                </p>
+                <p>
+                  <strong className="highlight">AI 개발 도구</strong>를 단순히 '사용'하는 것을 넘어, 이를 통해 <strong>개발 워크플로우 자체를 재설계</strong>하고 있습니다. 빠른 프로토타이핑과 반복적인 개선 사이클로 <strong>아이디어를 현실로 만드는 속도</strong>를 높이고, 더 많은 시간을 <strong>창의적인 문제 해결</strong>에 투자합니다.
+                </p>
+              </div>
+            </div>
+            <div className="profile-skills-grid">
+              <div className="profile-skill-card">
+                <div className="profile-skill-icon">🎮</div>
+                <h4>게임 개발</h4>
+                <p>Unity 2D/3D 게임 개발 및 Three.js를 활용한 웹 기반 3D 인터랙티브 경험 구현</p>
+              </div>
+              <div className="profile-skill-card">
+                <div className="profile-skill-icon">💻</div>
+                <h4>풀스택 개발</h4>
+                <p>React, TypeScript, Node.js 등을 활용한 현대적인 웹 애플리케이션 풀스택 개발</p>
+              </div>
+              <div className="profile-skill-card">
+                <div className="profile-skill-icon">👥</div>
+                <h4>실시간 시스템</h4>
+                <p>Socket.IO 기반 실시간 멀티플레이어 시스템 및 실시간 데이터 동기화 구현</p>
+              </div>
+              <div className="profile-skill-card">
+                <div className="profile-skill-icon">🤖</div>
+                <h4>AI 도구 활용</h4>
+                <p>Claude Code, Cursor 등 AI 코딩 도구를 활용한 효율적인 개발 워크플로우 구축</p>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
