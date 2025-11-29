@@ -806,13 +806,12 @@ function CameraController({ gameState, characterRef }) {
   return null;
 }
 
-function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor, door2Position, setIsNearDoor2, door3Position, setIsNearDoor3, doorPositionLevel2, setIsNearDoorLevel2, doorPositionLevel3, setIsNearDoorLevel3, doorPositionLevel4, setIsNearDoorLevel4 }) {
+function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor, door2Position, setIsNearDoor2, door3Position, setIsNearDoor3, doorPositionLevel2, setIsNearDoorLevel2, doorPositionLevel3, setIsNearDoorLevel3, doorPositionLevel4, setIsNearDoorLevel4, spawnPosition }) {
   const { scene, animations } = useGLTF('/resources/GameView/Suit.glb');
   const { actions } = useAnimations(animations, characterRef);
 
   const { forward, backward, left, right, shift, e, log } = useKeyboardControls();
   const [currentAnimation, setCurrentAnimation] = useState('none');
-  const prevGameStateRef = useRef(gameState); // 이전 게임 상태 추적
 
   // 발걸음 소리를 위한 오디오 시스템
   const stepAudioRef = useRef(null);
@@ -829,8 +828,6 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
   const rigidBodyRef = useRef(); // Rapier RigidBody 참조
   const currentRotationRef = useRef(new THREE.Quaternion()); // 현재 회전 저장 (모델용)
   const modelGroupRef = useRef(); // 캐릭터 모델 그룹 참조
-  const returnSpawnPosRef = useRef(null); // Level1 복귀 시 스폰 위치 저장
-  const teleportRequest = useRef(null); // 위치 변경 요청을 위한 큐
 
   // 발걸음 소리 로드 및 재생 함수
   useEffect(() => {
@@ -915,61 +912,7 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
     if (modelGroupRef.current) {
       characterRef.current = modelGroupRef.current;
     }
-
-    // 레벨 전환 시 캐릭터 위치 리셋
-    if (rigidBodyRef.current) {
-      const prevState = prevGameStateRef.current;
-
-      if (gameState === 'playing_level2') {
-        console.log('=== Level2 초기 스폰 요청 ===');
-        teleportRequest.current = { x: 0, y: 2, z: 0 };
-      } else if (gameState === 'playing_level3') {
-        if (prevState === 'returning_to_level3_from_level4') {
-          const spawnPos = returnSpawnPosRef.current || { x: 0, y: 2, z: 0 };
-          console.log('=== Level3 복귀 요청 (from Level4) ===');
-          console.log('목표 스폰 위치:', spawnPos);
-          teleportRequest.current = spawnPos;
-          returnSpawnPosRef.current = null;
-        } else if (prevState !== 'playing_level3') {
-          console.log('=== Level3 초기 스폰 요청 (이전 상태:', prevState, ') ===');
-          teleportRequest.current = { x: 0, y: 2, z: 0 };
-        }
-      } else if (gameState === 'playing_level4') {
-        console.log('=== Level4 초기 스폰 요청 ===');
-        teleportRequest.current = { x: 0, y: 2, z: 0 };
-      } else if (gameState === 'returning_to_level3_from_level4') {
-        const spawnPos = { x: -40.51, y: 0.32, z: -16.39 };
-        console.log('=== Level3 복귀 시작 (from Level4) ===');
-        returnSpawnPosRef.current = spawnPos;
-        setTimeout(() => setGameState('playing_level3'), 150);
-      } else if (gameState === 'returning_to_level1') {
-        const spawnPos = { x: 10.12, y: 0.29, z: -62.64 };
-        console.log('=== Level1 복귀 시작 (from Level2) ===');
-        returnSpawnPosRef.current = spawnPos;
-        setTimeout(() => setGameState('playing_level1'), 150);
-      } else if (gameState === 'returning_to_level1_from_level3') {
-        const spawnPos = { x: -41.85, y: 0.29, z: -25.70 };
-        console.log('=== Level1 복귀 시작 (from Level3) ===');
-        returnSpawnPosRef.current = spawnPos;
-        setTimeout(() => setGameState('playing_level1'), 150);
-      } else if (gameState === 'playing_level1') {
-        if (prevState === 'returning_to_level1' || prevState === 'returning_to_level1_from_level3') {
-          const spawnPos = returnSpawnPosRef.current || { x: 0, y: 2, z: 0 };
-          console.log('=== Level1 복귀 요청 (from', prevState === 'returning_to_level1' ? 'Level2' : 'Level3', ') ===');
-          console.log('목표 스폰 위치:', spawnPos);
-          teleportRequest.current = spawnPos;
-          returnSpawnPosRef.current = null;
-        } else if (prevState !== 'playing_level1') {
-          console.log('=== Level1 초기 스폰 요청 (이전 상태:', prevState, ') ===');
-          teleportRequest.current = { x: 0, y: 2, z: 0 };
-        }
-      }
-
-      // 이전 상태 업데이트
-      prevGameStateRef.current = gameState;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameState]);
+  }, []);
 
   useEffect(() => {
     let animToPlay = 'Idle';
@@ -999,13 +942,6 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
   useFrame((state, delta) => {
     if (!rigidBodyRef.current || !modelGroupRef.current) return;
 
-    // 위치 변경 요청 처리
-    if (teleportRequest.current) {
-      rigidBodyRef.current.setTranslation(teleportRequest.current, true);
-      rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-      teleportRequest.current = null; // 요청 처리 후 초기화
-    }
-    
     if (gameState !== 'playing_level1' && gameState !== 'playing_level2' && gameState !== 'playing_level3' && gameState !== 'playing_level4') return;
 
     const speed = shift ? 18 : 8; // 물리 기반 속도 (걷기: 8, 뛰기: 18)
@@ -1227,7 +1163,7 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
         linearDamping={2.0} // 증가: 더 빠르게 감속 (떨림 방지)
         angularDamping={1.0} // 회전 감쇠 추가
         enabledRotations={[false, false, false]} // 물리적 회전 완전 잠금
-        position={[0, 2, 0]} // 시작 위치
+        position={spawnPosition} // 동적 스폰 위치
         lockRotations={true} // 회전 완전 잠금
         canSleep={false} // 절대 sleep 상태로 전환되지 않음 (플레이어 캐릭터용)
       >
@@ -1235,7 +1171,7 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       </RigidBody>
 
       {/* 캐릭터 모델 (RigidBody와 분리) */}
-      <group ref={modelGroupRef} visible={gameState !== 'returning_to_level1' && gameState !== 'returning_to_level1_from_level3' && gameState !== 'returning_to_level3_from_level4'}>
+      <group ref={modelGroupRef}>
         <primitive
           ref={characterRef}
           object={scene}
@@ -2517,14 +2453,37 @@ function App() {
   const [isNearDoorLevel3, setIsNearDoorLevel3] = useState(false); // Level3 문 근처에 있는지 여부
   const [isNearDoorLevel4, setIsNearDoorLevel4] = useState(false); // Level4 문 근처에 있는지 여부
   const [isFading, setIsFading] = useState(false); // 페이드 전환 상태
+  const [spawnPosition, setSpawnPosition] = useState([0, 2, 0]); // 캐릭터 스폰 위치
 
   // 페이드 효과와 함께 레벨 전환
   const setGameStateWithFade = (newState) => {
     setIsFading(true); // 페이드 아웃 시작
 
-    // 페이드 아웃 후 레벨 전환
+    // 페이드 아웃 후 레벨 전환 및 스폰 위치 설정
     setTimeout(() => {
-      setGameState(newState);
+      // 레벨 복귀 시 스폰 위치 설정 및 목적지 상태로 즉시 전환
+      if (newState === 'returning_to_level1') {
+        setSpawnPosition([9.96, 0.29, -61.47]); // Level2에서 Level1로
+        setGameState('playing_level1');
+      } else if (newState === 'returning_to_level1_from_level3') {
+        setSpawnPosition([-41.16, 0.29, -26.00]); // Level3에서 Level1로
+        setGameState('playing_level1');
+      } else if (newState === 'returning_to_level3_from_level4') {
+        setSpawnPosition([-40.53, 0.32, -16.26]); // Level4에서 Level3로
+        setGameState('playing_level3');
+      } else if (newState === 'playing_level2') {
+        setSpawnPosition([0, 2, 0]); // Level2 초기 스폰
+        setGameState('playing_level2');
+      } else if (newState === 'playing_level3') {
+        setSpawnPosition([0, 2, 0]); // Level3 초기 스폰
+        setGameState('playing_level3');
+      } else if (newState === 'playing_level4') {
+        setSpawnPosition([0, 2, 0]); // Level4 초기 스폰
+        setGameState('playing_level4');
+      } else if (newState === 'playing_level1') {
+        setSpawnPosition([0, 2, 0]); // Level1 초기 스폰
+        setGameState('playing_level1');
+      }
     }, 400); // 0.4초 페이드 아웃
 
     // 전체 애니메이션 완료 후 오버레이 제거
@@ -2568,37 +2527,10 @@ function App() {
     }
   }, [isDarkMode]);
 
-  // 레벨 전환 시 문 위치 리셋 (물리 엔진 메모리 안전성을 위해)
-  useEffect(() => {
-    // Level4를 벗어날 때 문 위치 리셋
-    if (gameState === 'returning_to_level3_from_level4') {
-      setDoorPositionLevel4(null);
-    }
-    // Level3를 벗어날 때 문 위치 리셋
-    if (gameState === 'returning_to_level1_from_level3' || gameState === 'playing_level4') {
-      setDoor3Position(null);
-    }
-    // Level2를 벗어날 때 문 위치 리셋
-    if (gameState === 'returning_to_level1') {
-      setDoorPositionLevel2(null);
-    }
-    // Level1를 벗어날 때 문 위치 리셋
-    if (gameState === 'playing_level2' || gameState === 'playing_level3') {
-      setDoorPosition(null);
-      setDoor2Position(null);
-    }
-  }, [gameState]);
-
-  // Physics key - 전환 상태에서 목적지 레벨 사용
+  // Physics key - spawnPosition이 변경되면 Physics를 재생성
   const getPhysicsKey = () => {
-    if (gameState === 'playing_level1') return 'level1';
-    if (gameState === 'playing_level2') return 'level2';
-    if (gameState === 'playing_level3') return 'level3';
-    if (gameState === 'playing_level4') return 'level4';
-    // 전환 상태에서는 목적지 레벨로 즉시 전환 (물리 엔진 재생성)
-    if (gameState === 'returning_to_level1' || gameState === 'returning_to_level1_from_level3') return 'level1-return';
-    if (gameState === 'returning_to_level3_from_level4') return 'level3-return';
-    return gameState; // gameState를 그대로 사용하여 매번 재생성
+    // spawnPosition을 문자열로 변환하여 key로 사용
+    return `${gameState}-${spawnPosition.join(',')}`;
   };
 
   return (
@@ -2652,7 +2584,7 @@ function App() {
 
         <Suspense fallback={null}>
           <Physics key={getPhysicsKey()} gravity={[0, -40, 0]}>
-            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} door2Position={door2Position} setIsNearDoor2={setIsNearDoor2} door3Position={door3Position} setIsNearDoor3={setIsNearDoor3} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} doorPositionLevel3={doorPositionLevel3} setIsNearDoorLevel3={setIsNearDoorLevel3} doorPositionLevel4={doorPositionLevel4} setIsNearDoorLevel4={setIsNearDoorLevel4} />
+            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} door2Position={door2Position} setIsNearDoor2={setIsNearDoor2} door3Position={door3Position} setIsNearDoor3={setIsNearDoor3} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} doorPositionLevel3={doorPositionLevel3} setIsNearDoorLevel3={setIsNearDoorLevel3} doorPositionLevel4={doorPositionLevel4} setIsNearDoorLevel4={setIsNearDoorLevel4} spawnPosition={spawnPosition} />
             <CameraController gameState={gameState} characterRef={characterRef} />
             <CameraLogger />
             {gameState === 'playing_level1' && (
@@ -2667,7 +2599,6 @@ function App() {
             {gameState === 'playing_level4' && (
               <Level4 key="level4" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel4} />
             )}
-            {/* 복귀 상태에서는 아무 레벨도 렌더링하지 않음 (검은 화면) */}
           </Physics>
         </Suspense>
         </Canvas>
