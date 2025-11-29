@@ -1028,10 +1028,11 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       currentRotationRef.current.slerp(targetQuaternion, 0.25);
 
       // 물리 기반 이동 (setLinvel 사용)
-      const currentVel = rigidBodyRef.current.linvel();
+      // Y축 속도만 먼저 추출 (참조를 즉시 해제하기 위해)
+      const currentY = rigidBodyRef.current.linvel().y;
       rigidBodyRef.current.setLinvel({
         x: direction.x * speed,
-        y: currentVel.y, // Y축은 중력 유지
+        y: currentY, // Y축은 중력 유지
         z: direction.z * speed
       });
 
@@ -1045,14 +1046,18 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       }
     } else {
       // 정지 시 속도 0
-      const currentVel = rigidBodyRef.current.linvel();
-      rigidBodyRef.current.setLinvel({ x: 0, y: currentVel.y, z: 0 });
+      // Y축 속도만 먼저 추출 (참조를 즉시 해제하기 위해)
+      const currentY = rigidBodyRef.current.linvel().y;
+      rigidBodyRef.current.setLinvel({ x: 0, y: currentY, z: 0 });
     }
 
     // RigidBody의 위치를 모델에 동기화
     const rbPosition = rigidBodyRef.current.translation();
-    modelGroupRef.current.position.set(rbPosition.x, rbPosition.y, rbPosition.z);
-    
+    const posX = rbPosition.x; // 값을 즉시 복사하여 Rust 참조 해제
+    const posY = rbPosition.y;
+    const posZ = rbPosition.z;
+    modelGroupRef.current.position.set(posX, posY, posZ);
+
     // 모델의 회전은 입력에 의한 회전만 적용
     modelGroupRef.current.quaternion.copy(currentRotationRef.current);
 
@@ -1061,7 +1066,7 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
 
     // door001 상호작용 감지 (Level1에서만)
     if (gameState === 'playing_level1' && doorPosition) {
-      const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
+      const charPos = new THREE.Vector3(posX, posY, posZ);
       const distance = charPos.distanceTo(doorPosition);
 
       if (distance < doorInteractionDistance) {
@@ -1084,7 +1089,7 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
 
     // door 상호작용 감지 (Level1에서만 - Level3로 가는 문)
     if (gameState === 'playing_level1' && door2Position) {
-      const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
+      const charPos = new THREE.Vector3(posX, posY, posZ);
       const distance = charPos.distanceTo(door2Position);
 
       if (distance < doorInteractionDistance) {
@@ -1107,7 +1112,7 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
 
     // door001 상호작용 감지 (Level2에서만)
     if (gameState === 'playing_level2' && doorPositionLevel2) {
-      const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
+      const charPos = new THREE.Vector3(posX, posY, posZ);
       const distance = charPos.distanceTo(doorPositionLevel2);
 
       if (distance < doorInteractionDistance) {
@@ -1130,7 +1135,7 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
 
     // door 상호작용 감지 (Level3에서만 - Level1로 돌아가는 문)
     if (gameState === 'playing_level3' && doorPositionLevel3) {
-      const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
+      const charPos = new THREE.Vector3(posX, posY, posZ);
       const distance = charPos.distanceTo(doorPositionLevel3);
 
       if (distance < doorInteractionDistance) {
@@ -1153,7 +1158,7 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
 
     // door002 상호작용 감지 (Level3에서만 - Level4로 가는 문)
     if (gameState === 'playing_level3' && door3Position) {
-      const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
+      const charPos = new THREE.Vector3(posX, posY, posZ);
       const distance = charPos.distanceTo(door3Position);
 
       if (distance < doorInteractionDistance) {
@@ -1176,7 +1181,7 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
 
     // door002 상호작용 감지 (Level4에서만 - Level3로 돌아가는 문)
     if (gameState === 'playing_level4' && doorPositionLevel4) {
-      const charPos = new THREE.Vector3(rbPosition.x, rbPosition.y, rbPosition.z);
+      const charPos = new THREE.Vector3(posX, posY, posZ);
       const distance = charPos.distanceTo(doorPositionLevel4);
 
       if (distance < doorInteractionDistance) {
@@ -1200,8 +1205,11 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
     // C키로 캐릭터 위치 로그 (디버그)
     if (log) {
       const debugPosition = rigidBodyRef.current.translation();
+      const debugX = debugPosition.x;
+      const debugY = debugPosition.y;
+      const debugZ = debugPosition.z;
       console.log('=== 캐릭터 위치 ===');
-      console.log(`Position: x=${debugPosition.x.toFixed(2)}, y=${debugPosition.y.toFixed(2)}, z=${debugPosition.z.toFixed(2)}`);
+      console.log(`Position: x=${debugX.toFixed(2)}, y=${debugY.toFixed(2)}, z=${debugZ.toFixed(2)}`);
       console.log(`GameState: ${gameState}`);
       console.log('Level1 doorPosition:', doorPosition);
       console.log('Level2 doorPosition:', doorPositionLevel2);
@@ -2589,7 +2597,7 @@ function App() {
         )}
 
         <Suspense fallback={null}>
-          <Physics gravity={[0, -40, 0]} debug>
+          <Physics gravity={[0, -40, 0]}>
             <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} door2Position={door2Position} setIsNearDoor2={setIsNearDoor2} door3Position={door3Position} setIsNearDoor3={setIsNearDoor3} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} doorPositionLevel3={doorPositionLevel3} setIsNearDoorLevel3={setIsNearDoorLevel3} doorPositionLevel4={doorPositionLevel4} setIsNearDoorLevel4={setIsNearDoorLevel4} />
             <CameraController gameState={gameState} characterRef={characterRef} />
             <CameraLogger />
