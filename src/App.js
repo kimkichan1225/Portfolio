@@ -806,7 +806,7 @@ function CameraController({ gameState, characterRef }) {
   return null;
 }
 
-function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor, door2Position, setIsNearDoor2, door3Position, setIsNearDoor3, doorPositionLevel2, setIsNearDoorLevel2, doorPositionLevel3, setIsNearDoorLevel3, doorPositionLevel4, setIsNearDoorLevel4, cabinetTVPosition, setIsNearCabinetTV, setShowContactInfo, wallPosition, setIsNearWall, setShowProfile, asuraCabinetPosition, setIsNearAsuraCabinet, setShowFirstProject, conviCabinetPosition, setIsNearConviCabinet, setShowSecondProject, voidCabinetPosition, setIsNearVoidCabinet, setShowThirdProject, spawnPosition }) {
+function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor, door2Position, setIsNearDoor2, door3Position, setIsNearDoor3, doorPositionLevel2, setIsNearDoorLevel2, doorPositionLevel3, setIsNearDoorLevel3, doorPositionLevel4, setIsNearDoorLevel4, cabinetTVPosition, setIsNearCabinetTV, setShowContactInfo, wallPosition, setIsNearWall, setShowProfile, asuraCabinetPosition, setIsNearAsuraCabinet, setShowFirstProject, conviCabinetPosition, setIsNearConviCabinet, setShowSecondProject, voidCabinetPosition, setIsNearVoidCabinet, setShowThirdProject, frontendTablePosition, setIsNearFrontendTable, backendTablePosition, setIsNearBackendTable, gamedevTablePosition, setIsNearGamedevTable, toolsTablePosition, setIsNearToolsTable, spawnPosition }) {
   const { scene, animations } = useGLTF('/resources/GameView/Suit.glb');
   const { actions } = useAnimations(animations, characterRef);
 
@@ -1226,6 +1226,62 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       }
     } else {
       setIsNearVoidCabinet(false);
+    }
+
+    // FrontendTable 근접 감지 (Level3에서만, 자동 표시)
+    if (gameState === 'playing_level3' && frontendTablePosition) {
+      const charPos = new THREE.Vector3(posX, posY, posZ);
+      const distance = charPos.distanceTo(frontendTablePosition);
+
+      if (distance < doorInteractionDistance) {
+        setIsNearFrontendTable(true);
+      } else {
+        setIsNearFrontendTable(false);
+      }
+    } else {
+      setIsNearFrontendTable(false);
+    }
+
+    // BackendTable 근접 감지 (Level3에서만, 자동 표시)
+    if (gameState === 'playing_level3' && backendTablePosition) {
+      const charPos = new THREE.Vector3(posX, posY, posZ);
+      const distance = charPos.distanceTo(backendTablePosition);
+
+      if (distance < doorInteractionDistance) {
+        setIsNearBackendTable(true);
+      } else {
+        setIsNearBackendTable(false);
+      }
+    } else {
+      setIsNearBackendTable(false);
+    }
+
+    // GamedevTable 근접 감지 (Level3에서만, 자동 표시)
+    if (gameState === 'playing_level3' && gamedevTablePosition) {
+      const charPos = new THREE.Vector3(posX, posY, posZ);
+      const distance = charPos.distanceTo(gamedevTablePosition);
+
+      if (distance < doorInteractionDistance) {
+        setIsNearGamedevTable(true);
+      } else {
+        setIsNearGamedevTable(false);
+      }
+    } else {
+      setIsNearGamedevTable(false);
+    }
+
+    // ToolsTable 근접 감지 (Level3에서만, 자동 표시)
+    if (gameState === 'playing_level3' && toolsTablePosition) {
+      const charPos = new THREE.Vector3(posX, posY, posZ);
+      const distance = charPos.distanceTo(toolsTablePosition);
+
+      if (distance < doorInteractionDistance) {
+        setIsNearToolsTable(true);
+      } else {
+        setIsNearToolsTable(false);
+      }
+    } else {
+      setIsNearToolsTable(false);
     }
 
     // C키로 캐릭터 위치 로그 (디버그)
@@ -2259,7 +2315,7 @@ function Level2Map({ onDoorPositionFound, onAsuraCabinetPositionFound, onConviCa
 
 useGLTF.preload('/resources/GameView/Level2Map-v2.glb');
 
-function Level3Map({ onDoorPositionFound, onDoor2PositionFound, ...props }) {
+function Level3Map({ onDoorPositionFound, onDoor2PositionFound, onFrontendTablePositionFound, onBackendTablePositionFound, onGamedevTablePositionFound, onToolsTablePositionFound, ...props }) {
   const { scene } = useGLTF('/resources/GameView/Level3Map-v2.glb');
 
   // Level3Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
@@ -2286,9 +2342,41 @@ function Level3Map({ onDoorPositionFound, onDoor2PositionFound, ...props }) {
           onDoor2PositionFound(worldPos);
         }
       }
+      // FrontendTable 오브젝트 찾기
+      if (child.name === 'FrontendTable' || child.name.includes('Frontend')) {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        if (onFrontendTablePositionFound) {
+          onFrontendTablePositionFound(worldPos);
+        }
+      }
+      // BackendTable 오브젝트 찾기
+      if (child.name === 'BackendTable' || child.name.includes('Backend')) {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        if (onBackendTablePositionFound) {
+          onBackendTablePositionFound(worldPos);
+        }
+      }
+      // GamedevTable 오브젝트 찾기
+      if (child.name === 'GamedevTable' || child.name.includes('Gamedev')) {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        if (onGamedevTablePositionFound) {
+          onGamedevTablePositionFound(worldPos);
+        }
+      }
+      // ToolsTable 오브젝트 찾기
+      if (child.name === 'ToolsTable' || child.name.includes('Tools')) {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        if (onToolsTablePositionFound) {
+          onToolsTablePositionFound(worldPos);
+        }
+      }
     });
     return cloned;
-  }, [scene, onDoorPositionFound, onDoor2PositionFound]);
+  }, [scene, onDoorPositionFound, onDoor2PositionFound, onFrontendTablePositionFound, onBackendTablePositionFound, onGamedevTablePositionFound, onToolsTablePositionFound]);
 
   return (
     <RigidBody type="fixed" colliders="trimesh">
@@ -2618,7 +2706,7 @@ function Level2({ characterRef, onDoorPositionFound, onAsuraCabinetPositionFound
   );
 }
 
-function Level3({ characterRef, onDoorPositionFound, onDoor2PositionFound }) {
+function Level3({ characterRef, onDoorPositionFound, onDoor2PositionFound, onFrontendTablePositionFound, onBackendTablePositionFound, onGamedevTablePositionFound, onToolsTablePositionFound }) {
   const { scene } = useThree();
 
   // Level3 배경을 검정색으로 설정
@@ -2660,6 +2748,10 @@ function Level3({ characterRef, onDoorPositionFound, onDoor2PositionFound }) {
       <Level3Map
         onDoorPositionFound={onDoorPositionFound}
         onDoor2PositionFound={onDoor2PositionFound}
+        onFrontendTablePositionFound={onFrontendTablePositionFound}
+        onBackendTablePositionFound={onBackendTablePositionFound}
+        onGamedevTablePositionFound={onGamedevTablePositionFound}
+        onToolsTablePositionFound={onToolsTablePositionFound}
         position={[0, 0, 0]}
         scale={1}
         rotation={[0, 0, 0]}
@@ -2864,6 +2956,14 @@ function App() {
   const [voidCabinetPosition, setVoidCabinetPosition] = useState(null); // Level2 VoidCabinet 위치
   const [isNearVoidCabinet, setIsNearVoidCabinet] = useState(false); // VoidCabinet 근처에 있는지 여부
   const [showThirdProject, setShowThirdProject] = useState(false); // 세 번째 프로젝트 모달 표시 여부
+  const [frontendTablePosition, setFrontendTablePosition] = useState(null); // Level3 FrontendTable 위치
+  const [isNearFrontendTable, setIsNearFrontendTable] = useState(false); // FrontendTable 근처에 있는지 여부
+  const [backendTablePosition, setBackendTablePosition] = useState(null); // Level3 BackendTable 위치
+  const [isNearBackendTable, setIsNearBackendTable] = useState(false); // BackendTable 근처에 있는지 여부
+  const [gamedevTablePosition, setGamedevTablePosition] = useState(null); // Level3 GamedevTable 위치
+  const [isNearGamedevTable, setIsNearGamedevTable] = useState(false); // GamedevTable 근처에 있는지 여부
+  const [toolsTablePosition, setToolsTablePosition] = useState(null); // Level3 ToolsTable 위치
+  const [isNearToolsTable, setIsNearToolsTable] = useState(false); // ToolsTable 근처에 있는지 여부
   const [isFading, setIsFading] = useState(false); // 페이드 전환 상태
   const [spawnPosition, setSpawnPosition] = useState([0, 2, 0]); // 캐릭터 스폰 위치
 
@@ -3001,7 +3101,7 @@ function App() {
 
         <Suspense fallback={null}>
           <Physics key={getPhysicsKey()} gravity={[0, -40, 0]}>
-            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} door2Position={door2Position} setIsNearDoor2={setIsNearDoor2} door3Position={door3Position} setIsNearDoor3={setIsNearDoor3} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} doorPositionLevel3={doorPositionLevel3} setIsNearDoorLevel3={setIsNearDoorLevel3} doorPositionLevel4={doorPositionLevel4} setIsNearDoorLevel4={setIsNearDoorLevel4} cabinetTVPosition={cabinetTVPosition} setIsNearCabinetTV={setIsNearCabinetTV} setShowContactInfo={setShowContactInfo} wallPosition={wallPosition} setIsNearWall={setIsNearWall} setShowProfile={setShowProfile} asuraCabinetPosition={asuraCabinetPosition} setIsNearAsuraCabinet={setIsNearAsuraCabinet} setShowFirstProject={setShowFirstProject} conviCabinetPosition={conviCabinetPosition} setIsNearConviCabinet={setIsNearConviCabinet} setShowSecondProject={setShowSecondProject} voidCabinetPosition={voidCabinetPosition} setIsNearVoidCabinet={setIsNearVoidCabinet} setShowThirdProject={setShowThirdProject} spawnPosition={spawnPosition} />
+            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} door2Position={door2Position} setIsNearDoor2={setIsNearDoor2} door3Position={door3Position} setIsNearDoor3={setIsNearDoor3} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} doorPositionLevel3={doorPositionLevel3} setIsNearDoorLevel3={setIsNearDoorLevel3} doorPositionLevel4={doorPositionLevel4} setIsNearDoorLevel4={setIsNearDoorLevel4} cabinetTVPosition={cabinetTVPosition} setIsNearCabinetTV={setIsNearCabinetTV} setShowContactInfo={setShowContactInfo} wallPosition={wallPosition} setIsNearWall={setIsNearWall} setShowProfile={setShowProfile} asuraCabinetPosition={asuraCabinetPosition} setIsNearAsuraCabinet={setIsNearAsuraCabinet} setShowFirstProject={setShowFirstProject} conviCabinetPosition={conviCabinetPosition} setIsNearConviCabinet={setIsNearConviCabinet} setShowSecondProject={setShowSecondProject} voidCabinetPosition={voidCabinetPosition} setIsNearVoidCabinet={setIsNearVoidCabinet} setShowThirdProject={setShowThirdProject} frontendTablePosition={frontendTablePosition} setIsNearFrontendTable={setIsNearFrontendTable} backendTablePosition={backendTablePosition} setIsNearBackendTable={setIsNearBackendTable} gamedevTablePosition={gamedevTablePosition} setIsNearGamedevTable={setIsNearGamedevTable} toolsTablePosition={toolsTablePosition} setIsNearToolsTable={setIsNearToolsTable} spawnPosition={spawnPosition} />
             <CameraController gameState={gameState} characterRef={characterRef} />
             <CameraLogger />
             {gameState === 'playing_level1' && (
@@ -3011,7 +3111,7 @@ function App() {
               <Level2 key="level2" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel2} onAsuraCabinetPositionFound={setAsuraCabinetPosition} onConviCabinetPositionFound={setConviCabinetPosition} onVoidCabinetPositionFound={setVoidCabinetPosition} />
             )}
             {gameState === 'playing_level3' && (
-              <Level3 key="level3" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel3} onDoor2PositionFound={setDoor3Position} />
+              <Level3 key="level3" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel3} onDoor2PositionFound={setDoor3Position} onFrontendTablePositionFound={setFrontendTablePosition} onBackendTablePositionFound={setBackendTablePosition} onGamedevTablePositionFound={setGamedevTablePosition} onToolsTablePositionFound={setToolsTablePosition} />
             )}
             {gameState === 'playing_level4' && (
               <Level4 key="level4" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel4} onCabinetTVPositionFound={setCabinetTVPosition} onWallPositionFound={setWallPosition} />
@@ -3226,6 +3326,149 @@ function App() {
           project={projectsData[2]}
           onClose={() => setShowThirdProject(false)}
         />
+      )}
+
+      {/* 프론트엔드 기술 팝업 - Level3 FrontendTable 근처 */}
+      {!isWebMode && isNearFrontendTable && gameState === 'playing_level3' && (
+        <div className="frontend-tech-popup">
+          <div className="frontend-tech-content">
+            <h2>🎨 프로젝트별 Frontend 기술 스택</h2>
+            <div className="frontend-tech-list">
+              {projectsData.map((project, index) => {
+                // Frontend 관련 기술만 필터링
+                const frontendTechs = project.tech.filter(tech =>
+                  ['React', 'React 19', 'TypeScript', 'Vite', 'Vite 6', 'TailwindCSS',
+                   'JavaScript', 'HTML5', 'CSS', 'Zustand', 'TanStack Query',
+                   'Three.js', 'React Three Fiber', 'Emotion', 'styled-components'].some(
+                    frontendKeyword => tech.includes(frontendKeyword)
+                  )
+                );
+
+                if (frontendTechs.length === 0) return null;
+
+                return (
+                  <div key={project.id} className="frontend-project-item">
+                    <h3>{project.title}</h3>
+                    <div className="tech-tags">
+                      {frontendTechs.map((tech, techIndex) => (
+                        <span key={techIndex} className="tech-tag">{tech}</span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 백엔드 기술 팝업 - Level3 BackendTable 근처 */}
+      {!isWebMode && isNearBackendTable && gameState === 'playing_level3' && (
+        <div className="backend-tech-popup">
+          <div className="backend-tech-content">
+            <h2>⚙️ 프로젝트별 Backend 기술 스택</h2>
+            <div className="backend-tech-list">
+              {projectsData.map((project, index) => {
+                // Backend 관련 기술만 필터링
+                const backendTechs = project.tech.filter(tech =>
+                  ['Node.js', 'Express', 'Socket.IO', 'Supabase', 'PostgreSQL',
+                   'MySQL', 'MongoDB', 'Redis', 'REST API', 'GraphQL',
+                   'JWT', 'OAuth', 'AWS', 'Docker', 'Kubernetes', 'Nginx',
+                   'Python', 'Django', 'Flask', 'FastAPI', 'Spring Boot', 'Java',
+                   'Go', 'Rust', 'C#', '.NET', 'Ruby', 'Rails'].some(
+                    backendKeyword => tech.includes(backendKeyword)
+                  )
+                );
+
+                if (backendTechs.length === 0) return null;
+
+                return (
+                  <div key={project.id} className="backend-project-item">
+                    <h3>{project.title}</h3>
+                    <div className="tech-tags">
+                      {backendTechs.map((tech, techIndex) => (
+                        <span key={techIndex} className="tech-tag backend-tag">{tech}</span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 게임 개발 기술 팝업 - Level3 GamedevTable 근처 */}
+      {!isWebMode && isNearGamedevTable && gameState === 'playing_level3' && (
+        <div className="gamedev-tech-popup">
+          <div className="gamedev-tech-content">
+            <h2>🎮 프로젝트별 Game Dev 기술 스택</h2>
+            <div className="gamedev-tech-list">
+              {projectsData.map((project, index) => {
+                // Game Dev 관련 기술만 필터링
+                const gamedevTechs = project.tech.filter(tech =>
+                  ['Three.js', 'React Three Fiber', 'WebGL', 'Unity', 'Unreal Engine',
+                   'Godot', 'Phaser', 'PixiJS', 'Babylon.js', 'PlayCanvas',
+                   'GLTF', 'GLB', 'Blender', 'Maya', '3D', 'Canvas',
+                   'Game Engine', 'Physics', 'Rapier', 'Cannon.js', 'Ammo.js'].some(
+                    gamedevKeyword => tech.includes(gamedevKeyword)
+                  )
+                );
+
+                if (gamedevTechs.length === 0) return null;
+
+                return (
+                  <div key={project.id} className="gamedev-project-item">
+                    <h3>{project.title}</h3>
+                    <div className="tech-tags">
+                      {gamedevTechs.map((tech, techIndex) => (
+                        <span key={techIndex} className="tech-tag gamedev-tag">{tech}</span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 도구 팝업 - Level3 ToolsTable 근처 */}
+      {!isWebMode && isNearToolsTable && gameState === 'playing_level3' && (
+        <div className="tools-tech-popup">
+          <div className="tools-tech-content">
+            <h2>🛠️ 프로젝트별 Tools & 개발 도구</h2>
+            <div className="tools-tech-list">
+              {projectsData.map((project, index) => {
+                // Tools 관련 기술만 필터링
+                const toolsTechs = project.tech.filter(tech =>
+                  ['Git', 'GitHub', 'GitLab', 'Bitbucket', 'npm', 'yarn', 'pnpm',
+                   'Webpack', 'Vite', 'Vite 6', 'Rollup', 'Babel', 'ESLint', 'Prettier',
+                   'Jest', 'Vitest', 'Cypress', 'Playwright', 'Testing Library',
+                   'Postman', 'Insomnia', 'VS Code', 'IntelliJ', 'WebStorm',
+                   'Figma', 'Adobe XD', 'Sketch', 'Photoshop', 'Illustrator',
+                   'Jira', 'Trello', 'Notion', 'Slack', 'Discord',
+                   'Vercel', 'Netlify', 'Heroku', 'Railway', 'Render'].some(
+                    toolKeyword => tech.includes(toolKeyword)
+                  )
+                );
+
+                if (toolsTechs.length === 0) return null;
+
+                return (
+                  <div key={project.id} className="tools-project-item">
+                    <h3>{project.title}</h3>
+                    <div className="tech-tags">
+                      {toolsTechs.map((tech, techIndex) => (
+                        <span key={techIndex} className="tech-tag tools-tag">{tech}</span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
