@@ -19,7 +19,7 @@ const projectsData = [
     description: 'Node.js와 Socket.IO를 활용한 실시간 웹 기반 멀티플레이어 액션 게임',
     image: '/FirstProject.png',
     video: '/FirstProjectGamePlay.mp4',
-    tech: ['Node.js', 'Express', 'Socket.IO', 'JavaScript', 'HTML5'],
+    tech: ['Node.js', 'Express', 'Socket.IO', 'JavaScript', 'HTML5', 'CSS3', 'Three.js'],
     overview: [
       'Node.js + Express + Socket.IO 기반 실시간 멀티플레이어 3D 전투 게임',
       'Three.js를 활용한 3인칭 시점 3D 렌더링 및 캐릭터 애니메이션',
@@ -85,7 +85,7 @@ const projectsData = [
     description: 'React 19 + TypeScript로 구축한 실시간 편의점 통합 관리 플랫폼 (98% 완성)',
     image: '/SecondProject.png',
     video: '/SecondProjectPlay.mov',
-    tech: ['React 19', 'TypeScript', 'Vite 6', 'Supabase', 'PostgreSQL', 'TailwindCSS', 'Zustand', 'TanStack Query'],
+    tech: ['React 19', 'TypeScript', 'Vite 6', 'Supabase', 'PostgreSQL', 'TailwindCSS', 'CSS3', 'Zustand', 'TanStack Query'],
     overview: [
       'React 19 + TypeScript + Vite 6 기반 모던 프론트엔드 아키텍처',
       'Supabase (PostgreSQL 15) + Row Level Security (RLS) 보안 시스템',
