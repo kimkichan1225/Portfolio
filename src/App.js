@@ -2058,7 +2058,7 @@ useGLTF.preload('/instagramlogo.glb');
 useGLTF.preload('/toolbox.glb');
 
 function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPositionsFound, ...props }) {
-  const { scene } = useGLTF('/resources/GameView/Level1Map.glb');
+  const { scene } = useGLTF('/resources/GameView/Level1Map-v3.glb');
 
   // Level1Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
   const clonedScene = useMemo(() => {
@@ -2090,7 +2090,6 @@ function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPos
       if (child.name && child.name.startsWith('Streetlight')) {
         const worldPos = new THREE.Vector3();
         child.getWorldPosition(worldPos);
-        console.log(`Found ${child.name} at position:`, worldPos);
         streetlightPositions.push({
           name: child.name,
           position: worldPos
@@ -2100,10 +2099,7 @@ function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPos
 
     // 가로등 위치들 전달
     if (onStreetlightPositionsFound && streetlightPositions.length > 0) {
-      console.log(`Total streetlights found: ${streetlightPositions.length}`);
       onStreetlightPositionsFound(streetlightPositions);
-    } else {
-      console.log('No streetlights found in Level1Map');
     }
 
     return cloned;
@@ -2117,7 +2113,7 @@ function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPos
 }
 
 useGLTF.preload('/resources/GameView/Suit.glb');
-useGLTF.preload('/resources/GameView/Level1Map.glb');
+useGLTF.preload('/resources/GameView/Level1Map-v3.glb');
 
 function Level2Map({ onDoorPositionFound, onAsuraCabinetPositionFound, onConviCabinetPositionFound, onVoidCabinetPositionFound, ...props }) {
   const { scene } = useGLTF('/resources/GameView/Level2Map-v2.glb');
