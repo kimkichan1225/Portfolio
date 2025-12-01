@@ -1935,3 +1935,262 @@
     padding: 0.4rem 0.8rem;
   }
 }
+
+/* Portfolio Popup - Level4 deskCorner (게임뷰 전용) */
+.portfolio-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease-out;
+  backdrop-filter: blur(10px);
+}
+
+.portfolio-popup-content {
+  position: relative;
+  width: 90%;
+  max-width: 800px;
+  max-height: 85vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
+  animation: slideUp 0.4s ease-out;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.portfolio-popup-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.portfolio-popup-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.portfolio-popup-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+.portfolio-popup-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.portfolio-popup-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  color: white;
+  font-size: 1.8rem;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.portfolio-popup-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+}
+
+.portfolio-popup-title {
+  color: white;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.portfolio-popup-description {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.portfolio-popup-section {
+  margin-bottom: 2rem;
+}
+
+.portfolio-popup-section h3 {
+  color: white;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.portfolio-tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.portfolio-tech-tag {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.portfolio-tech-tag:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.portfolio-feature-list,
+.portfolio-achievement-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.portfolio-feature-list li,
+.portfolio-achievement-list li {
+  color: white;
+  padding: 0.6rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.portfolio-feature-list li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: bold;
+}
+
+.portfolio-achievement-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #4ade80;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.portfolio-popup-links {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  justify-content: center;
+}
+
+.portfolio-link-button {
+  flex: 1;
+  max-width: 200px;
+  padding: 0.9rem 1.5rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.github-button {
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.github-button:hover {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.demo-button {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.demo-button:hover {
+  background: rgba(255, 255, 255, 0.35);
+  border-color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+}
+
+/* Animations */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive design for portfolio popup */
+@media (max-width: 768px) {
+  .portfolio-popup-content {
+    width: 95%;
+    padding: 1.8rem;
+    max-height: 90vh;
+  }
+
+  .portfolio-popup-title {
+    font-size: 1.7rem;
+  }
+
+  .portfolio-popup-description {
+    font-size: 1rem;
+  }
+
+  .portfolio-popup-section h3 {
+    font-size: 1.2rem;
+  }
+
+  .portfolio-tech-tag {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .portfolio-feature-list li,
+  .portfolio-achievement-list li {
+    font-size: 0.95rem;
+  }
+
+  .portfolio-popup-links {
+    flex-direction: column;
+  }
+
+  .portfolio-link-button {
+    max-width: 100%;
+  }
+}

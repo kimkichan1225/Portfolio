@@ -210,63 +210,6 @@ const projectsData = [
         file: '/ThirdProjectPowerPoint.pdf'
       }
     ]
-  },
-  {
-    id: 4,
-    title: '3D Interactive Portfolio',
-    description: 'React Three Fiber로 구축한 3D 인터랙티브 포트폴리오 웹사이트',
-    image: null,
-    video: null,
-    tech: ['React 19', 'Three.js', 'React Three Fiber', 'JavaScript', 'HTML5', 'CSS3', 'Vite', 'Netlify'],
-    overview: [
-      'React 19 + Three.js + React Three Fiber 기반 3D 게임형 포트폴리오',
-      '웹 모드와 게임 모드 간 원활한 전환 (듀얼 모드 시스템)',
-      '4개의 독특한 3D 레벨 (자연 마을, 도시 레이싱, 오피스, 우주 공간)',
-      'GLTF 애니메이션 캐릭터 컨트롤 (Idle, Walk, Run 애니메이션)',
-      'Rapier 물리 엔진 기반 캐릭터 이동 및 충돌 감지',
-      '레벨 간 포털/도어 상호작용 시스템 (E키 상호작용)',
-      '드라이브 가능한 차량 시스템 (Level 2 - 레이싱 환경)',
-      '프로젝트별 기술 스택 팝업 시스템 (Frontend, Backend, Game Dev, Tools)',
-      '커스텀 GLSL 셰이더 (그라디언트 바닥, 포털 볼텍스 효과)',
-      'Netlify 배포 및 최적화된 SPA 라우팅'
-    ],
-    achievements: [
-      '웹과 게임을 하나의 포트폴리오로 통합한 독창적인 UX',
-      'Three.js와 React의 완벽한 통합 (선언적 3D 렌더링)',
-      '물리 기반 캐릭터 컨트롤러 구현 (스프린트, 회전, 관성)',
-      '4개 레벨 간 원활한 전환 시스템 (페이드 효과 + 스폰 포지션 관리)',
-      'Rapier RigidBody 재생성 패턴으로 Rust 차용 체커 오류 해결',
-      '커스텀 키보드 컨트롤 훅 (useKeyboardControls)',
-      '3D 모델 클로닝 및 섀도우 최적화 패턴',
-      '근접 감지 기반 인터랙션 시스템 (거리 계산 알고리즘)',
-      '반응형 UI 및 다크 모드 지원',
-      '프로젝트 모달 시스템 (상세 정보, 기술 스택, GitHub 링크)'
-    ],
-    challenges: [
-      {
-        title: 'React Three Fiber 생태계 학습',
-        description: 'Three.js의 명령형 API를 React의 선언적 패러다임에 맞게 변환하는 방법 학습. useFrame, useThree, useLoader 등 R3F 전용 훅 활용. GLTF 모델 로딩, 애니메이션 제어, 씬 그래프 관리를 JSX로 표현. Canvas 컴포넌트 내부와 외부의 상태 관리 차이 이해 및 ref를 통한 브리지 구현.'
-      },
-      {
-        title: 'Rapier 물리 엔진 통합 및 디버깅',
-        description: 'Rapier의 Rust 기반 Wasm 바인딩으로 인한 차용 체커 오류 해결. RigidBody 위치를 직접 변경하는 대신 Physics 컴포넌트를 key prop으로 재생성하여 스폰 포지션 설정. 레벨 전환 시 물리 세계를 완전히 재생성하는 패턴 개발. CapsuleCollider와 선형/각도 감쇠를 조정하여 자연스러운 캐릭터 움직임 구현.'
-      },
-      {
-        title: '레벨 전환 시스템 및 상태 머신',
-        description: '4개 레벨(playing_level1~4) + 6개 전환 상태로 구성된 상태 머신 설계. 페이드 아웃(400ms) → 상태/스폰 변경 → 페이드 인(1800ms) 타이밍 조율. 각 레벨별 복귀 스폰 포지션 관리 (Level1 ↔ Level2/3, Level3 ↔ Level4). 도어 상호작용 쿨다운(5초)으로 스팸 방지. 카메라 lerp 속도 조정으로 포털 전환 시 부드러운 추적.'
-      },
-      {
-        title: '3D 모델 최적화 및 섀도우 시스템',
-        description: 'useMemo로 GLTF 씬 클로닝하여 다중 인스턴스 생성. traverse()로 모든 메시에 castShadow/receiveShadow 활성화. 커스텀 셰이더 머티리얼에 Three.js 섀도우 맵 shader chunks 통합. DirectionalLight 설정 최적화 (shadowMapSize 8192, 카메라 절두체 조정). 대용량 모델(.glb) 프리로드 및 캐싱 전략.'
-      },
-      {
-        title: '근접 감지 인터랙션 시스템',
-        description: 'useFrame 내에서 매 프레임 캐릭터와 인터랙션 오브젝트 간 거리 계산 (THREE.Vector3.distanceTo). doorInteractionDistance(8 units) 임계값으로 UI 표시 제어. Level3의 4개 테이블(Frontend, Backend, Gamedev, Tools) 위치 감지 및 자동 팝업. Level4의 deskCorner는 E키 상호작용 방식. onPositionFound 콜백 패턴으로 부모 컴포넌트에 위치 전달.'
-      }
-    ],
-    github: 'https://github.com/kimkichan1225/Portfolio',
-    demo: 'https://kichan.site/',
-    reports: []
   }
 ];
 
@@ -3424,12 +3367,65 @@ function App() {
         />
       )}
 
-      {/* 포트폴리오 프로젝트 팝업 - Level4 deskCorner */}
-      {showPortfolioPopup && (
-        <ProjectModal
-          project={projectsData[3]}
-          onClose={() => setShowPortfolioPopup(false)}
-        />
+      {/* 포트폴리오 프로젝트 팝업 - Level4 deskCorner (게임뷰 전용) */}
+      {showPortfolioPopup && !isWebMode && (
+        <div className="portfolio-popup-overlay" onClick={() => setShowPortfolioPopup(false)}>
+          <div className="portfolio-popup-content" onClick={(e) => e.stopPropagation()}>
+            <button className="portfolio-popup-close" onClick={() => setShowPortfolioPopup(false)}>✕</button>
+
+            <h2 className="portfolio-popup-title">💼 3D Interactive Portfolio</h2>
+            <p className="portfolio-popup-description">React Three Fiber로 구축한 3D 인터랙티브 포트폴리오 웹사이트</p>
+
+            <div className="portfolio-popup-section">
+              <h3>🛠️ 기술 스택</h3>
+              <div className="portfolio-tech-tags">
+                <span className="portfolio-tech-tag">React 19</span>
+                <span className="portfolio-tech-tag">Three.js</span>
+                <span className="portfolio-tech-tag">React Three Fiber</span>
+                <span className="portfolio-tech-tag">JavaScript</span>
+                <span className="portfolio-tech-tag">HTML5</span>
+                <span className="portfolio-tech-tag">CSS3</span>
+                <span className="portfolio-tech-tag">Vite</span>
+                <span className="portfolio-tech-tag">Netlify</span>
+              </div>
+            </div>
+
+            <div className="portfolio-popup-section">
+              <h3>📋 주요 기능</h3>
+              <ul className="portfolio-feature-list">
+                <li>웹 모드와 게임 모드 간 원활한 전환 (듀얼 모드 시스템)</li>
+                <li>4개의 독특한 3D 레벨 (자연 마을, 도시 레이싱, 오피스, 우주 공간)</li>
+                <li>GLTF 애니메이션 캐릭터 컨트롤 (Idle, Walk, Run)</li>
+                <li>Rapier 물리 엔진 기반 캐릭터 이동 및 충돌 감지</li>
+                <li>레벨 간 포털/도어 상호작용 시스템</li>
+                <li>드라이브 가능한 차량 시스템 (Level 2)</li>
+                <li>프로젝트별 기술 스택 팝업 시스템</li>
+                <li>커스텀 GLSL 셰이더 (그라디언트 바닥, 포털 볼텍스)</li>
+              </ul>
+            </div>
+
+            <div className="portfolio-popup-section">
+              <h3>🎯 주요 성과</h3>
+              <ul className="portfolio-achievement-list">
+                <li>웹과 게임을 하나로 통합한 독창적인 UX</li>
+                <li>Three.js와 React의 완벽한 통합</li>
+                <li>물리 기반 캐릭터 컨트롤러 구현</li>
+                <li>4개 레벨 간 원활한 전환 시스템</li>
+                <li>Rapier RigidBody 재생성 패턴으로 오류 해결</li>
+                <li>근접 감지 기반 인터랙션 시스템</li>
+              </ul>
+            </div>
+
+            <div className="portfolio-popup-links">
+              <a href="https://github.com/kimkichan1225/Portfolio" target="_blank" rel="noopener noreferrer" className="portfolio-link-button github-button">
+                <span>GitHub</span>
+              </a>
+              <a href="https://kichan.site/" target="_blank" rel="noopener noreferrer" className="portfolio-link-button demo-button">
+                <span>Live Demo</span>
+              </a>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* 프론트엔드 기술 팝업 - Level3 FrontendTable 근처 */}
