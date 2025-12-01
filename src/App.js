@@ -2113,14 +2113,12 @@ function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPos
           position: worldPos
         });
       }
-      // Greenlight 오브젝트들 찾기 (Greenlight004~009만)
+      // Greenlight 오브젝트들 찾기 
       if (child.name && (
-        child.name === 'Greenlight004' ||
-        child.name === 'Greenlight005' ||
-        child.name === 'Greenlight006' ||
-        child.name === 'Greenlight007' ||
-        child.name === 'Greenlight008' ||
-        child.name === 'Greenlight009'
+        child.name === 'Greenlight' ||
+        child.name === 'Greenlight001' ||
+        child.name === 'Greenlight002' ||
+        child.name === 'Greenlight003' 
       )) {
         const worldPos = new THREE.Vector3();
         child.getWorldPosition(worldPos);
@@ -2326,6 +2324,15 @@ function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, isDar
   const [streetlightPositions, setStreetlightPositions] = useState([]);
   const [redlightPositions, setRedlightPositions] = useState([]);
   const [greenlightPositions, setGreenlightPositions] = useState([]);
+  const [showRedLights, setShowRedLights] = useState(true);
+
+  // 불빛 깜빡임 효과
+  useFrame((state) => {
+    const time = state.clock.elapsedTime;
+    // 1초마다 전환 (0.5초 빨강, 0.5초 초록)
+    const isRed = Math.floor(time * 2) % 2 === 0;
+    setShowRedLights(isRed);
+  });
 
   return (
     <>
@@ -2370,8 +2377,8 @@ function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, isDar
         </group>
       ))}
 
-      {/* 빨간 불빛 장식 */}
-      {redlightPositions.map((light, index) => (
+      {/* 빨간 불빛 장식 - showRedLights가 true일 때만 표시 */}
+      {showRedLights && redlightPositions.map((light, index) => (
         <group key={`redlight-${index}`} position={[light.position.x, light.position.y, light.position.z]}>
           {/* 빨간 포인트 라이트 */}
           <pointLight
@@ -2394,8 +2401,8 @@ function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, isDar
         </group>
       ))}
 
-      {/* 초록 불빛 장식 */}
-      {greenlightPositions.map((light, index) => (
+      {/* 초록 불빛 장식 - showRedLights가 false일 때만 표시 */}
+      {!showRedLights && greenlightPositions.map((light, index) => (
         <group key={`greenlight-${index}`} position={[light.position.x, light.position.y, light.position.z]}>
           {/* 초록 포인트 라이트 */}
           <pointLight
