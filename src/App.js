@@ -2057,13 +2057,15 @@ useGLTF.preload('/mailbox.glb');
 useGLTF.preload('/instagramlogo.glb');
 useGLTF.preload('/toolbox.glb');
 
-function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPositionsFound, ...props }) {
+function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPositionsFound, onRedlightPositionsFound, onGreenlightPositionsFound, ...props }) {
   const { scene } = useGLTF('/resources/GameView/Level1Map-v3.glb');
 
   // Level1Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
   const clonedScene = useMemo(() => {
     const cloned = scene.clone();
     const streetlightPositions = [];
+    const redlightPositions = [];
+    const greenlightPositions = [];
 
     cloned.traverse((child) => {
       if (child.isMesh) {
@@ -2095,15 +2097,55 @@ function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPos
           position: worldPos
         });
       }
+      // Redlight 오브젝트들 찾기 (Redlight004~009만)
+      if (child.name && (
+        child.name === 'Redlight004' ||
+        child.name === 'Redlight005' ||
+        child.name === 'Redlight006' ||
+        child.name === 'Redlight007' ||
+        child.name === 'Redlight008' ||
+        child.name === 'Redlight009'
+      )) {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        redlightPositions.push({
+          name: child.name,
+          position: worldPos
+        });
+      }
+      // Greenlight 오브젝트들 찾기 (Greenlight004~009만)
+      if (child.name && (
+        child.name === 'Greenlight004' ||
+        child.name === 'Greenlight005' ||
+        child.name === 'Greenlight006' ||
+        child.name === 'Greenlight007' ||
+        child.name === 'Greenlight008' ||
+        child.name === 'Greenlight009'
+      )) {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        greenlightPositions.push({
+          name: child.name,
+          position: worldPos
+        });
+      }
     });
 
     // 가로등 위치들 전달
     if (onStreetlightPositionsFound && streetlightPositions.length > 0) {
       onStreetlightPositionsFound(streetlightPositions);
     }
+    // 빨간 불빛 위치들 전달
+    if (onRedlightPositionsFound && redlightPositions.length > 0) {
+      onRedlightPositionsFound(redlightPositions);
+    }
+    // 초록 불빛 위치들 전달
+    if (onGreenlightPositionsFound && greenlightPositions.length > 0) {
+      onGreenlightPositionsFound(greenlightPositions);
+    }
 
     return cloned;
-  }, [scene, onDoorPositionFound, onDoor2PositionFound, onStreetlightPositionsFound]);
+  }, [scene, onDoorPositionFound, onDoor2PositionFound, onStreetlightPositionsFound, onRedlightPositionsFound, onGreenlightPositionsFound]);
 
   return (
     <RigidBody type="fixed" colliders="trimesh">
@@ -2282,6 +2324,8 @@ useGLTF.preload('/resources/GameView/Level4Map.glb');
 
 function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, isDarkMode }) {
   const [streetlightPositions, setStreetlightPositions] = useState([]);
+  const [redlightPositions, setRedlightPositions] = useState([]);
+  const [greenlightPositions, setGreenlightPositions] = useState([]);
 
   return (
     <>
@@ -2292,6 +2336,8 @@ function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, isDar
         onDoorPositionFound={onDoorPositionFound}
         onDoor2PositionFound={onDoor2PositionFound}
         onStreetlightPositionsFound={setStreetlightPositions}
+        onRedlightPositionsFound={setRedlightPositions}
+        onGreenlightPositionsFound={setGreenlightPositions}
         position={[0, 0, 0]}
         scale={1}
         rotation={[0, 0, 0]}
@@ -2321,6 +2367,54 @@ function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, isDar
             shadow-mapSize-width={512}
             shadow-mapSize-height={512}
           />
+        </group>
+      ))}
+
+      {/* 빨간 불빛 장식 */}
+      {redlightPositions.map((light, index) => (
+        <group key={`redlight-${index}`} position={[light.position.x, light.position.y, light.position.z]}>
+          {/* 빨간 포인트 라이트 */}
+          <pointLight
+            color="#FF0000"
+            intensity={100}
+            distance={10}
+            decay={2}
+            castShadow={false}
+          />
+          {/* 불빛 시각화 */}
+          <mesh>
+            <sphereGeometry args={[0.3, 16, 16]} />
+            <meshBasicMaterial color="#FF0000" transparent opacity={0.9} />
+          </mesh>
+          {/* 글로우 효과 */}
+          <mesh>
+            <sphereGeometry args={[0.5, 16, 16]} />
+            <meshBasicMaterial color="#FF6666" transparent opacity={0.3} />
+          </mesh>
+        </group>
+      ))}
+
+      {/* 초록 불빛 장식 */}
+      {greenlightPositions.map((light, index) => (
+        <group key={`greenlight-${index}`} position={[light.position.x, light.position.y, light.position.z]}>
+          {/* 초록 포인트 라이트 */}
+          <pointLight
+            color="#00FF00"
+            intensity={80}
+            distance={10}
+            decay={2}
+            castShadow={false}
+          />
+          {/* 불빛 시각화 */}
+          <mesh>
+            <sphereGeometry args={[0.3, 16, 16]} />
+            <meshBasicMaterial color="#00FF00" transparent opacity={0.9} />
+          </mesh>
+          {/* 글로우 효과 */}
+          <mesh>
+            <sphereGeometry args={[0.5, 16, 16]} />
+            <meshBasicMaterial color="#66FF66" transparent opacity={0.3} />
+          </mesh>
         </group>
       ))}
 
