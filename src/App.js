@@ -2115,7 +2115,7 @@ function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPos
           position: worldPos
         });
       }
-      // Greenlight 오브젝트들 찾기 
+      // Greenlight 오브젝트들 찾기 (Greenlight004~009만)
       if (child.name && (
         child.name === 'Greenlight' ||
         child.name === 'Greenlight001' ||
@@ -2472,14 +2472,14 @@ function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, isDar
           {/* 빨간 포인트 라이트 */}
           <pointLight
             color="#FF0000"
-            intensity={100}
+            intensity={90}
             distance={10}
             decay={2}
             castShadow={false}
           />
           {/* 불빛 시각화 */}
           <mesh>
-            <sphereGeometry args={[0.3, 16, 16]} />
+            <sphereGeometry args={[0.5, 16, 16]} />
             <meshBasicMaterial color="#FF0000" transparent opacity={0.9} />
           </mesh>
           {/* 글로우 효과 */}
