@@ -1865,13 +1865,13 @@
   background-clip: text;
 }
 
-.tools-tech-list {
+.tools-general-list {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-.tools-project-item {
+.tools-general-item {
   background: rgba(255, 255, 255, 0.9);
   border-radius: 15px;
   padding: 1.5rem;
@@ -1880,12 +1880,12 @@
   border: 2px solid rgba(255, 152, 0, 0.1);
 }
 
-.tools-project-item:hover {
+.tools-general-item:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(255, 152, 0, 0.2);
 }
 
-.tools-project-item h3 {
+.tools-general-item h3 {
   color: #2c3e50;
   font-size: 1.3rem;
   font-weight: 700;
@@ -1926,7 +1926,7 @@
     margin-bottom: 1.5rem;
   }
 
-  .tools-project-item h3 {
+  .tools-general-item h3 {
     font-size: 1.1rem;
   }
 

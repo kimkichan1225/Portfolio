@@ -3335,11 +3335,9 @@ function App() {
             <h2>🎨 프로젝트별 Frontend 기술 스택</h2>
             <div className="frontend-tech-list">
               {projectsData.map((project, index) => {
-                // Frontend 관련 기술만 필터링
+                // Frontend 관련 기술만 필터링 (웹뷰 기준: React 19, TypeScript, JavaScript, Three.js, HTML5, CSS3, TailwindCSS)
                 const frontendTechs = project.tech.filter(tech =>
-                  ['React', 'React 19', 'TypeScript', 'Vite', 'Vite 6', 'TailwindCSS',
-                   'JavaScript', 'HTML5', 'CSS', 'Zustand', 'TanStack Query',
-                   'Three.js', 'React Three Fiber', 'Emotion', 'styled-components'].some(
+                  ['React 19', 'React', 'TypeScript', 'JavaScript', 'Three.js', 'HTML5', 'HTML', 'CSS3', 'CSS', 'TailwindCSS'].some(
                     frontendKeyword => tech.includes(frontendKeyword)
                   )
                 );
@@ -3369,13 +3367,9 @@ function App() {
             <h2>⚙️ 프로젝트별 Backend 기술 스택</h2>
             <div className="backend-tech-list">
               {projectsData.map((project, index) => {
-                // Backend 관련 기술만 필터링
+                // Backend 관련 기술만 필터링 (웹뷰 기준: Node.js, Express, Socket.IO, Supabase, PostgreSQL)
                 const backendTechs = project.tech.filter(tech =>
-                  ['Node.js', 'Express', 'Socket.IO', 'Supabase', 'PostgreSQL',
-                   'MySQL', 'MongoDB', 'Redis', 'REST API', 'GraphQL',
-                   'JWT', 'OAuth', 'AWS', 'Docker', 'Kubernetes', 'Nginx',
-                   'Python', 'Django', 'Flask', 'FastAPI', 'Spring Boot', 'Java',
-                   'Go', 'Rust', 'C#', '.NET', 'Ruby', 'Rails'].some(
+                  ['Node.js', 'Express', 'Socket.IO', 'Supabase', 'PostgreSQL'].some(
                     backendKeyword => tech.includes(backendKeyword)
                   )
                 );
@@ -3405,12 +3399,9 @@ function App() {
             <h2>🎮 프로젝트별 Game Dev 기술 스택</h2>
             <div className="gamedev-tech-list">
               {projectsData.map((project, index) => {
-                // Game Dev 관련 기술만 필터링
+                // Game Dev 관련 기술만 필터링 (웹뷰 기준: Unity 6, C#, React Three Fiber)
                 const gamedevTechs = project.tech.filter(tech =>
-                  ['Three.js', 'React Three Fiber', 'WebGL', 'Unity', 'Unreal Engine',
-                   'Godot', 'Phaser', 'PixiJS', 'Babylon.js', 'PlayCanvas',
-                   'GLTF', 'GLB', 'Blender', 'Maya', '3D', 'Canvas',
-                   'Game Engine', 'Physics', 'Rapier', 'Cannon.js', 'Ammo.js'].some(
+                  ['Unity 6', 'Unity', 'C#', 'React Three Fiber'].some(
                     gamedevKeyword => tech.includes(gamedevKeyword)
                   )
                 );
@@ -3437,35 +3428,18 @@ function App() {
       {!isWebMode && isNearToolsTable && gameState === 'playing_level3' && (
         <div className="tools-tech-popup">
           <div className="tools-tech-content">
-            <h2>🛠️ 프로젝트별 Tools & 개발 도구</h2>
-            <div className="tools-tech-list">
-              {projectsData.map((project, index) => {
-                // Tools 관련 기술만 필터링
-                const toolsTechs = project.tech.filter(tech =>
-                  ['Git', 'GitHub', 'GitLab', 'Bitbucket', 'npm', 'yarn', 'pnpm',
-                   'Webpack', 'Vite', 'Vite 6', 'Rollup', 'Babel', 'ESLint', 'Prettier',
-                   'Jest', 'Vitest', 'Cypress', 'Playwright', 'Testing Library',
-                   'Postman', 'Insomnia', 'VS Code', 'IntelliJ', 'WebStorm',
-                   'Figma', 'Adobe XD', 'Sketch', 'Photoshop', 'Illustrator',
-                   'Jira', 'Trello', 'Notion', 'Slack', 'Discord',
-                   'Vercel', 'Netlify', 'Heroku', 'Railway', 'Render'].some(
-                    toolKeyword => tech.includes(toolKeyword)
-                  )
-                );
-
-                if (toolsTechs.length === 0) return null;
-
-                return (
-                  <div key={project.id} className="tools-project-item">
-                    <h3>{project.title}</h3>
-                    <div className="tech-tags">
-                      {toolsTechs.map((tech, techIndex) => (
-                        <span key={techIndex} className="tech-tag tools-tag">{tech}</span>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
+            <h2>🛠️ Tools & 개발 도구</h2>
+            <div className="tools-general-list">
+              <div className="tools-general-item">
+                <h3>사용하는 도구</h3>
+                <div className="tech-tags">
+                  <span className="tech-tag tools-tag">Git</span>
+                  <span className="tech-tag tools-tag">GitHub</span>
+                  <span className="tech-tag tools-tag">Vite</span>
+                  <span className="tech-tag tools-tag">Netlify</span>
+                  <span className="tech-tag tools-tag">Render</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
