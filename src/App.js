@@ -2045,7 +2045,7 @@ useGLTF.preload('/resources/GameView/Suit.glb');
 useGLTF.preload('/resources/GameView/Level1Map.glb');
 
 function Level2Map({ onDoorPositionFound, ...props }) {
-  const { scene } = useGLTF('/resources/GameView/Level2Map.glb');
+  const { scene } = useGLTF('/resources/GameView/Level2Map-v2.glb');
 
   // Level2Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
   const clonedScene = useMemo(() => {
@@ -2074,7 +2074,7 @@ function Level2Map({ onDoorPositionFound, ...props }) {
   );
 }
 
-useGLTF.preload('/resources/GameView/Level2Map.glb');
+useGLTF.preload('/resources/GameView/Level2Map-v2.glb');
 
 function Level3Map({ onDoorPositionFound, onDoor2PositionFound, ...props }) {
   const { scene } = useGLTF('/resources/GameView/Level3Map.glb');
