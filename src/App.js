@@ -2057,12 +2057,14 @@ useGLTF.preload('/mailbox.glb');
 useGLTF.preload('/instagramlogo.glb');
 useGLTF.preload('/toolbox.glb');
 
-function Level1Map({ onDoorPositionFound, onDoor2PositionFound, ...props }) {
+function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPositionsFound, ...props }) {
   const { scene } = useGLTF('/resources/GameView/Level1Map.glb');
 
   // Level1Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
   const clonedScene = useMemo(() => {
     const cloned = scene.clone();
+    const streetlightPositions = [];
+
     cloned.traverse((child) => {
       if (child.isMesh) {
         child.castShadow = true;
@@ -2084,9 +2086,28 @@ function Level1Map({ onDoorPositionFound, onDoor2PositionFound, ...props }) {
           onDoor2PositionFound(worldPos);
         }
       }
+      // Streetlight 오브젝트들 찾기
+      if (child.name && child.name.startsWith('Streetlight')) {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        console.log(`Found ${child.name} at position:`, worldPos);
+        streetlightPositions.push({
+          name: child.name,
+          position: worldPos
+        });
+      }
     });
+
+    // 가로등 위치들 전달
+    if (onStreetlightPositionsFound && streetlightPositions.length > 0) {
+      console.log(`Total streetlights found: ${streetlightPositions.length}`);
+      onStreetlightPositionsFound(streetlightPositions);
+    } else {
+      console.log('No streetlights found in Level1Map');
+    }
+
     return cloned;
-  }, [scene, onDoorPositionFound, onDoor2PositionFound]);
+  }, [scene, onDoorPositionFound, onDoor2PositionFound, onStreetlightPositionsFound]);
 
   return (
     <RigidBody type="fixed" colliders="trimesh">
@@ -2264,6 +2285,8 @@ function Level4Map({ onDoorPositionFound, onCabinetTVPositionFound, onWallPositi
 useGLTF.preload('/resources/GameView/Level4Map.glb');
 
 function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, isDarkMode }) {
+  const [streetlightPositions, setStreetlightPositions] = useState([]);
+
   return (
     <>
       <Sky isDarkMode={isDarkMode} />
@@ -2272,12 +2295,38 @@ function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, isDar
       <Level1Map
         onDoorPositionFound={onDoorPositionFound}
         onDoor2PositionFound={onDoor2PositionFound}
+        onStreetlightPositionsFound={setStreetlightPositions}
         position={[0, 0, 0]}
         scale={1}
         rotation={[0, 0, 0]}
         castShadow
         receiveShadow
       />
+
+      {/* 가로등 불빛 - 다크 모드에서만 활성화 */}
+      {isDarkMode && streetlightPositions.map((light, index) => (
+        <group key={`streetlight-${index}`} position={[light.position.x, light.position.y, light.position.z]}>
+          {/* 중심부 포인트 라이트 - 매우 강한 강도로 모델을 뚫고 나오도록 */}
+          <pointLight
+            color="#FFD700"
+            intensity={100}
+            distance={30}
+            decay={1}
+            castShadow={false}
+          />
+          {/* 위쪽 포인트 라이트 - 가로등 위에서도 빛이 나오도록 */}
+          <pointLight
+            position={[0, 0, 0]}
+            color="#FFE4B5"
+            intensity={200}
+            distance={35}
+            decay={1.2}
+            castShadow
+            shadow-mapSize-width={512}
+            shadow-mapSize-height={512}
+          />
+        </group>
+      ))}
 
       {/* 숨겨진 텍스트로 프리로드 - 화면 밖에 배치 */}
       <Text
