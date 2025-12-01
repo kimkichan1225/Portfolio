@@ -210,6 +210,63 @@ const projectsData = [
         file: '/ThirdProjectPowerPoint.pdf'
       }
     ]
+  },
+  {
+    id: 4,
+    title: '3D Interactive Portfolio',
+    description: 'React Three Fiber로 구축한 3D 인터랙티브 포트폴리오 웹사이트',
+    image: null,
+    video: null,
+    tech: ['React 19', 'Three.js', 'React Three Fiber', 'JavaScript', 'HTML5', 'CSS3', 'Vite', 'Netlify'],
+    overview: [
+      'React 19 + Three.js + React Three Fiber 기반 3D 게임형 포트폴리오',
+      '웹 모드와 게임 모드 간 원활한 전환 (듀얼 모드 시스템)',
+      '4개의 독특한 3D 레벨 (자연 마을, 도시 레이싱, 오피스, 우주 공간)',
+      'GLTF 애니메이션 캐릭터 컨트롤 (Idle, Walk, Run 애니메이션)',
+      'Rapier 물리 엔진 기반 캐릭터 이동 및 충돌 감지',
+      '레벨 간 포털/도어 상호작용 시스템 (E키 상호작용)',
+      '드라이브 가능한 차량 시스템 (Level 2 - 레이싱 환경)',
+      '프로젝트별 기술 스택 팝업 시스템 (Frontend, Backend, Game Dev, Tools)',
+      '커스텀 GLSL 셰이더 (그라디언트 바닥, 포털 볼텍스 효과)',
+      'Netlify 배포 및 최적화된 SPA 라우팅'
+    ],
+    achievements: [
+      '웹과 게임을 하나의 포트폴리오로 통합한 독창적인 UX',
+      'Three.js와 React의 완벽한 통합 (선언적 3D 렌더링)',
+      '물리 기반 캐릭터 컨트롤러 구현 (스프린트, 회전, 관성)',
+      '4개 레벨 간 원활한 전환 시스템 (페이드 효과 + 스폰 포지션 관리)',
+      'Rapier RigidBody 재생성 패턴으로 Rust 차용 체커 오류 해결',
+      '커스텀 키보드 컨트롤 훅 (useKeyboardControls)',
+      '3D 모델 클로닝 및 섀도우 최적화 패턴',
+      '근접 감지 기반 인터랙션 시스템 (거리 계산 알고리즘)',
+      '반응형 UI 및 다크 모드 지원',
+      '프로젝트 모달 시스템 (상세 정보, 기술 스택, GitHub 링크)'
+    ],
+    challenges: [
+      {
+        title: 'React Three Fiber 생태계 학습',
+        description: 'Three.js의 명령형 API를 React의 선언적 패러다임에 맞게 변환하는 방법 학습. useFrame, useThree, useLoader 등 R3F 전용 훅 활용. GLTF 모델 로딩, 애니메이션 제어, 씬 그래프 관리를 JSX로 표현. Canvas 컴포넌트 내부와 외부의 상태 관리 차이 이해 및 ref를 통한 브리지 구현.'
+      },
+      {
+        title: 'Rapier 물리 엔진 통합 및 디버깅',
+        description: 'Rapier의 Rust 기반 Wasm 바인딩으로 인한 차용 체커 오류 해결. RigidBody 위치를 직접 변경하는 대신 Physics 컴포넌트를 key prop으로 재생성하여 스폰 포지션 설정. 레벨 전환 시 물리 세계를 완전히 재생성하는 패턴 개발. CapsuleCollider와 선형/각도 감쇠를 조정하여 자연스러운 캐릭터 움직임 구현.'
+      },
+      {
+        title: '레벨 전환 시스템 및 상태 머신',
+        description: '4개 레벨(playing_level1~4) + 6개 전환 상태로 구성된 상태 머신 설계. 페이드 아웃(400ms) → 상태/스폰 변경 → 페이드 인(1800ms) 타이밍 조율. 각 레벨별 복귀 스폰 포지션 관리 (Level1 ↔ Level2/3, Level3 ↔ Level4). 도어 상호작용 쿨다운(5초)으로 스팸 방지. 카메라 lerp 속도 조정으로 포털 전환 시 부드러운 추적.'
+      },
+      {
+        title: '3D 모델 최적화 및 섀도우 시스템',
+        description: 'useMemo로 GLTF 씬 클로닝하여 다중 인스턴스 생성. traverse()로 모든 메시에 castShadow/receiveShadow 활성화. 커스텀 셰이더 머티리얼에 Three.js 섀도우 맵 shader chunks 통합. DirectionalLight 설정 최적화 (shadowMapSize 8192, 카메라 절두체 조정). 대용량 모델(.glb) 프리로드 및 캐싱 전략.'
+      },
+      {
+        title: '근접 감지 인터랙션 시스템',
+        description: 'useFrame 내에서 매 프레임 캐릭터와 인터랙션 오브젝트 간 거리 계산 (THREE.Vector3.distanceTo). doorInteractionDistance(8 units) 임계값으로 UI 표시 제어. Level3의 4개 테이블(Frontend, Backend, Gamedev, Tools) 위치 감지 및 자동 팝업. Level4의 deskCorner는 E키 상호작용 방식. onPositionFound 콜백 패턴으로 부모 컴포넌트에 위치 전달.'
+      }
+    ],
+    github: 'https://github.com/kimkichan1225/Portfolio',
+    demo: 'https://kichan.site/',
+    reports: []
   }
 ];
 
@@ -806,7 +863,7 @@ function CameraController({ gameState, characterRef }) {
   return null;
 }
 
-function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor, door2Position, setIsNearDoor2, door3Position, setIsNearDoor3, doorPositionLevel2, setIsNearDoorLevel2, doorPositionLevel3, setIsNearDoorLevel3, doorPositionLevel4, setIsNearDoorLevel4, cabinetTVPosition, setIsNearCabinetTV, setShowContactInfo, wallPosition, setIsNearWall, setShowProfile, asuraCabinetPosition, setIsNearAsuraCabinet, setShowFirstProject, conviCabinetPosition, setIsNearConviCabinet, setShowSecondProject, voidCabinetPosition, setIsNearVoidCabinet, setShowThirdProject, frontendTablePosition, setIsNearFrontendTable, backendTablePosition, setIsNearBackendTable, gamedevTablePosition, setIsNearGamedevTable, toolsTablePosition, setIsNearToolsTable, spawnPosition }) {
+function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor, door2Position, setIsNearDoor2, door3Position, setIsNearDoor3, doorPositionLevel2, setIsNearDoorLevel2, doorPositionLevel3, setIsNearDoorLevel3, doorPositionLevel4, setIsNearDoorLevel4, cabinetTVPosition, setIsNearCabinetTV, setShowContactInfo, wallPosition, setIsNearWall, setShowProfile, asuraCabinetPosition, setIsNearAsuraCabinet, setShowFirstProject, conviCabinetPosition, setIsNearConviCabinet, setShowSecondProject, voidCabinetPosition, setIsNearVoidCabinet, setShowThirdProject, frontendTablePosition, setIsNearFrontendTable, backendTablePosition, setIsNearBackendTable, gamedevTablePosition, setIsNearGamedevTable, toolsTablePosition, setIsNearToolsTable, deskCornerPosition, setIsNearDeskCorner, setShowPortfolioPopup, spawnPosition }) {
   const { scene, animations } = useGLTF('/resources/GameView/Suit.glb');
   const { actions } = useAnimations(animations, characterRef);
 
@@ -820,7 +877,7 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
 
   // 문 열림 소리를 위한 오디오 시스템
   const doorAudioRef = useRef(null);
-  const doorInteractionDistance = 8; // 문과 상호작용 가능한 거리
+  const doorInteractionDistance = 7; // 문과 상호작용 가능한 거리
   const lastDoorInteractionTimeRef = useRef(0); // E키 쿨다운 (5초)
   const doorCooldownDuration = 500; // 5초 쿨다운 (밀리초)
 
@@ -1282,6 +1339,26 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       }
     } else {
       setIsNearToolsTable(false);
+    }
+
+    // deskCorner 근접 감지 (Level4에서만, E키 상호작용)
+    if (gameState === 'playing_level4' && deskCornerPosition) {
+      const charPos = new THREE.Vector3(posX, posY, posZ);
+      const distance = charPos.distanceTo(deskCornerPosition);
+
+      if (distance < doorInteractionDistance) {
+        setIsNearDeskCorner(true);
+        const now = Date.now();
+        if (e && (now - lastDoorInteractionTimeRef.current > doorCooldownDuration)) {
+          // E키 눌렀을 때 포트폴리오 팝업 표시
+          setShowPortfolioPopup(true);
+          lastDoorInteractionTimeRef.current = now;
+        }
+      } else {
+        setIsNearDeskCorner(false);
+      }
+    } else {
+      setIsNearDeskCorner(false);
     }
 
     // C키로 캐릭터 위치 로그 (디버그)
@@ -2387,8 +2464,8 @@ function Level3Map({ onDoorPositionFound, onDoor2PositionFound, onFrontendTableP
 
 useGLTF.preload('/resources/GameView/Level3Map-v2.glb');
 
-function Level4Map({ onDoorPositionFound, onCabinetTVPositionFound, onWallPositionFound, ...props }) {
-  const { scene } = useGLTF('/resources/GameView/Level4Map.glb');
+function Level4Map({ onDoorPositionFound, onCabinetTVPositionFound, onWallPositionFound, onDeskCornerPositionFound, ...props }) {
+  const { scene } = useGLTF('/resources/GameView/Level4Map-v2.glb');
 
   // Level4Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
   const clonedScene = useMemo(() => {
@@ -2422,9 +2499,17 @@ function Level4Map({ onDoorPositionFound, onCabinetTVPositionFound, onWallPositi
           onWallPositionFound(worldPos);
         }
       }
+      // deskCorner 오브젝트 찾기
+      if (child.name === 'deskCorner' || child.name.includes('deskCorner')) {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        if (onDeskCornerPositionFound) {
+          onDeskCornerPositionFound(worldPos);
+        }
+      }
     });
     return cloned;
-  }, [scene, onDoorPositionFound, onCabinetTVPositionFound, onWallPositionFound]);
+  }, [scene, onDoorPositionFound, onCabinetTVPositionFound, onWallPositionFound, onDeskCornerPositionFound]);
 
   // Cleanup 함수 추가
   useEffect(() => {
@@ -2454,7 +2539,7 @@ function Level4Map({ onDoorPositionFound, onCabinetTVPositionFound, onWallPositi
   );
 }
 
-useGLTF.preload('/resources/GameView/Level4Map.glb');
+useGLTF.preload('/resources/GameView/Level4Map-v2.glb');
 
 function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, isDarkMode }) {
   const [streetlightPositions, setStreetlightPositions] = useState([]);
@@ -2772,7 +2857,7 @@ function Level3({ characterRef, onDoorPositionFound, onDoor2PositionFound, onFro
   );
 }
 
-function Level4({ characterRef, onDoorPositionFound, onCabinetTVPositionFound, onWallPositionFound }) {
+function Level4({ characterRef, onDoorPositionFound, onCabinetTVPositionFound, onWallPositionFound, onDeskCornerPositionFound }) {
   const { scene } = useThree();
 
   // Level4 배경을 검정색으로 설정
@@ -2815,6 +2900,7 @@ function Level4({ characterRef, onDoorPositionFound, onCabinetTVPositionFound, o
         onDoorPositionFound={onDoorPositionFound}
         onCabinetTVPositionFound={onCabinetTVPositionFound}
         onWallPositionFound={onWallPositionFound}
+        onDeskCornerPositionFound={onDeskCornerPositionFound}
         position={[0, 0, 0]}
         scale={1}
         rotation={[0, 0, 0]}
@@ -2964,6 +3050,9 @@ function App() {
   const [isNearGamedevTable, setIsNearGamedevTable] = useState(false); // GamedevTable 근처에 있는지 여부
   const [toolsTablePosition, setToolsTablePosition] = useState(null); // Level3 ToolsTable 위치
   const [isNearToolsTable, setIsNearToolsTable] = useState(false); // ToolsTable 근처에 있는지 여부
+  const [deskCornerPosition, setDeskCornerPosition] = useState(null); // Level4 deskCorner 위치
+  const [isNearDeskCorner, setIsNearDeskCorner] = useState(false); // deskCorner 근처에 있는지 여부
+  const [showPortfolioPopup, setShowPortfolioPopup] = useState(false); // 포트폴리오 팝업 표시 여부
   const [isFading, setIsFading] = useState(false); // 페이드 전환 상태
   const [spawnPosition, setSpawnPosition] = useState([0, 2, 0]); // 캐릭터 스폰 위치
 
@@ -3101,7 +3190,7 @@ function App() {
 
         <Suspense fallback={null}>
           <Physics key={getPhysicsKey()} gravity={[0, -40, 0]}>
-            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} door2Position={door2Position} setIsNearDoor2={setIsNearDoor2} door3Position={door3Position} setIsNearDoor3={setIsNearDoor3} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} doorPositionLevel3={doorPositionLevel3} setIsNearDoorLevel3={setIsNearDoorLevel3} doorPositionLevel4={doorPositionLevel4} setIsNearDoorLevel4={setIsNearDoorLevel4} cabinetTVPosition={cabinetTVPosition} setIsNearCabinetTV={setIsNearCabinetTV} setShowContactInfo={setShowContactInfo} wallPosition={wallPosition} setIsNearWall={setIsNearWall} setShowProfile={setShowProfile} asuraCabinetPosition={asuraCabinetPosition} setIsNearAsuraCabinet={setIsNearAsuraCabinet} setShowFirstProject={setShowFirstProject} conviCabinetPosition={conviCabinetPosition} setIsNearConviCabinet={setIsNearConviCabinet} setShowSecondProject={setShowSecondProject} voidCabinetPosition={voidCabinetPosition} setIsNearVoidCabinet={setIsNearVoidCabinet} setShowThirdProject={setShowThirdProject} frontendTablePosition={frontendTablePosition} setIsNearFrontendTable={setIsNearFrontendTable} backendTablePosition={backendTablePosition} setIsNearBackendTable={setIsNearBackendTable} gamedevTablePosition={gamedevTablePosition} setIsNearGamedevTable={setIsNearGamedevTable} toolsTablePosition={toolsTablePosition} setIsNearToolsTable={setIsNearToolsTable} spawnPosition={spawnPosition} />
+            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} door2Position={door2Position} setIsNearDoor2={setIsNearDoor2} door3Position={door3Position} setIsNearDoor3={setIsNearDoor3} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} doorPositionLevel3={doorPositionLevel3} setIsNearDoorLevel3={setIsNearDoorLevel3} doorPositionLevel4={doorPositionLevel4} setIsNearDoorLevel4={setIsNearDoorLevel4} cabinetTVPosition={cabinetTVPosition} setIsNearCabinetTV={setIsNearCabinetTV} setShowContactInfo={setShowContactInfo} wallPosition={wallPosition} setIsNearWall={setIsNearWall} setShowProfile={setShowProfile} asuraCabinetPosition={asuraCabinetPosition} setIsNearAsuraCabinet={setIsNearAsuraCabinet} setShowFirstProject={setShowFirstProject} conviCabinetPosition={conviCabinetPosition} setIsNearConviCabinet={setIsNearConviCabinet} setShowSecondProject={setShowSecondProject} voidCabinetPosition={voidCabinetPosition} setIsNearVoidCabinet={setIsNearVoidCabinet} setShowThirdProject={setShowThirdProject} frontendTablePosition={frontendTablePosition} setIsNearFrontendTable={setIsNearFrontendTable} backendTablePosition={backendTablePosition} setIsNearBackendTable={setIsNearBackendTable} gamedevTablePosition={gamedevTablePosition} setIsNearGamedevTable={setIsNearGamedevTable} toolsTablePosition={toolsTablePosition} setIsNearToolsTable={setIsNearToolsTable} deskCornerPosition={deskCornerPosition} setIsNearDeskCorner={setIsNearDeskCorner} setShowPortfolioPopup={setShowPortfolioPopup} spawnPosition={spawnPosition} />
             <CameraController gameState={gameState} characterRef={characterRef} />
             <CameraLogger />
             {gameState === 'playing_level1' && (
@@ -3114,7 +3203,7 @@ function App() {
               <Level3 key="level3" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel3} onDoor2PositionFound={setDoor3Position} onFrontendTablePositionFound={setFrontendTablePosition} onBackendTablePositionFound={setBackendTablePosition} onGamedevTablePositionFound={setGamedevTablePosition} onToolsTablePositionFound={setToolsTablePosition} />
             )}
             {gameState === 'playing_level4' && (
-              <Level4 key="level4" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel4} onCabinetTVPositionFound={setCabinetTVPosition} onWallPositionFound={setWallPosition} />
+              <Level4 key="level4" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel4} onCabinetTVPositionFound={setCabinetTVPosition} onWallPositionFound={setWallPosition} onDeskCornerPositionFound={setDeskCornerPosition} />
             )}
           </Physics>
         </Suspense>
@@ -3195,6 +3284,13 @@ function App() {
       {!isWebMode && isNearVoidCabinet && gameState === 'playing_level2' && (
         <div className="door-interaction-ui">
           🎯 E키를 눌러 Void 프로젝트 보기
+        </div>
+      )}
+
+      {/* deskCorner 상호작용 UI - Level4 */}
+      {!isWebMode && isNearDeskCorner && gameState === 'playing_level4' && !showPortfolioPopup && (
+        <div className="door-interaction-ui">
+          💼 E키를 눌러 포트폴리오 프로젝트 보기
         </div>
       )}
 
@@ -3325,6 +3421,14 @@ function App() {
         <ProjectModal
           project={projectsData[2]}
           onClose={() => setShowThirdProject(false)}
+        />
+      )}
+
+      {/* 포트폴리오 프로젝트 팝업 - Level4 deskCorner */}
+      {showPortfolioPopup && (
+        <ProjectModal
+          project={projectsData[3]}
+          onClose={() => setShowPortfolioPopup(false)}
         />
       )}
 
