@@ -2287,8 +2287,14 @@ function Level2Map({ onDoorPositionFound, onAsuraCabinetPositionFound, onConviCa
     const cloned = scene.clone();
     cloned.traverse((child) => {
       if (child.isMesh) {
-        child.castShadow = true;
-        child.receiveShadow = true;
+        // Gradmain_Sword, GradMain_Mace, Gradmain_Lance는 그림자 제외
+        if (child.name === 'Gradmain_Sword' || child.name === 'GradMain_Mace' || child.name === 'Gradmain_Lance') {
+          child.castShadow = false;
+          child.receiveShadow = false;
+        } else {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
       }
       // door001 오브젝트 찾기
       if (child.name === 'door001') {
