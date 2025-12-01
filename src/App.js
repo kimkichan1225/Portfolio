@@ -2260,7 +2260,7 @@ function Level2Map({ onDoorPositionFound, onAsuraCabinetPositionFound, onConviCa
 useGLTF.preload('/resources/GameView/Level2Map-v2.glb');
 
 function Level3Map({ onDoorPositionFound, onDoor2PositionFound, ...props }) {
-  const { scene } = useGLTF('/resources/GameView/Level3Map.glb');
+  const { scene } = useGLTF('/resources/GameView/Level3Map-v2.glb');
 
   // Level3Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
   const clonedScene = useMemo(() => {
@@ -2297,7 +2297,7 @@ function Level3Map({ onDoorPositionFound, onDoor2PositionFound, ...props }) {
   );
 }
 
-useGLTF.preload('/resources/GameView/Level3Map.glb');
+useGLTF.preload('/resources/GameView/Level3Map-v2.glb');
 
 function Level4Map({ onDoorPositionFound, onCabinetTVPositionFound, onWallPositionFound, ...props }) {
   const { scene } = useGLTF('/resources/GameView/Level4Map.glb');
