@@ -722,11 +722,11 @@ const GradientFloorMaterial = shaderMaterial(
 extend({ GradientFloorMaterial });
 
 // 하늘을 위한 컴포넌트
-function Sky() {
+function Sky({ isDarkMode }) {
   return (
     <mesh>
       <sphereGeometry args={[400, 32, 32]} />
-      <meshBasicMaterial color="#87CEFA" side={THREE.BackSide} />
+      <meshBasicMaterial color={isDarkMode ? "#0B1026" : "#87CEFA"} side={THREE.BackSide} />
     </mesh>
   );
 }
@@ -2263,10 +2263,10 @@ function Level4Map({ onDoorPositionFound, onCabinetTVPositionFound, onWallPositi
 
 useGLTF.preload('/resources/GameView/Level4Map.glb');
 
-function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound }) {
+function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, isDarkMode }) {
   return (
     <>
-      <Sky />
+      <Sky isDarkMode={isDarkMode} />
 
       {/* Level1 Map - 크리스마스 마을 */}
       <Level1Map
@@ -2706,12 +2706,13 @@ function App() {
         >
         <ambientLight intensity={0.5} />
 
-        {/* Level1 전용 태양 */}
+        {/* Level1 전용 태양/달 */}
         {gameState === 'playing_level1' && (
           <>
             <directionalLight
               position={[50, 50, 25]}
-              intensity={6}
+              intensity={isDarkMode ? 2 : 6}
+              color={isDarkMode ? "#C0D0F0" : "#FFFFFF"}
               castShadow
               shadow-mapSize-width={8192}
               shadow-mapSize-height={8192}
@@ -2724,11 +2725,15 @@ function App() {
               shadow-normalBias={0.02}
               shadow-radius={4}
             />
-            {/* Sun visual */}
+            {/* 태양/달 시각화 */}
             <mesh position={[50, 50, 25]}>
               <sphereGeometry args={[3, 16, 16]} />
-              <meshBasicMaterial color="#FDB813" />
+              <meshBasicMaterial color={isDarkMode ? "#E8EAF6" : "#FDB813"} />
             </mesh>
+            {/* 다크 모드에서 주변 조명 추가 (달빛 분위기) */}
+            {isDarkMode && (
+              <ambientLight intensity={0.3} color="#4A5A8A" />
+            )}
           </>
         )}
 
@@ -2738,7 +2743,7 @@ function App() {
             <CameraController gameState={gameState} characterRef={characterRef} />
             <CameraLogger />
             {gameState === 'playing_level1' && (
-              <Level1 key="level1" characterRef={characterRef} onDoorPositionFound={setDoorPosition} onDoor2PositionFound={setDoor2Position} />
+              <Level1 key="level1" characterRef={characterRef} onDoorPositionFound={setDoorPosition} onDoor2PositionFound={setDoor2Position} isDarkMode={isDarkMode} />
             )}
             {gameState === 'playing_level2' && (
               <Level2 key="level2" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel2} onAsuraCabinetPositionFound={setAsuraCabinetPosition} onConviCabinetPositionFound={setConviCabinetPosition} onVoidCabinetPositionFound={setVoidCabinetPosition} />
