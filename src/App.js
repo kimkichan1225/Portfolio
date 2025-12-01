@@ -2057,7 +2057,7 @@ useGLTF.preload('/mailbox.glb');
 useGLTF.preload('/instagramlogo.glb');
 useGLTF.preload('/toolbox.glb');
 
-function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPositionsFound, onRedlightPositionsFound, onGreenlightPositionsFound, onRedlight2PositionsFound, onYellowlightPositionsFound, ...props }) {
+function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPositionsFound, onRedlightPositionsFound, onGreenlightPositionsFound, onRedlight2PositionsFound, onYellowlightPositionsFound, onStarLightPositionFound, ...props }) {
   const { scene } = useGLTF('/resources/GameView/Level1Map-v3.glb');
 
   // Level1Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
@@ -2068,6 +2068,7 @@ function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPos
     const greenlightPositions = [];
     const redlight2Positions = [];
     const yellowlightPositions = [];
+    let starLightPosition = null;
 
     cloned.traverse((child) => {
       if (child.isMesh) {
@@ -2156,6 +2157,12 @@ function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPos
           position: worldPos
         });
       }
+      // Yellowlight003 오브젝트 찾기 (크리스마스 트리 별 장식)
+      if (child.name === 'Yellowlight003') {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        starLightPosition = worldPos;
+      }
     });
 
     // 가로등 위치들 전달
@@ -2178,9 +2185,13 @@ function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPos
     if (onYellowlightPositionsFound && yellowlightPositions.length > 0) {
       onYellowlightPositionsFound(yellowlightPositions);
     }
+    // 별 장식 위치 전달 (Yellowlight003)
+    if (onStarLightPositionFound && starLightPosition) {
+      onStarLightPositionFound(starLightPosition);
+    }
 
     return cloned;
-  }, [scene, onDoorPositionFound, onDoor2PositionFound, onStreetlightPositionsFound, onRedlightPositionsFound, onGreenlightPositionsFound, onRedlight2PositionsFound, onYellowlightPositionsFound]);
+  }, [scene, onDoorPositionFound, onDoor2PositionFound, onStreetlightPositionsFound, onRedlightPositionsFound, onGreenlightPositionsFound, onRedlight2PositionsFound, onYellowlightPositionsFound, onStarLightPositionFound]);
 
   return (
     <RigidBody type="fixed" colliders="trimesh">
@@ -2363,6 +2374,7 @@ function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, isDar
   const [greenlightPositions, setGreenlightPositions] = useState([]);
   const [redlight2Positions, setRedlight2Positions] = useState([]);
   const [yellowlightPositions, setYellowlightPositions] = useState([]);
+  const [starLightPosition, setStarLightPosition] = useState(null);
   const [showRedLights, setShowRedLights] = useState(true);
 
   // 불빛 깜빡임 효과
@@ -2386,6 +2398,7 @@ function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, isDar
         onGreenlightPositionsFound={setGreenlightPositions}
         onRedlight2PositionsFound={setRedlight2Positions}
         onYellowlightPositionsFound={setYellowlightPositions}
+        onStarLightPositionFound={setStarLightPosition}
         position={[0, 0, 0]}
         scale={1}
         rotation={[0, 0, 0]}
@@ -2513,6 +2526,20 @@ function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, isDar
           </mesh>
         </group>
       ))}
+
+      {/* 크리스마스 트리 별 장식 불빛 (Yellowlight003) - 다크 모드에서만 활성화, 항상 켜져있음 */}
+      {isDarkMode && starLightPosition && (
+        <group position={[starLightPosition.x, starLightPosition.y + 1, starLightPosition.z]}>
+          {/* 별 장식 포인트 라이트 - 더 밝고 멀리 비춤 */}
+          <pointLight
+            color="#FFD700"
+            intensity={300}
+            distance={30}
+            decay={1.5}
+            castShadow={false}
+          />
+        </group>
+      )}
 
       {/* 숨겨진 텍스트로 프리로드 - 화면 밖에 배치 */}
       <Text
