@@ -15,7 +15,7 @@ import { Physics, RigidBody, CapsuleCollider } from '@react-three/rapier';
 const projectsData = [
   {
     id: 1,
-    title: 'KDT 멀티 격투 게임',
+    title: 'Asura(웹 멀티 격투 게임)',
     description: 'Node.js와 Socket.IO를 활용한 실시간 웹 기반 멀티플레이어 액션 게임',
     image: '/FirstProject.png',
     video: '/FirstProjectGamePlay.mp4',
@@ -151,7 +151,7 @@ const projectsData = [
   },
   {
     id: 3,
-    title: '2D Unity Action RPG',
+    title: 'Void(2D Unity Action RPG)',
     description: 'Unity 6로 제작한 2D 액션 RPG 게임 (졸업 프로젝트)',
     image: '/ThirdProject.png',
     video: null,
@@ -806,7 +806,7 @@ function CameraController({ gameState, characterRef }) {
   return null;
 }
 
-function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor, door2Position, setIsNearDoor2, door3Position, setIsNearDoor3, doorPositionLevel2, setIsNearDoorLevel2, doorPositionLevel3, setIsNearDoorLevel3, doorPositionLevel4, setIsNearDoorLevel4, cabinetTVPosition, setIsNearCabinetTV, setShowContactInfo, wallPosition, setIsNearWall, setShowProfile, spawnPosition }) {
+function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor, door2Position, setIsNearDoor2, door3Position, setIsNearDoor3, doorPositionLevel2, setIsNearDoorLevel2, doorPositionLevel3, setIsNearDoorLevel3, doorPositionLevel4, setIsNearDoorLevel4, cabinetTVPosition, setIsNearCabinetTV, setShowContactInfo, wallPosition, setIsNearWall, setShowProfile, asuraCabinetPosition, setIsNearAsuraCabinet, setShowFirstProject, conviCabinetPosition, setIsNearConviCabinet, setShowSecondProject, voidCabinetPosition, setIsNearVoidCabinet, setShowThirdProject, spawnPosition }) {
   const { scene, animations } = useGLTF('/resources/GameView/Suit.glb');
   const { actions } = useAnimations(animations, characterRef);
 
@@ -1172,6 +1172,60 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       }
     } else {
       setIsNearWall(false);
+    }
+
+    // AsuraCabinet 상호작용 감지 (Level2에서만)
+    if (gameState === 'playing_level2' && asuraCabinetPosition) {
+      const charPos = new THREE.Vector3(posX, posY, posZ);
+      const distance = charPos.distanceTo(asuraCabinetPosition);
+
+      if (distance < doorInteractionDistance) {
+        setIsNearAsuraCabinet(true);
+        if (e && !onCooldown) {
+          setShowFirstProject(true);
+          lastDoorInteractionTimeRef.current = currentTime;
+        }
+      } else {
+        setIsNearAsuraCabinet(false);
+      }
+    } else {
+      setIsNearAsuraCabinet(false);
+    }
+
+    // ConviCabinet 상호작용 감지 (Level2에서만)
+    if (gameState === 'playing_level2' && conviCabinetPosition) {
+      const charPos = new THREE.Vector3(posX, posY, posZ);
+      const distance = charPos.distanceTo(conviCabinetPosition);
+
+      if (distance < doorInteractionDistance) {
+        setIsNearConviCabinet(true);
+        if (e && !onCooldown) {
+          setShowSecondProject(true);
+          lastDoorInteractionTimeRef.current = currentTime;
+        }
+      } else {
+        setIsNearConviCabinet(false);
+      }
+    } else {
+      setIsNearConviCabinet(false);
+    }
+
+    // VoidCabinet 상호작용 감지 (Level2에서만)
+    if (gameState === 'playing_level2' && voidCabinetPosition) {
+      const charPos = new THREE.Vector3(posX, posY, posZ);
+      const distance = charPos.distanceTo(voidCabinetPosition);
+
+      if (distance < doorInteractionDistance) {
+        setIsNearVoidCabinet(true);
+        if (e && !onCooldown) {
+          setShowThirdProject(true);
+          lastDoorInteractionTimeRef.current = currentTime;
+        }
+      } else {
+        setIsNearVoidCabinet(false);
+      }
+    } else {
+      setIsNearVoidCabinet(false);
     }
 
     // C키로 캐릭터 위치 로그 (디버그)
@@ -2044,7 +2098,7 @@ function Level1Map({ onDoorPositionFound, onDoor2PositionFound, ...props }) {
 useGLTF.preload('/resources/GameView/Suit.glb');
 useGLTF.preload('/resources/GameView/Level1Map.glb');
 
-function Level2Map({ onDoorPositionFound, ...props }) {
+function Level2Map({ onDoorPositionFound, onAsuraCabinetPositionFound, onConviCabinetPositionFound, onVoidCabinetPositionFound, ...props }) {
   const { scene } = useGLTF('/resources/GameView/Level2Map-v2.glb');
 
   // Level2Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
@@ -2063,9 +2117,33 @@ function Level2Map({ onDoorPositionFound, ...props }) {
           onDoorPositionFound(worldPos);
         }
       }
+      // AsuraCabinet 오브젝트 찾기
+      if (child.name === 'AsuraCabinet') {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        if (onAsuraCabinetPositionFound) {
+          onAsuraCabinetPositionFound(worldPos);
+        }
+      }
+      // ConviCabinet 오브젝트 찾기
+      if (child.name === 'ConviCabinet') {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        if (onConviCabinetPositionFound) {
+          onConviCabinetPositionFound(worldPos);
+        }
+      }
+      // VoidCabinet 오브젝트 찾기
+      if (child.name === 'VoidCabinet') {
+        const worldPos = new THREE.Vector3();
+        child.getWorldPosition(worldPos);
+        if (onVoidCabinetPositionFound) {
+          onVoidCabinetPositionFound(worldPos);
+        }
+      }
     });
     return cloned;
-  }, [scene, onDoorPositionFound]);
+  }, [scene, onDoorPositionFound, onAsuraCabinetPositionFound, onConviCabinetPositionFound, onVoidCabinetPositionFound]);
 
   return (
     <RigidBody type="fixed" colliders="trimesh">
@@ -2214,7 +2292,7 @@ function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound }) {
   );
 }
 
-function Level2({ characterRef, onDoorPositionFound }) {
+function Level2({ characterRef, onDoorPositionFound, onAsuraCabinetPositionFound, onConviCabinetPositionFound, onVoidCabinetPositionFound }) {
   const { scene } = useThree();
 
   // Level2 배경을 검정색으로 설정
@@ -2255,6 +2333,9 @@ function Level2({ characterRef, onDoorPositionFound }) {
       {/* Level2 Map */}
       <Level2Map
         onDoorPositionFound={onDoorPositionFound}
+        onAsuraCabinetPositionFound={onAsuraCabinetPositionFound}
+        onConviCabinetPositionFound={onConviCabinetPositionFound}
+        onVoidCabinetPositionFound={onVoidCabinetPositionFound}
         position={[0, 0, 0]}
         scale={1}
         rotation={[0, 0, 0]}
@@ -2512,6 +2593,15 @@ function App() {
   const [wallPosition, setWallPosition] = useState(null); // Level4 wall 위치
   const [isNearWall, setIsNearWall] = useState(false); // wall 근처에 있는지 여부
   const [showProfile, setShowProfile] = useState(false); // 프로필 모달 표시 여부
+  const [asuraCabinetPosition, setAsuraCabinetPosition] = useState(null); // Level2 AsuraCabinet 위치
+  const [isNearAsuraCabinet, setIsNearAsuraCabinet] = useState(false); // AsuraCabinet 근처에 있는지 여부
+  const [showFirstProject, setShowFirstProject] = useState(false); // 첫 번째 프로젝트 모달 표시 여부
+  const [conviCabinetPosition, setConviCabinetPosition] = useState(null); // Level2 ConviCabinet 위치
+  const [isNearConviCabinet, setIsNearConviCabinet] = useState(false); // ConviCabinet 근처에 있는지 여부
+  const [showSecondProject, setShowSecondProject] = useState(false); // 두 번째 프로젝트 모달 표시 여부
+  const [voidCabinetPosition, setVoidCabinetPosition] = useState(null); // Level2 VoidCabinet 위치
+  const [isNearVoidCabinet, setIsNearVoidCabinet] = useState(false); // VoidCabinet 근처에 있는지 여부
+  const [showThirdProject, setShowThirdProject] = useState(false); // 세 번째 프로젝트 모달 표시 여부
   const [isFading, setIsFading] = useState(false); // 페이드 전환 상태
   const [spawnPosition, setSpawnPosition] = useState([0, 2, 0]); // 캐릭터 스폰 위치
 
@@ -2644,14 +2734,14 @@ function App() {
 
         <Suspense fallback={null}>
           <Physics key={getPhysicsKey()} gravity={[0, -40, 0]}>
-            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} door2Position={door2Position} setIsNearDoor2={setIsNearDoor2} door3Position={door3Position} setIsNearDoor3={setIsNearDoor3} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} doorPositionLevel3={doorPositionLevel3} setIsNearDoorLevel3={setIsNearDoorLevel3} doorPositionLevel4={doorPositionLevel4} setIsNearDoorLevel4={setIsNearDoorLevel4} cabinetTVPosition={cabinetTVPosition} setIsNearCabinetTV={setIsNearCabinetTV} setShowContactInfo={setShowContactInfo} wallPosition={wallPosition} setIsNearWall={setIsNearWall} setShowProfile={setShowProfile} spawnPosition={spawnPosition} />
+            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} door2Position={door2Position} setIsNearDoor2={setIsNearDoor2} door3Position={door3Position} setIsNearDoor3={setIsNearDoor3} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} doorPositionLevel3={doorPositionLevel3} setIsNearDoorLevel3={setIsNearDoorLevel3} doorPositionLevel4={doorPositionLevel4} setIsNearDoorLevel4={setIsNearDoorLevel4} cabinetTVPosition={cabinetTVPosition} setIsNearCabinetTV={setIsNearCabinetTV} setShowContactInfo={setShowContactInfo} wallPosition={wallPosition} setIsNearWall={setIsNearWall} setShowProfile={setShowProfile} asuraCabinetPosition={asuraCabinetPosition} setIsNearAsuraCabinet={setIsNearAsuraCabinet} setShowFirstProject={setShowFirstProject} conviCabinetPosition={conviCabinetPosition} setIsNearConviCabinet={setIsNearConviCabinet} setShowSecondProject={setShowSecondProject} voidCabinetPosition={voidCabinetPosition} setIsNearVoidCabinet={setIsNearVoidCabinet} setShowThirdProject={setShowThirdProject} spawnPosition={spawnPosition} />
             <CameraController gameState={gameState} characterRef={characterRef} />
             <CameraLogger />
             {gameState === 'playing_level1' && (
               <Level1 key="level1" characterRef={characterRef} onDoorPositionFound={setDoorPosition} onDoor2PositionFound={setDoor2Position} />
             )}
             {gameState === 'playing_level2' && (
-              <Level2 key="level2" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel2} />
+              <Level2 key="level2" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel2} onAsuraCabinetPositionFound={setAsuraCabinetPosition} onConviCabinetPositionFound={setConviCabinetPosition} onVoidCabinetPositionFound={setVoidCabinetPosition} />
             )}
             {gameState === 'playing_level3' && (
               <Level3 key="level3" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel3} onDoor2PositionFound={setDoor3Position} />
@@ -2717,6 +2807,27 @@ function App() {
       {!isWebMode && isNearWall && gameState === 'playing_level4' && (
         <div className="door-interaction-ui">
           🖼️ E키를 눌러 프로필 보기
+        </div>
+      )}
+
+      {/* AsuraCabinet 상호작용 UI - Level2 */}
+      {!isWebMode && isNearAsuraCabinet && gameState === 'playing_level2' && (
+        <div className="door-interaction-ui">
+          🎮 E키를 눌러 Asura 프로젝트 보기
+        </div>
+      )}
+
+      {/* ConviCabinet 상호작용 UI - Level2 */}
+      {!isWebMode && isNearConviCabinet && gameState === 'playing_level2' && (
+        <div className="door-interaction-ui">
+          🏪 E키를 눌러 Convi 프로젝트 보기
+        </div>
+      )}
+
+      {/* VoidCabinet 상호작용 UI - Level2 */}
+      {!isWebMode && isNearVoidCabinet && gameState === 'playing_level2' && (
+        <div className="door-interaction-ui">
+          🎯 E키를 눌러 Void 프로젝트 보기
         </div>
       )}
 
@@ -2824,6 +2935,30 @@ function App() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* 첫 번째 프로젝트 모달 */}
+      {showFirstProject && (
+        <ProjectModal
+          project={projectsData[0]}
+          onClose={() => setShowFirstProject(false)}
+        />
+      )}
+
+      {/* 두 번째 프로젝트 모달 */}
+      {showSecondProject && (
+        <ProjectModal
+          project={projectsData[1]}
+          onClose={() => setShowSecondProject(false)}
+        />
+      )}
+
+      {/* 세 번째 프로젝트 모달 */}
+      {showThirdProject && (
+        <ProjectModal
+          project={projectsData[2]}
+          onClose={() => setShowThirdProject(false)}
+        />
       )}
     </div>
   );
