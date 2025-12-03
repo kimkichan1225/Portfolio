@@ -1,204 +1,286 @@
+# 3D 인터랙티브 포트폴리오
 
-# 🎮 3D 포트폴리오 게임
+React와 Three.js를 활용한 듀얼 모드 인터랙티브 포트폴리오입니다. 전통적인 웹 포트폴리오와 3D 게임 환경을 자유롭게 전환하며 경험할 수 있습니다.
 
-React와 Three.js를 활용한 인터랙티브 3D 포트폴리오 웹사이트입니다. 3개의 레벨로 구성된 가상 세계에서 캐릭터를 조작하며 다양한 프로젝트를 탐험할 수 있습니다.
+## 🌟 주요 기능
 
-## ✨ 주요 기능
+### 듀얼 모드 시스템
+- **웹 모드**: 스크롤 기반 포트폴리오 웹사이트
+  - 프로젝트 갤러리 및 상세 정보 모달
+  - 부드러운 스크롤 애니메이션
+  - 다크/라이트 테마 토글
+  - 이메일 복사 기능
+  - 떠다니는 파티클 배경 효과
 
-### 🎯 3D 게임 환경
-- **3개의 레벨**: 각각 다른 테마와 기능을 가진 독특한 레벨
-- **실시간 3D 렌더링**: Three.js와 React Three Fiber를 활용한 고품질 3D 그래픽
-- **동적 조명**: 그림자와 조명 효과가 적용된 몰입감 있는 환경
+- **게임 모드**: 3D 인터랙티브 환경
+  - 4개의 탐험 가능한 레벨
+  - 애니메이션 캐릭터 조작
+  - 문을 통한 레벨 전환
+  - 인터랙티브 오브젝트 상호작용
+  - 실시간 물리 엔진 (Rapier)
 
-### 🚶‍♂️ 캐릭터 시스템
-- **애니메이션 캐릭터**: 걷기, 뛰기, 대기 등 다양한 애니메이션
-- **키보드 조작**: WASD 키로 캐릭터 이동, Shift로 달리기
-- **실시간 사운드**: 발걸음 소리와 상호작용 사운드
+### 게임 모드 - 4개의 레벨
 
-### 🚗 자동차 시스템 (Level 2)
-- **자동차 탑승/하차**: E키로 자동차 상호작용
-- **현실적인 운전**: 전륜조향, 후륜구동, 가속도 시스템
-- **바퀴 애니메이션**: 실제 바퀴 회전과 조향 효과
+#### 레벨 1 - 시작 공간
+- 자연 풍경이 있는 시작 환경
+- Level 2, Level 3로 이동하는 포털 문
+- 그라디언트 바닥 셰이더
 
-### 🌟 포털 시스템
-- **레벨 간 이동**: 포털을 통한 매끄러운 레벨 전환
-- **시각적 효과**: 커스텀 셰이더를 활용한 포털 소용돌이 효과
-- **부드러운 전환**: 애니메이션과 함께하는 레벨 전환
+#### 레벨 2 - 프로젝트 갤러리
+- 3개의 프로젝트 캐비닛 (Asura, 편의점 솔루션, Void)
+- E키로 각 캐비닛 상호작용 시 프로젝트 상세 정보 표시
+- Level 1로 돌아가는 문
 
-### 🎨 시각적 효과
-- **커스텀 셰이더**: 그라데이션 바닥과 포털 효과
-- **동적 텍스처**: 각 레벨별 고유한 환경 텍스처
-- **3D 모델**: 다양한 3D 에셋을 활용한 풍부한 환경
+#### 레벨 3 - 기술 스택 사무실
+- 4개의 기술 스택 테이블 (Frontend, Backend, Game Dev, Tools)
+- 테이블 근처 접근 시 자동으로 기술 스택 표시
+- Level 1과 Level 4로 이동하는 문
+
+#### 레벨 4 - 개인 작업실
+- 어두운 공간 환경
+- CabinetTelevision: 연락처 정보 표시
+- Wall: 프로필 정보 표시
+- DeskCorner: 포트폴리오 링크 표시
+- Level 3로 돌아가는 문
+
+### 게임 기능
+- **애니메이션 캐릭터**: Idle, Walk, Run 애니메이션
+- **물리 기반 이동**: Rapier 물리 엔진으로 현실적인 움직임
+- **스마트 카메라**: 캐릭터를 부드럽게 추적하는 고정 오프셋 카메라
+- **사운드 시스템**: 발소리 및 문 열림 소리
+- **커스텀 셰이더**: GLSL 기반 그라디언트 바닥 재질
+- **상호작용 시스템**: 거리 기반 오브젝트 감지 및 E키 상호작용
 
 ## 🎮 조작법
 
-| 키 | 기능 |
-|---|---|
-| `W` | 앞으로 이동 |
-| `S` | 뒤로 이동 |
-| `A` | 왼쪽으로 이동 |
-| `D` | 오른쪽으로 이동 |
-| `Shift` | 달리기 (WASD와 함께) |
-| `E` | 자동차 탑승/하차 (Level 2) |
-| `C` | 카메라 위치 로그 (개발자용) |
+### 키보드
+- **WASD**: 캐릭터 이동
+- **Shift**: 달리기
+- **E**: 문/오브젝트와 상호작용
+- **C**: 캐릭터 위치 로그 (디버그)
 
-## 🗺️ 레벨 구성
-
-### Level 1: 자연 환경
-- **환경**: 연두색 그라데이션 바닥과 팜트리
-- **NPC**: 환영 메시지와 함께하는 NPC 캐릭터
-- **포털**: Level 2와 Level 3으로 이동하는 포털
-- **특징**: 자연스러운 환경과 평화로운 분위기
-
-### Level 2: 자동차 레이싱
-- **환경**: 도시 스타일의 레이싱 트랙
-- **자동차**: 미래형 레이싱카 탑승 가능
-- **운전**: 현실적인 자동차 물리 시스템
-- **특징**: 고속 주행과 자동차 조작의 재미
-
-### Level 3: 건축 환경
-- **환경**: 3D 건물 모델과 도시 풍경
-- **지형**: 복잡한 건축 구조물
-- **특징**: 건축과 도시 디자인을 보여주는 환경
+### 마우스
+- 게임 모드에서 화면 상단에 마우스를 올리면 네비게이션 바 표시
 
 ## 🛠️ 기술 스택
 
 ### Frontend
-- **React 19.1.1**: 최신 React 기능 활용
-- **Three.js 0.179.1**: 3D 그래픽 렌더링
-- **React Three Fiber 9.3.0**: React와 Three.js 통합
-- **React Three Drei 10.7.4**: Three.js 헬퍼 라이브러리
+- **React 19**: 최신 React로 구축된 UI
+- **Three.js**: 3D 그래픽 렌더링
+- **React Three Fiber**: React용 Three.js 렌더러
+- **@react-three/drei**: Three.js 유틸리티
+- **@react-three/rapier**: 물리 엔진
+- **JavaScript/JSX**: 메인 프로그래밍 언어
 
-### 3D 에셋
-- **캐릭터**: Ultimate Animated Character Pack
-- **자연 환경**: Ultimate Nature Pack, Nature Kit
-- **자동차**: Kenney Car Kit
-- **건축**: 커스텀 3D 모델 (GameMap.glb, GameMap2.glb)
+### 개발 도구
+- **Create React App**: 빌드 도구
+- **Netlify**: 배포 플랫폼
 
-### 오디오
-- **효과음**: 발걸음 소리, 자동차 소리
-- **포맷**: WAV, MP3 지원
+### 3D Assets
+- **Ultimate Animated Character Pack**: 캐릭터 모델 (Suit.glb)
+- **커스텀 레벨 맵**: Level1Map.glb, Level2Map.glb, Level3Map.glb, Level4Map.glb
+- **사운드**: 발소리 (Step2.wav), 문 열림 소리 (opendoor.mp3)
 
-## 🚀 설치 및 실행
+## 📦 설치 및 실행
 
-### 필요 조건
-- Node.js 14.0 이상
-- npm 또는 yarn
-
-### 설치
+### 1. 저장소 클론
 ```bash
-# 저장소 클론
-git clone [repository-url]
+git clone https://github.com/kimkichan1225/Portfolio.git
 cd portfolio-game
+```
 
-# 의존성 설치
+### 2. 의존성 설치
+```bash
 npm install
 ```
 
-### 개발 서버 실행
+### 3. 개발 서버 실행
 ```bash
 npm start
 ```
-브라우저에서 `http://localhost:3000`으로 접속
+브라우저에서 `http://localhost:3000` 자동 실행
+
+## 🚀 빌드 및 배포
 
 ### 프로덕션 빌드
 ```bash
 npm run build
 ```
+`build/` 폴더에 최적화된 프로덕션 빌드 생성
 
-## 🌐 Netlify 배포
-
-### 방법 1: Netlify CLI 사용
+### Netlify 배포
 ```bash
-# Netlify CLI 설치
-npm install -g netlify-cli
-
-# 빌드
-npm run build
-
-# Netlify에 배포
 netlify deploy --prod
 ```
-
-### 방법 2: Git 연동 (권장)
-1. GitHub/GitLab에 코드를 푸시
-2. [Netlify](https://www.netlify.com/)에 로그인
-3. "New site from Git" 클릭
-4. 저장소 선택
-5. 빌드 설정 자동 감지 (netlify.toml 사용)
-6. "Deploy site" 클릭
-
-### 방법 3: 드래그 앤 드롭
-```bash
-npm run build
-```
-빌드 후 생성된 `build` 폴더를 [Netlify Drop](https://app.netlify.com/drop)에 드래그 앤 드롭
-
-### 배포 설정
-- **빌드 명령어**: `npm run build`
-- **배포 디렉토리**: `build`
-- **Node 버전**: 18
 
 ## 📁 프로젝트 구조
 
 ```
 portfolio-game/
 ├── public/
-│   ├── resources/          # 3D 모델 및 텍스처
-│   │   ├── kenney_car-kit/     # 자동차 모델
-│   │   ├── Nature-Kit/         # 자연 환경 모델
-│   │   ├── Ultimate Animated Character Pack/  # 캐릭터 모델
-│   │   └── Ultimate Nature Pack/              # 자연 모델
-│   ├── sounds/             # 오디오 파일
-│   └── *.glb               # 3D 모델 파일
+│   ├── resources/
+│   │   ├── GameView/
+│   │   │   └── Suit.glb                    # 캐릭터 모델
+│   │   ├── Sounds/
+│   │   │   ├── Step.wav
+│   │   │   ├── Step1.wav
+│   │   │   ├── Step2.wav
+│   │   │   └── Step3.wav
+│   │   ├── Ultimate Animated Character Pack/
+│   │   ├── Level1Map.glb                    # 레벨 1 맵
+│   │   ├── Level1Map-v2.glb
+│   │   ├── Level1Map-v3.glb
+│   │   ├── Level1Map-snow.glb
+│   │   ├── Level2Map.glb                    # 레벨 2 맵
+│   │   ├── Level2Map-v2.glb
+│   │   ├── Level3Map.glb                    # 레벨 3 맵
+│   │   ├── Level3Map-v2.glb
+│   │   ├── Level4Map.glb                    # 레벨 4 맵
+│   │   └── Level4Map-v2.glb
+│   ├── sounds/
+│   │   └── opendoor.mp3
+│   ├── FirstProject.png
+│   ├── SecondProject.png
+│   ├── ThirdProject.png
+│   ├── Kimkichan.png
+│   └── *.pdf                                # 프로젝트 보고서
 ├── src/
-│   ├── App.js              # 메인 애플리케이션
-│   ├── PortalVortex.js     # 포털 셰이더 컴포넌트
-│   ├── useKeyboardControls.js  # 키보드 입력 처리
-│   └── App.css             # 스타일
-└── package.json
+│   ├── App.js                               # 메인 애플리케이션
+│   ├── App.css                              # 메인 스타일
+│   ├── useKeyboardControls.js               # 키보드 입력 훅
+│   ├── TypingAnimation.js                   # 타이핑 효과 컴포넌트
+│   ├── useScrollAnimation.js                # 스크롤 애니메이션 훅
+│   ├── ProjectModal.js                      # 프로젝트 모달
+│   ├── ProjectModal.css                     # 모달 스타일
+│   ├── TutorialPopup.css                    # 튜토리얼 팝업 스타일
+│   ├── PortalVortex.js                      # 포털 효과 (미사용)
+│   ├── SquareForestTile.js                  # 타일 컴포넌트 (미사용)
+│   ├── index.js                             # React 진입점
+│   └── index.css                            # 전역 스타일
+├── package.json
+└── README.md
 ```
 
-## 🎨 커스텀 셰이더
+## 🎨 주요 컴포넌트
 
-프로젝트는 커스텀 GLSL 셰이더를 활용합니다:
+### App.js 핵심 구조
 
-- **GradientFloorMaterial**: 그라데이션 바닥과 그림자 효과
-- **VortexMaterial**: 포털의 소용돌이 효과
-- **실시간 애니메이션**: 시간 기반 셰이더 애니메이션
+#### 모드 관리
+- `isWebMode` 상태로 웹/게임 모드 전환
+- `NavigationBar`: 모드 전환 버튼 및 다크 모드 토글
 
-## 🔧 개발 정보
+#### 게임 상태 관리
+- 상태 머신 패턴 사용
+- `playing_level1`, `playing_level2`, `playing_level3`, `playing_level4`
+- `returning_to_level1`, `returning_to_level1_from_level3`, `returning_to_level3_from_level4`
 
-### 성능 최적화
-- **모델 프리로딩**: 필요한 3D 모델 사전 로드
-- **인스턴싱**: 동일한 모델의 여러 인스턴스 최적화
-- **그림자 최적화**: 효율적인 그림자 렌더링
+#### 레벨 전환 시스템
+- `setGameStateWithFade()`: 페이드 효과와 함께 레벨 전환
+- 레벨별 `spawnPosition` 설정
+- Physics 컴포넌트 key 기반 재생성으로 Rapier 월드 리셋
 
-### 브라우저 지원
-- Chrome (권장)
-- Firefox
-- Safari
-- Edge
+#### 캐릭터 시스템 (`Model` 컴포넌트)
+- GLTF 캐릭터 모델 로드 및 애니메이션 (Idle, Walk, Run)
+- Rapier RigidBody 기반 물리 이동
+- 거리 기반 오브젝트 상호작용 감지
+- 발소리 자동 재생 시스템
+
+#### 카메라 시스템 (`CameraController` 컴포넌트)
+- 고정 오프셋 카메라: `(-0.00, 28.35, 19.76)`
+- 부드러운 lerp 기반 추적
+- 레벨 전환 시 카메라 리셋
+
+### 커스텀 훅
+
+**useKeyboardControls**
+- WASD, Shift, E, C 키 입력 감지
+- 키 상태를 boolean 값으로 반환
+
+**useScrollAnimation**
+- IntersectionObserver 기반 스크롤 애니메이션
+- 요소가 화면에 나타날 때 애니메이션 트리거
+
+### 커스텀 셰이더
+
+**GradientFloorMaterial**
+- GLSL 기반 그라디언트 바닥 셰이더
+- Three.js 그림자 매핑 지원
+- 화면 좌표 기반 대각선 그라디언트
+
+## 🔧 주요 상수
+
+### 캐릭터 이동
+- 걷기 속도: 8
+- 달리기 속도: 18
+- 발소리 간격: 걷기 0.6초, 달리기 0.45초
+
+### 상호작용
+- 상호작용 거리: 7 유닛
+- 쿨다운: 500ms
+
+### 카메라
+- 오프셋: `(-0.00, 28.35, 19.76)`
+- Lerp 속도: 2.0 (일반), 12.0 (타겟 추적)
+
+## 📊 프로젝트 데이터
+
+웹 모드에 표시되는 3개의 프로젝트:
+1. **Asura** - Node.js + Socket.IO 멀티플레이어 액션 게임
+2. **편의점 종합 솔루션** - React 19 + Supabase 통합 관리 플랫폼
+3. **Void** - Unity 6 2D 액션 RPG
+
+각 프로젝트는 다음 정보 포함:
+- 제목, 설명, 기술 스택
+- 프로젝트 개요, 성과, 도전 과제
+- GitHub, 데모, 보고서 링크
+
+## 🎯 개발 가이드
+
+### 새 프로젝트 추가 (웹 모드)
+1. `projectsData` 배열에 프로젝트 객체 추가 (src/App.js:14)
+2. 프로젝트 이미지/비디오를 `public/` 폴더에 추가
+3. 필요시 GitHub/Demo URL 및 PDF 보고서 추가
+
+### 새 레벨 추가
+1. 새 게임 상태 추가 (예: `playing_level5`)
+2. 레벨 컴포넌트 생성 (GLB 파일 로드 및 렌더링)
+3. `Model` 컴포넌트에 문 상호작용 로직 추가
+4. `setGameStateWithFade`에 스폰 위치 추가
+5. `App.js`의 Canvas 내부에 레벨 조건부 렌더링 추가
+
+### 새 인터랙티브 오브젝트 추가
+1. 오브젝트 위치 상태 추가 (예: `newObjectPosition`)
+2. `Model` 컴포넌트의 `useFrame`에 거리 감지 로직 추가
+3. UI 인디케이터 컴포넌트 추가
+4. E키 상호작용 시 동작 정의
+
+## 🌐 배포 설정
+
+### Netlify 설정
+프로젝트는 Netlify 배포에 최적화되어 있습니다:
+- SPA 리다이렉션 지원
+- React Router 호환
+- 자동 빌드 및 배포
 
 ## 📝 라이선스
 
-이 프로젝트는 다음 에셋을 사용합니다:
-- **Kenney Assets**: MIT 라이선스
-- **Ultimate Character Pack**: 상업적 사용 가능
-- **Ultimate Nature Pack**: 상업적 사용 가능
+이 프로젝트는 개인 포트폴리오용입니다.
 
-## 🤝 기여하기
+## 👤 개발자
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+**김기찬**
+- Email: kimkichan1225@gmail.com
+- Phone: +82 10-4225-5388
+- GitHub: [github.com/kimkichan1225](https://github.com/kimkichan1225)
+- Instagram: [@kim_kichan](https://www.instagram.com/kim_kichan/)
 
-## 📧 연락처
+## 🙏 감사의 글
 
-프로젝트에 대한 문의사항이 있으시면 언제든 연락해주세요!
+- **Ultimate Animated Character Pack**: 캐릭터 3D 모델
+- **Three.js & React Three Fiber**: 3D 그래픽 라이브러리
+- **Rapier**: 물리 엔진
+- **사운드 에셋**: 발소리 및 효과음
 
 ---
 
-**즐거운 3D 포트폴리오 탐험을 경험해보세요! 🎮✨**
+**💡 Tip**: 상단 우측의 🎮 버튼을 클릭하여 게임 모드로 전환하고 3D 환경을 직접 탐험해보세요!
