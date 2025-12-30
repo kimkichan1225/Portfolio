@@ -303,7 +303,7 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
             <div style={{ display: 'flex', gap: '3rem', alignItems: 'center', marginBottom: '4rem', marginLeft: '4rem' }}>
               <div style={{ textAlign: 'center' }}>
                 <div className="profile-image-container" style={{ border: 'none', boxShadow: 'none', borderRadius: '10px', flexShrink: 0 }}>
-                  <img src="/Kimkichan.png" alt="김기찬" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px', border: 'none' }} />
+                  <img src="/Kimkichan-1.png" alt="김기찬" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px', border: 'none' }} />
                 </div>
                 <p style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#888' }}>📅 2001.12.25</p>
               </div>
@@ -3304,7 +3304,7 @@ function App() {
             <h2>About Me</h2>
             <div className="profile-modal-content">
               <div className="profile-image-section">
-                <img src="/Kimkichan.png" alt="김기찬" className="profile-modal-image" />
+                <img src="/Kimkichan-1.png" alt="김기찬" className="profile-modal-image" />
                 <p className="profile-birthday">📅 2001.12.25</p>
               </div>
               <div className="profile-text-section">
