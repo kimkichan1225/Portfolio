@@ -155,6 +155,65 @@ const projectsData = [
   },
   {
     id: 3,
+    category: 'KDT',
+    categoryLabel: 'KDT 프로젝트 - 3차',
+    title: 'MetaPlaza(위치기반 3D 소셜 메타버스)',
+    description: 'React 19 + Three.js + Spring Boot로 구축한 위치기반 3D 소셜 커뮤니티 플랫폼',
+    image: '/FourthProject.png',
+    video: null,
+    tech: ['React 19', 'Three.js', 'React Three Fiber', 'Spring Boot', 'WebSocket', 'MySQL', 'JWT', 'Mapbox'],
+    overview: [
+      'React 19 + Three.js + React Three Fiber 기반 3D 소셜 메타버스',
+      'Spring Boot 3.x + Spring Security + JWT 백엔드 인증 시스템',
+      '실시간 3D 가상 광장 (동적 조명, 그림자, 다중 사용자 지원)',
+      'GPS 기반 위치 서비스 (Mapbox/Kakao Maps API 연동)',
+      '커스텀 방 생성 (자신의 위치에 3D 공간 생성, 근거리 사용자만 접속)',
+      'WebSocket 실시간 통신 (채팅, 사용자 위치 동기화)',
+      '3D 캐릭터 시스템 (GLTF 모델, 걷기/뛰기 애니메이션, 커스터마이징)',
+      '소셜 기능 (친구 추가/관리, 프로필 보기, 사용자 상호작용)',
+      '미니게임 시스템 (게임 생성/참가/관전)',
+      '아이템 상점 및 결제 연동 (PortOne 통합 결제)'
+    ],
+    achievements: [
+      'Three.js LOD 및 인스턴싱으로 다중 사용자 렌더링 최적화',
+      'GPS 반경 계산 (Turf.js)으로 근거리 방 필터링',
+      'WebSocket 양방향 통신으로 실시간 캐릭터 위치 동기화',
+      'Spring Security + JWT로 안전한 인증/권한 관리',
+      'Redis 캐싱으로 DB 부하 감소 및 성능 향상',
+      'Mapbox API로 실시간 지도에 생성된 방 마커 표시',
+      'GLTF 3D 모델 최적화 및 애니메이션 시스템 구현',
+      'AWS S3 + RDS + EC2 기반 프로덕션 배포',
+      'Netlify + Vercel 프론트엔드 배포 및 CI/CD',
+      'XSS/CSRF/SQL Injection 방지 보안 구현'
+    ],
+    challenges: [
+      {
+        title: '3D 다중 사용자 렌더링 최적화',
+        description: 'Three.js LOD(Level of Detail) 시스템으로 거리에 따라 캐릭터 모델 디테일 조절. InstancedMesh로 동일 모델 배치 최적화하여 50명 이상 동시 렌더링 시에도 60fps 유지. Frustum Culling으로 화면 밖 객체 렌더링 제외.'
+      },
+      {
+        title: 'GPS 기반 위치 서비스 구현',
+        description: 'Geolocation API로 사용자 실시간 위치 추적. Turf.js로 두 지점 간 거리 계산 (Haversine formula). 반경 N미터 내 방 필터링 및 지도 API에 마커 표시. 위치 권한 요청 및 에러 핸들링 구현.'
+      },
+      {
+        title: 'WebSocket 실시간 동기화',
+        description: 'Socket.io + STOMP 프로토콜로 클라이언트-서버 양방향 통신. 캐릭터 이동, 채팅, 게임 상태를 실시간 브로드캐스트. 네트워크 지연 보상을 위한 클라이언트 예측 및 서버 권한 검증. 재연결 로직 및 세션 복구 구현.'
+      },
+      {
+        title: 'Spring Boot 백엔드 아키텍처',
+        description: 'Spring Security + JWT로 Stateless 인증 시스템. Access Token + Refresh Token 전략으로 보안 강화. JPA + MySQL로 사용자/방/친구/아이템 데이터 관리. Redis로 세션 캐싱 및 Token Blacklist 관리. RESTful API 설계 및 DTO 패턴 적용.'
+      },
+      {
+        title: '3D 캐릭터 시스템 및 애니메이션',
+        description: 'GLTF 포맷 3D 모델 로딩 및 Three.js AnimationMixer로 애니메이션 제어. WASD 키보드 입력 → 캐릭터 이동/회전 → 애니메이션 전환 (Idle/Walk/Run). 캐릭터 커스터마이징 (의상, 액세서리) 시스템. 충돌 감지 및 맵 경계 처리.'
+      }
+    ],
+    github: 'https://github.com/kimkichan1225/3DCommunity',
+    demo: 'https://metaplaza-ashy.vercel.app',
+    reports: []
+  },
+  {
+    id: 4,
     category: '대학 졸업작품',
     categoryLabel: '대학 졸업작품',
     title: 'Void(2D Unity Action RPG)',
@@ -216,6 +275,46 @@ const projectsData = [
         file: '/ThirdProjectPowerPoint.pdf'
       }
     ]
+  },
+  {
+    id: 5,
+    category: '기타',
+    categoryLabel: '기타',
+    icon: '📋',
+    title: '출석체크 시스템',
+    description: 'QR 코드 기반 모바일 친화적 출석 관리 웹 애플리케이션',
+    image: null,
+    video: null,
+    tech: ['React', 'Vite', 'Supabase', 'TailwindCSS'],
+    overview: [
+      'React 18 + Vite 기반 모바일 친화적 출석 시스템',
+      'Supabase (PostgreSQL) 백엔드 및 실시간 데이터베이스',
+      'QR 코드 스캔으로 간편한 출석 체크',
+      '관리자 대시보드 (사용자/이벤트/출석 관리)',
+      'CSV 내보내기 및 수동 출석 처리',
+      'Row Level Security (RLS) 기반 보안'
+    ],
+    achievements: [
+      'QR 코드 기반 간편한 출석 시스템 구현',
+      'Supabase RLS로 데이터 보안 강화',
+      '모바일 최적화 반응형 디자인',
+      '실시간 출석 데이터 동기화',
+      'CSV 엑셀 다운로드 기능',
+      'TailwindCSS로 빠른 UI 개발'
+    ],
+    challenges: [
+      {
+        title: 'QR 코드 스캔 및 출석 처리',
+        description: 'html5-qrcode 라이브러리로 카메라 QR 스캔 구현. QR 데이터로 이벤트 조회 후 사용자 이름 입력받아 출석 기록. 같은 날 중복 출석 방지를 위한 UNIQUE INDEX 설정.'
+      },
+      {
+        title: 'Supabase Row Level Security',
+        description: 'RLS 정책으로 테이블 수준 권한 제어. Public 읽기 권한으로 출석 조회 가능, 삽입 권한으로 출석 체크 가능. 관리자는 Service Role Key로 모든 CRUD 작업.'
+      }
+    ],
+    github: 'https://github.com/kimkichan1225/AttendanceCheck',
+    demo: null,
+    reports: []
   }
 ];
 
@@ -379,7 +478,6 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                   <span className="category-icon">🎓</span>
                   <h3>대학 졸업작품</h3>
                 </div>
-                <p className="category-description">대학교에서 진행한 졸업 프로젝트입니다</p>
               </div>
               <div className="projects-grid">
                 {projectsData
@@ -456,7 +554,6 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                   <span className="category-icon">💼</span>
                   <h3>KDT 프로젝트</h3>
                 </div>
-                <p className="category-description">한국디지털교육원 웹 개발 과정에서 진행한 프로젝트들입니다</p>
               </div>
               <div className="projects-grid">
                 {projectsData
@@ -479,6 +576,151 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                       {!project.image && (
                         <div className="project-card-image"></div>
                       )}
+                      <div className="project-card-content">
+                        <h3>{project.title}</h3>
+                        <p>{project.description}</p>
+                        {project.tech && (
+                          <div className="project-card-tech">
+                            {project.tech.slice(0, 5).map((tech, idx) => (
+                              <span key={idx} className="project-tech-tag">
+                                {tech}
+                              </span>
+                            ))}
+                            {project.tech.length > 5 && (
+                              <span className="project-tech-tag more">+{project.tech.length - 5}</span>
+                            )}
+                          </div>
+                        )}
+                        {(project.github || project.demo) && (
+                          <div className="project-card-links">
+                            {project.github && (
+                              <a
+                                href={project.github}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="project-card-link"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                GitHub
+                              </a>
+                            )}
+                            {project.demo && (
+                              <a
+                                href={project.demo}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="project-card-link demo"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {project.demo.includes('releases/download') ? 'Download Game' : 'Live Demo'}
+                              </a>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* 개인 프로젝트 카테고리 */}
+            <div className="project-category">
+              <div className="category-header">
+                <div className="category-title">
+                  <span className="category-icon">💻</span>
+                  <h3>개인 프로젝트</h3>
+                </div>
+              </div>
+              <div className="projects-grid">
+                {projectsData
+                  .filter(project => project.category === '개인')
+                  .map((project, index) => (
+                    <div
+                      key={project.id}
+                      className={`project-card scale-in ${projectsVisible ? 'visible' : ''}`}
+                      style={{ transitionDelay: `${index * 0.1}s` }}
+                      onClick={() => setSelectedProject(project)}
+                    >
+                      <div className="project-badge personal">{project.categoryLabel}</div>
+                      {project.image && (
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className="project-card-image"
+                        />
+                      )}
+                      {!project.image && (
+                        <div className="project-card-image"></div>
+                      )}
+                      <div className="project-card-content">
+                        <h3>{project.title}</h3>
+                        <p>{project.description}</p>
+                        {project.tech && (
+                          <div className="project-card-tech">
+                            {project.tech.slice(0, 5).map((tech, idx) => (
+                              <span key={idx} className="project-tech-tag">
+                                {tech}
+                              </span>
+                            ))}
+                            {project.tech.length > 5 && (
+                              <span className="project-tech-tag more">+{project.tech.length - 5}</span>
+                            )}
+                          </div>
+                        )}
+                        {(project.github || project.demo) && (
+                          <div className="project-card-links">
+                            {project.github && (
+                              <a
+                                href={project.github}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="project-card-link"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                GitHub
+                              </a>
+                            )}
+                            {project.demo && (
+                              <a
+                                href={project.demo}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="project-card-link demo"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {project.demo.includes('releases/download') ? 'Download Game' : 'Live Demo'}
+                              </a>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* 기타 프로젝트 카테고리 */}
+            <div className="project-category">
+              <div className="category-header">
+                <div className="category-title">
+                  <span className="category-icon">📦</span>
+                  <h3>기타 프로젝트</h3>
+                </div>
+              </div>
+              <div className="projects-grid">
+                {projectsData
+                  .filter(project => project.category === '기타')
+                  .map((project, index) => (
+                    <div
+                      key={project.id}
+                      className={`project-card scale-in ${projectsVisible ? 'visible' : ''}`}
+                      style={{ transitionDelay: `${index * 0.1}s` }}
+                      onClick={() => setSelectedProject(project)}
+                    >
+                      <div className="project-badge other">{project.categoryLabel}</div>
+                      <div className="project-card-icon-area">
+                        <span className="project-card-icon">{project.icon || '📦'}</span>
+                      </div>
                       <div className="project-card-content">
                         <h3>{project.title}</h3>
                         <p>{project.description}</p>
