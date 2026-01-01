@@ -15,6 +15,8 @@ import { Physics, RigidBody, CapsuleCollider } from '@react-three/rapier';
 const projectsData = [
   {
     id: 1,
+    category: 'KDT',
+    categoryLabel: 'KDT 프로젝트 - 1차',
     title: 'Asura(웹 멀티 격투 게임)',
     description: 'Node.js와 Socket.IO를 활용한 실시간 웹 기반 멀티플레이어 액션 게임',
     image: '/FirstProject.png',
@@ -81,6 +83,8 @@ const projectsData = [
   },
   {
     id: 2,
+    category: 'KDT',
+    categoryLabel: 'KDT 프로젝트 - 2차',
     title: '편의점 종합 솔루션',
     description: 'React 19 + TypeScript로 구축한 실시간 편의점 통합 관리 플랫폼 (98% 완성)',
     image: '/SecondProject.png',
@@ -151,6 +155,8 @@ const projectsData = [
   },
   {
     id: 3,
+    category: '대학 졸업작품',
+    categoryLabel: '대학 졸업작품',
     title: 'Void(2D Unity Action RPG)',
     description: 'Unity 6로 제작한 2D 액션 RPG 게임 (졸업 프로젝트)',
     image: '/ThirdProject.png',
@@ -365,65 +371,159 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
         <section id="projects" className="section">
           <div ref={projectsRef} className={`fade-in ${projectsVisible ? 'visible' : ''}`} style={{ width: '100%', maxWidth: '1200px' }}>
             <h2>Projects</h2>
-            <div className="projects-grid">
-              {projectsData.map((project, index) => (
-                <div
-                  key={project.id}
-                  className={`project-card scale-in ${projectsVisible ? 'visible' : ''}`}
-                  style={{ transitionDelay: `${index * 0.1}s` }}
-                  onClick={() => setSelectedProject(project)}
-                >
-                  {project.image && (
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="project-card-image"
-                    />
-                  )}
-                  {!project.image && (
-                    <div className="project-card-image"></div>
-                  )}
-                  <div className="project-card-content">
-                    <h3>{project.title}</h3>
-                    <p>{project.description}</p>
-                    {project.tech && (
-                      <div className="project-card-tech">
-                        {project.tech.map((tech, idx) => (
-                          <span key={idx} className="project-tech-tag">
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    {(project.github || project.demo) && (
-                      <div className="project-card-links">
-                        {project.github && (
-                          <a
-                            href={project.github}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="project-card-link"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            GitHub
-                          </a>
-                        )}
-                        {project.demo && (
-                          <a
-                            href={project.demo}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="project-card-link demo"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {project.demo.includes('releases/download') ? 'Download Game' : 'Live Demo'}
-                          </a>
-                        )}
-                      </div>
-                    )}
-                  </div>
+
+            {/* 대학 졸업작품 카테고리 */}
+            <div className="project-category">
+              <div className="category-header">
+                <div className="category-title">
+                  <span className="category-icon">🎓</span>
+                  <h3>대학 졸업작품</h3>
                 </div>
-              ))}
+                <p className="category-description">대학교에서 진행한 졸업 프로젝트입니다</p>
+              </div>
+              <div className="projects-grid">
+                {projectsData
+                  .filter(project => project.category === '대학 졸업작품')
+                  .map((project, index) => (
+                    <div
+                      key={project.id}
+                      className={`project-card scale-in ${projectsVisible ? 'visible' : ''}`}
+                      style={{ transitionDelay: `${index * 0.1}s` }}
+                      onClick={() => setSelectedProject(project)}
+                    >
+                      <div className="project-badge graduation">{project.categoryLabel}</div>
+                      {project.image && (
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className="project-card-image"
+                        />
+                      )}
+                      {!project.image && (
+                        <div className="project-card-image"></div>
+                      )}
+                      <div className="project-card-content">
+                        <h3>{project.title}</h3>
+                        <p>{project.description}</p>
+                        {project.tech && (
+                          <div className="project-card-tech">
+                            {project.tech.slice(0, 5).map((tech, idx) => (
+                              <span key={idx} className="project-tech-tag">
+                                {tech}
+                              </span>
+                            ))}
+                            {project.tech.length > 5 && (
+                              <span className="project-tech-tag more">+{project.tech.length - 5}</span>
+                            )}
+                          </div>
+                        )}
+                        {(project.github || project.demo) && (
+                          <div className="project-card-links">
+                            {project.github && (
+                              <a
+                                href={project.github}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="project-card-link"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                GitHub
+                              </a>
+                            )}
+                            {project.demo && (
+                              <a
+                                href={project.demo}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="project-card-link demo"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {project.demo.includes('releases/download') ? 'Download Game' : 'Live Demo'}
+                              </a>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* KDT 프로젝트 카테고리 */}
+            <div className="project-category">
+              <div className="category-header">
+                <div className="category-title">
+                  <span className="category-icon">💼</span>
+                  <h3>KDT 프로젝트</h3>
+                </div>
+                <p className="category-description">한국디지털교육원 웹 개발 과정에서 진행한 프로젝트들입니다</p>
+              </div>
+              <div className="projects-grid">
+                {projectsData
+                  .filter(project => project.category === 'KDT')
+                  .map((project, index) => (
+                    <div
+                      key={project.id}
+                      className={`project-card scale-in ${projectsVisible ? 'visible' : ''}`}
+                      style={{ transitionDelay: `${index * 0.1}s` }}
+                      onClick={() => setSelectedProject(project)}
+                    >
+                      <div className="project-badge">{project.categoryLabel}</div>
+                      {project.image && (
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className="project-card-image"
+                        />
+                      )}
+                      {!project.image && (
+                        <div className="project-card-image"></div>
+                      )}
+                      <div className="project-card-content">
+                        <h3>{project.title}</h3>
+                        <p>{project.description}</p>
+                        {project.tech && (
+                          <div className="project-card-tech">
+                            {project.tech.slice(0, 5).map((tech, idx) => (
+                              <span key={idx} className="project-tech-tag">
+                                {tech}
+                              </span>
+                            ))}
+                            {project.tech.length > 5 && (
+                              <span className="project-tech-tag more">+{project.tech.length - 5}</span>
+                            )}
+                          </div>
+                        )}
+                        {(project.github || project.demo) && (
+                          <div className="project-card-links">
+                            {project.github && (
+                              <a
+                                href={project.github}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="project-card-link"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                GitHub
+                              </a>
+                            )}
+                            {project.demo && (
+                              <a
+                                href={project.demo}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="project-card-link demo"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {project.demo.includes('releases/download') ? 'Download Game' : 'Live Demo'}
+                              </a>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+              </div>
             </div>
           </div>
         </section>
