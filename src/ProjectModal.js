@@ -155,12 +155,51 @@ export function ProjectModal({ project, onClose }) {
             {activeTab === 'challenges' && project.challenges && (
               <div className="modal-details">
                 <h3>문제해결 사례</h3>
-                {project.challenges.map((challenge, index) => (
-                  <div key={index} className="challenge-item">
-                    <h4>{challenge.title}</h4>
-                    <p>{challenge.description}</p>
-                  </div>
-                ))}
+                {project.challenges.map((challenge, index) => {
+                  // Parse description into problem, solution, result
+                  const parts = challenge.description.split('\n');
+                  const problemText = parts.find(p => p.startsWith('문제:'))?.replace('문제:', '').trim();
+                  const solutionText = parts.find(p => p.startsWith('해결책:'))?.replace('해결책:', '').trim();
+                  const resultText = parts.find(p => p.startsWith('결과:'))?.replace('결과:', '').trim();
+
+                  return (
+                    <div key={index} className="challenge-item-card">
+                      <h4 className="challenge-title">
+                        <span className="challenge-number">{index + 1}</span>
+                        {challenge.title}
+                      </h4>
+                      <div className="challenge-content">
+                        {problemText && (
+                          <div className="challenge-section problem-section">
+                            <div className="section-label">
+                              <span className="label-icon">❗</span>
+                              <strong>문제</strong>
+                            </div>
+                            <p className="section-text">{problemText}</p>
+                          </div>
+                        )}
+                        {solutionText && (
+                          <div className="challenge-section solution-section">
+                            <div className="section-label">
+                              <span className="label-icon">💡</span>
+                              <strong>해결책</strong>
+                            </div>
+                            <p className="section-text">{solutionText}</p>
+                          </div>
+                        )}
+                        {resultText && (
+                          <div className="challenge-section result-section">
+                            <div className="section-label">
+                              <span className="label-icon">✅</span>
+                              <strong>결과</strong>
+                            </div>
+                            <p className="section-text">{resultText}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
 
