@@ -408,3 +408,102 @@
     flex-direction: column;
   }
 }
+
+/* Overview Sections - 카드 스타일 */
+.overview-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.overview-section-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.overview-section-card:hover {
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+}
+
+.overview-section-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.section-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.section-title {
+  color: white;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.overview-section-content {
+  padding: 1.25rem 1.5rem;
+}
+
+.overview-item {
+  padding: 0.6rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+  color: #495057;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  transition: all 0.2s;
+}
+
+.overview-item:hover {
+  color: #2c3e50;
+  padding-left: 1.7rem;
+}
+
+.overview-item::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: #667eea;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.overview-item:hover::before {
+  left: 0.2rem;
+}
+
+/* 반응형 - Overview */
+@media (max-width: 768px) {
+  .overview-section-header {
+    padding: 0.85rem 1.25rem;
+  }
+
+  .section-icon {
+    font-size: 1.3rem;
+  }
+
+  .section-title {
+    font-size: 1rem;
+  }
+
+  .overview-section-content {
+    padding: 1rem 1.25rem;
+  }
+
+  .overview-item {
+    font-size: 0.9rem;
+    padding-left: 1.3rem;
+  }
+}

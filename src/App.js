@@ -23,14 +23,18 @@ const projectsData = [
     video: '/FirstProjectGamePlay.mp4',
     tech: ['Node.js', 'Express', 'Socket.IO', 'JavaScript', 'HTML5', 'CSS3', 'Three.js'],
     overview: [
-      'Node.js + Express + Socket.IO 기반 실시간 멀티플레이어 3D 전투 게임',
-      'Three.js를 활용한 3인칭 시점 3D 렌더링 및 캐릭터 애니메이션',
-      '룸 기반 매칭 시스템 (최대 8인, 공개/비공개 방 설정)',
-      '20종 이상의 다양한 무기 (근접/원거리, 4단계 등급 시스템)',
-      'AI 봇 시스템 (Easy/Normal/Hard 난이도, 상태 기반 전투 AI)',
-      '복잡한 전투 메커니즘 (넉백, 기절, 출혈, 방어구 파괴)',
-      '2개의 맵과 캐릭터 선택 시스템 (GLTF 기반 애니메이션)',
-      'AABB 충돌 감지 및 실시간 타격 판정'
+      '[ 개요 ]',
+      'Node.js + Socket.IO 기반 실시간 웹 멀티플레이어 격투 게임',
+      'Three.js 3D 렌더링, 룸 기반 매칭, AI 봇 시스템',
+      '20종 무기(근접/원거리, 4단계 등급), 특수 효과 전투',
+      '',
+      '[ 기간 ]',
+      '2025.07.18 ~ 2025.07.28 (11일)',
+      '',
+      '[ 주요 기능 ]',
+      '▸ 멀티플레이어: Socket.IO 실시간 동기화, 룸 매칭 (최대 8인)',
+      '▸ AI 봇: 상태 기반 전투 AI (Easy/Normal/Hard 난이도)',
+      '▸ 전투: 넉백/기절/출혈/방어구 파괴, AABB 충돌 판정'
     ],
     achievements: [
       '멀티플레이어 동시 접속 및 안정적인 게임 세션 관리',
@@ -86,33 +90,35 @@ const projectsData = [
     category: 'KDT',
     categoryLabel: 'KDT 프로젝트 - 2차',
     title: '편의점 종합 솔루션',
-    description: 'React 19 + TypeScript로 구축한 실시간 편의점 통합 관리 플랫폼 (98% 완성)',
+    description: 'React 19 + TypeScript로 구축한 실시간 편의점 통합 관리 플랫폼',
     image: '/SecondProject.png',
     video: '/SecondProjectPlay.mov',
     tech: ['React 19', 'TypeScript', 'Vite 6', 'Supabase', 'PostgreSQL', 'TailwindCSS', 'CSS3', 'Zustand', 'TanStack Query'],
     overview: [
-      'React 19 + TypeScript + Vite 6 기반 모던 프론트엔드 아키텍처',
-      'Supabase (PostgreSQL 15) + Row Level Security (RLS) 보안 시스템',
-      '3개 역할 시스템 (고객/점주/본사) 완전 분리 구조',
-      '17개 테이블 + 13개 Database Functions + 15개 Triggers',
-      '토스페이먼츠 결제 연동 (카드, 간편결제, 계좌이체)',
-      'GPS 기반 지점 검색 (PostGIS + Google Maps API)',
-      'WebSocket 실시간 알림 시스템 (주문, 재고, 매출)',
-      '완전한 주문 워크플로우 (장바구니 → 결제 → 추적 → 완료)',
-      '자동화된 재고 관리 (주문 시 자동 차감, 부족 알림)',
-      '통합 매출 분석 (일/주/월 차트, 상품별/지점별 통계)'
+      '[ 개요 ]',
+      'React 19 + TypeScript로 구축한 편의점 통합 관리 플랫폼',
+      '고객/점주/본사를 위한 실시간 주문·재고·매출 관리 시스템',
+      '17개 테이블 + 13개 함수 + 15개 트리거 완전 자동화',
+      '',
+      '[ 기간 ]',
+      '2025.08.11 ~ 2025.08.22 (12일)',
+      '',
+      '[ 주요 기능 ]',
+      '▸ 고객: GPS 지점 검색, 토스페이먼츠 결제, 실시간 주문 추적',
+      '▸ 점주: 주문 관리, 자동 재고 차감, 매출 분석 대시보드',
+      '▸ 본사: 전체 지점 모니터링, 상품 마스터 관리, 물류 승인'
     ],
     achievements: [
-      '17개 테이블 완전한 ERD 설계 및 정규화',
-      'Row Level Security로 테이블 수준 권한 제어',
-      'PaymentKey 기반 3단계 중복 결제 방지 시스템',
-      '자동화된 비즈니스 로직 (13개 함수 + 15개 트리거)',
-      '실시간 WebSocket 구독으로 즉시 UI 업데이트',
-      'TypeScript Strict Mode 전체 적용 (타입 안전성)',
-      'Zustand + TanStack Query 최적화된 상태 관리',
-      '완전한 반응형 디자인 (모바일/태블릿/데스크톱)',
-      '5분 원클릭 데이터베이스 초기화 스크립트',
-      'SPA 라우팅 최적화 (Render 배포 지원)'
+      '17개 테이블 정규화된 ERD 설계 완료',
+      'RLS 정책으로 역할별 데이터 접근 제어',
+      'PaymentKey unique constraint 중복 결제 방지',
+      'PostgreSQL 트리거로 주문 시 자동 재고 차감',
+      'Supabase Realtime 구독으로 실시간 UI 업데이트',
+      'TypeScript Strict Mode 타입 안전성 보장',
+      'React Hook Form + Tailwind CSS 반응형 UI',
+      '원클릭 DB 초기화 스크립트 (00_setup_all_advanced.sql)',
+      'Express SPA 서버로 Render 배포 라우팅 해결',
+      '공급망 관리 (supply_requests → shipments 워크플로우)'
     ],
     challenges: [
       {
@@ -163,16 +169,18 @@ const projectsData = [
     video: null,
     tech: ['React 19', 'Three.js', 'React Three Fiber', 'Spring Boot', 'WebSocket', 'MySQL', 'JWT', 'Mapbox'],
     overview: [
-      'React 19 + Three.js + React Three Fiber 기반 3D 소셜 메타버스',
-      'Spring Boot 3.x + Spring Security + JWT 백엔드 인증 시스템',
-      '실시간 3D 가상 광장 (동적 조명, 그림자, 다중 사용자 지원)',
-      'GPS 기반 위치 서비스 (Mapbox/Kakao Maps API 연동)',
-      '커스텀 방 생성 (자신의 위치에 3D 공간 생성, 근거리 사용자만 접속)',
-      'WebSocket 실시간 통신 (채팅, 사용자 위치 동기화)',
-      '3D 캐릭터 시스템 (GLTF 모델, 걷기/뛰기 애니메이션, 커스터마이징)',
-      '소셜 기능 (친구 추가/관리, 프로필 보기, 사용자 상호작용)',
-      '미니게임 시스템 (게임 생성/참가/관전)',
-      '아이템 상점 및 결제 연동 (PortOne 통합 결제)'
+      '[ 개요 ]',
+      'React 19 + Three.js + Spring Boot 위치기반 3D 메타버스',
+      'GPS 기반 방 생성, WebSocket 실시간 3D 소셜 공간',
+      '3D 캐릭터, 친구 시스템, 미니게임, 아이템 상점',
+      '',
+      '[ 기간 ]',
+      '2025.08.11 ~ 2025.08.22 (12일)',
+      '',
+      '[ 주요 기능 ]',
+      '▸ 위치기반: GPS 근거리 방 생성/접속 (Mapbox API)',
+      '▸ 3D 메타버스: Three.js 실시간 캐릭터 렌더링, WebSocket 동기화',
+      '▸ 소셜: 친구 관리, 프로필, 미니게임, PortOne 결제 연동'
     ],
     achievements: [
       'Three.js LOD 및 인스턴싱으로 다중 사용자 렌더링 최적화',
@@ -222,14 +230,18 @@ const projectsData = [
     video: null,
     tech: ['Unity 6', 'C#', 'Windows'],
     overview: [
-      'Unity 6 (6000.0.41f1) 엔진 기반 2D 액션 RPG 게임',
-      '3종 무기 시스템 (검, 창, 메이스) - 각 무기별 고유 능력치 및 전투 스타일',
-      '하이브리드 전투 시스템 (일반 몬스터: 실시간 액션, 보스: 턴제 카드 배틀)',
-      '다단계 스테이지 구조 (튜토리얼 → 숲 맵 → 성 → 최종 보스)',
-      '전략적 주사위 메커니즘 (보스전 턴제 카드 배틀에서 주사위로 승부)',
-      '완전한 RPG 시스템 (레벨업, 스탯 성장, 인벤토리, 상점)',
-      '세이브/로드 시스템 (3개 슬롯 지원, JSON 기반 저장)',
-      '미니게임 통합 (대장간 강화, 라이프맵 스토리)'
+      '[ 개요 ]',
+      'Unity 6로 제작한 2D 액션 RPG 졸업 프로젝트',
+      '실시간 액션 + 턴제 보스전 하이브리드 전투 시스템',
+      '3종 무기(검/창/메이스), 다단계 스테이지, RPG 성장 요소',
+      '',
+      '[ 기간 ]',
+      '2025.08 ~ 2025.11 (4개월)',
+      '',
+      '[ 주요 기능 ]',
+      '▸ 전투: 실시간 액션(일반), 카드+주사위 턴제(보스)',
+      '▸ 무기: 검(밸런스), 창(사거리), 메이스(고화력)',
+      '▸ 시스템: 레벨업, 인벤토리, 상점, 세이브/로드 (3슬롯)'
     ],
     achievements: [
       '직관적인 조작감 구현 (WASD 이동, 대시, 점프, 벽 슬라이딩)',
@@ -287,12 +299,15 @@ const projectsData = [
     video: null,
     tech: ['React', 'Vite', 'Supabase', 'TailwindCSS'],
     overview: [
-      'React 18 + Vite 기반 모바일 친화적 출석 시스템',
-      'Supabase (PostgreSQL) 백엔드 및 실시간 데이터베이스',
-      'QR 코드 스캔으로 간편한 출석 체크',
-      '관리자 대시보드 (사용자/이벤트/출석 관리)',
-      'CSV 내보내기 및 수동 출석 처리',
-      'Row Level Security (RLS) 기반 보안'
+      '[ 개요 ]',
+      'React + Vite + Supabase 기반 QR 출석 관리 시스템',
+      'QR 스캔 출석, 관리자 대시보드, CSV 내보내기',
+      'Row Level Security (RLS) 보안, 모바일 최적화',
+      '',
+      '[ 주요 기능 ]',
+      '▸ 사용자: QR 코드 스캔으로 간편한 출석 체크',
+      '▸ 관리자: 사용자/이벤트 관리, 출석 기록 조회, CSV 다운로드',
+      '▸ 보안: Supabase RLS 정책으로 테이블 수준 권한 제어'
     ],
     achievements: [
       'QR 코드 기반 간편한 출석 시스템 구현',
@@ -312,8 +327,8 @@ const projectsData = [
         description: 'RLS 정책으로 테이블 수준 권한 제어. Public 읽기 권한으로 출석 조회 가능, 삽입 권한으로 출석 체크 가능. 관리자는 Service Role Key로 모든 CRUD 작업.'
       }
     ],
-    github: 'https://github.com/kimkichan1225/AttendanceCheck',
-    demo: null,
+    github: 'https://github.com/kimkichan1225/Attendance',
+    demo: 'https://attendancekim.netlify.app/',
     reports: []
   }
 ];

@@ -94,11 +94,50 @@ export function ProjectModal({ project, onClose }) {
             {activeTab === 'overview' && project.overview && (
               <div className="modal-details">
                 <h3>프로젝트 개요</h3>
-                <ul>
-                  {project.overview.map((item, index) => (
-                    <li key={index}>{item}</li>
-                  ))}
-                </ul>
+                <div className="overview-sections">
+                  {(() => {
+                    let currentSection = null;
+                    let sectionItems = [];
+                    const sections = [];
+
+                    project.overview.forEach((item, index) => {
+                      if (item.startsWith('[ ') && item.endsWith(' ]')) {
+                        // 이전 섹션 저장
+                        if (currentSection) {
+                          sections.push({ title: currentSection, items: sectionItems });
+                          sectionItems = [];
+                        }
+                        currentSection = item.replace(/\[|\]/g, '').trim();
+                      } else if (item !== '') {
+                        sectionItems.push(item);
+                      }
+                    });
+
+                    // 마지막 섹션 저장
+                    if (currentSection) {
+                      sections.push({ title: currentSection, items: sectionItems });
+                    }
+
+                    // 섹션 렌더링
+                    return sections.map((section, idx) => (
+                      <div key={idx} className="overview-section-card">
+                        <div className="overview-section-header">
+                          <span className="section-icon">
+                            {section.title === '개요' ? '📋' :
+                             section.title === '기간' ? '📅' :
+                             section.title === '주요 기능' ? '⚡' : '📌'}
+                          </span>
+                          <h4 className="section-title">{section.title}</h4>
+                        </div>
+                        <div className="overview-section-content">
+                          {section.items.map((item, i) => (
+                            <div key={i} className="overview-item">{item}</div>
+                          ))}
+                        </div>
+                      </div>
+                    ));
+                  })()}
+                </div>
               </div>
             )}
 
