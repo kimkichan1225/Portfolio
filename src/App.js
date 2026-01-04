@@ -33,20 +33,20 @@ const projectsData = [
       '[ 주요 기능 ]',
       '실시간 멀티플레이어: 최대 8인 동시 접속, 방 생성/참가 시스템',
       'AI 봇: 3단계 난이도, 상태 머신 기반 전투 AI',
-      '무기 시스템: 4단계 등급, 넉백/스턴 특수효과',
+      '무기 시스템: 데미지/넉백강도/공격판정 구간 등 세밀한 무기 데이터',
       '전투: HP 관리, 킬/데스 추적, 스코어보드'
     ],
     achievements: [
-      'Socket.IO 기반 실시간 멀티플레이어 동기화 (최대 8인)',
-      '방 생성/참가 시스템 (공개/비공개, 설정 커스터마이징)',
-      '26종 캐릭터 선택 (360도 프리뷰, Three.js 실시간 렌더링)',
-      '5단계 상태 머신 AI 봇 (3단계 난이도)',
-      '20+ 무기 시스템 (4단계 등급, 특수효과)',
-      '서버 권한 기반 HP/데미지 검증으로 치팅 방지',
-      'AABB 충돌 감지 (슬라이딩 이동, 단차 오르기)',
-      '2개 맵 지원 (경계 시스템, 맵별 데미지)',
-      '무기 자동 리스폰 (맵 내 항상 10개 유지)',
-      '킬 피드, 스코어보드, 사망/리스폰 시스템'
+      '최대 8인 동시 접속 지원\nSocket.IO 기반 실시간 멀티플레이어 게임 시스템 구현',
+      '방 생성/참가 시스템\n공개/비공개 방, 맵/인원/시간 설정 커스터마이징 지원',
+      '26종 캐릭터 선택 시스템\nThree.js 활용 360도 회전 프리뷰 및 실시간 3D 렌더링',
+      '5단계 상태 머신 AI 봇\n난이도별 차별화된 전투 AI (Easy/Normal/Hard)',
+      '20+ 무기 시스템\nweapon_data.json 기반 데미지, 넉백강도/지속시간, 공격판정 구간 등 세밀한 밸런싱',
+      '서버 권한 기반 검증\nHP/데미지 서버 검증으로 클라이언트 치팅 완전 차단',
+      'AABB 충돌 감지 시스템\n벽 슬라이딩 이동 및 단차 오르기 물리 구현',
+      '2개 맵 지원 (도시/아일랜드)\n맵별 경계 시스템 및 환경 데미지 적용',
+      '무기 자동 리스폰 시스템\n맵 내 항상 10개 무기 유지로 게임 밸런스 보장',
+      '완성도 높은 UI/UX\n킬 피드, 스코어보드, 사망 오버레이, 리스폰 시스템'
     ],
     challenges: [
       {
@@ -59,7 +59,7 @@ const projectsData = [
       },
       {
         title: '무기 시스템 밸런싱',
-        description: '문제: 무기 관리 및 균형 조정 필요\n해결책: weapon_data.json 기반 데이터 정의, 4단계 등급 시스템, 자동 리스폰(맵에 항상 10개 유지)\n결과: 다양한 무기 선택지, 균형잡힌 게임플레이'
+        description: '문제: 무기 관리 및 균형 조정 필요\n해결책: weapon_data.json 기반 무기별 데미지/넉백강도·지속시간/발사체속도/공격판정 구간(activationWindows) 정의, 자동 리스폰(맵에 항상 10개 유지)\n결과: 무기별 차별화된 전투감, 균형잡힌 게임플레이'
       },
       {
         title: '충돌 감지 시스템',
@@ -98,50 +98,50 @@ const projectsData = [
     tech: ['React 19', 'TypeScript', 'Vite 6', 'Supabase', 'PostgreSQL', 'TailwindCSS', 'CSS3', 'Zustand', 'TanStack Query'],
     overview: [
       '[ 개요 ]',
-      'React 19 + TypeScript로 구축한 편의점 통합 관리 플랫폼',
-      '고객/점주/본사를 위한 실시간 주문·재고·매출 관리 시스템',
-      '17개 테이블 + 13개 함수 + 15개 트리거 완전 자동화',
+      'React 19 + TypeScript + Supabase 실시간 편의점 통합 플랫폼',
+      '고객/점주/본사 3개 역할, 17개 테이블, 13개 함수, 15개 트리거',
       '',
       '[ 기간 ]',
-      '2025.08.11 ~ 2025.08.22 (12일)',
+      '2024.08.11 ~ 2024.08.22 (12일)',
       '',
       '[ 주요 기능 ]',
-      '고객: GPS 지점 검색, 토스페이먼츠 결제, 실시간 주문 추적',
-      '점주: 주문 관리, 자동 재고 차감, 매출 분석 대시보드',
-      '본사: 전체 지점 모니터링, 상품 마스터 관리, 물류 승인'
+      '고객: 지점 검색, 토스페이먼츠 결제, 실시간 주문 추적',
+      '점주: 주문/재고 관리, 본사 발주, 매출 분석 대시보드',
+      '본사: 전체 지점 모니터링, 상품 마스터 관리, 물류 승인',
+      '공통: RLS 정책 기반 역할별 데이터 접근 제어'
     ],
     achievements: [
-      '17개 테이블 정규화된 ERD 설계 완료',
-      'RLS 정책으로 역할별 데이터 접근 제어',
-      'PaymentKey unique constraint 중복 결제 방지',
-      'PostgreSQL 트리거로 주문 시 자동 재고 차감',
-      'Supabase Realtime 구독으로 실시간 UI 업데이트',
-      'TypeScript Strict Mode 타입 안전성 보장',
-      'React Hook Form + Tailwind CSS 반응형 UI',
-      '원클릭 DB 초기화 스크립트 (00_setup_all_advanced.sql)',
-      'Express SPA 서버로 Render 배포 라우팅 해결',
-      '공급망 관리 (supply_requests → shipments 워크플로우)'
+      '3개 역할 기반 시스템\n고객/점주/본사 완전히 분리된 UI/UX 및 권한 체계 구현',
+      '17개 테이블 정규화 ERD\nProfiles, Stores, Products, Orders, Supply 등 완전한 관계형 DB 설계',
+      'RLS 정책 기반 보안\nSupabase Row Level Security로 역할별 데이터 접근 완벽 제어',
+      'PostgreSQL 자동화 시스템\n13개 함수 + 15개 트리거로 재고 차감, 매출 집계 완전 자동화',
+      'Supabase Realtime 구독\n주문/재고 변경 사항 실시간 UI 업데이트',
+      '토스페이먼츠 결제 연동\nPaymentKey unique constraint로 중복 결제 완벽 방지',
+      'TypeScript Strict Mode\n전체 코드베이스 타입 안전성 보장 및 IDE 자동완성 지원',
+      '공급망 관리 워크플로우\n지점 발주 → 본사 승인 → 배송 → 입고 전체 프로세스 구현',
+      'TanStack Query 서버 상태 관리\n캐싱, 재시도, 낙관적 업데이트로 최적화된 데이터 패칭',
+      'Vite + Express SPA 배포\nNetlify/Render 배포 및 클라이언트 라우팅 완벽 처리'
     ],
     challenges: [
       {
-        title: '복잡한 다중 역할 시스템 설계',
-        description: '고객/점주/본사 3개 역할의 완전히 다른 UI/UX와 권한 체계를 단일 애플리케이션에 구현. Supabase RLS 정책으로 각 역할별로 접근 가능한 데이터를 테이블 레벨에서 제어. profiles 테이블의 role 컬럼과 auth.uid()를 조합하여 동적 권한 검증. React Router의 Protected Routes와 역할 기반 리다이렉트 로직으로 잘못된 접근 차단.'
+        title: '다중 역할 시스템 설계',
+        description: '문제: 고객/점주/본사 3개 역할의 완전히 다른 UI/UX 및 권한 체계 필요\n해결책: Supabase RLS 정책으로 테이블 레벨 접근 제어, profiles.role + auth.uid() 동적 권한 검증, React Router Protected Routes\n결과: 역할별 완벽히 분리된 경험, 데이터 보안 강화'
       },
       {
-        title: '중복 결제 방지 및 트랜잭션 처리',
-        description: '토스페이먼츠 결제 승인 후 네트워크 오류나 새로고침으로 인한 중복 주문 생성 문제 해결. 3단계 방어: (1) 클라이언트 sessionStorage로 결제 중 상태 추적, (2) PaymentKey unique constraint로 DB 레벨 중복 방지, (3) 주문 생성 전 PaymentKey 존재 여부 체크. PostgreSQL 트랜잭션과 Supabase 함수를 활용한 원자성 보장.'
+        title: '중복 결제 방지 시스템',
+        description: '문제: 토스페이먼츠 결제 후 네트워크 오류/새로고침으로 중복 주문 발생\n해결책: 3단계 방어 (sessionStorage 상태 추적, PaymentKey unique constraint, 주문 생성 전 체크), PostgreSQL 트랜잭션 원자성 보장\n결과: 중복 결제 완전 차단, 안정적인 결제 프로세스'
       },
       {
-        title: '실시간 재고 동기화 및 자동화',
-        description: '주문 완료 시 store_products 테이블의 재고를 자동으로 차감하고, 재고 부족 시 점주에게 즉시 알림. inventory_transactions 테이블로 모든 재고 변동 이력 추적. PostgreSQL Trigger를 활용하여 order_items 삽입 시 자동으로 재고 차감 및 트랜잭션 기록. Supabase Realtime으로 재고 변경 사항을 실시간 구독하여 UI 즉시 업데이트.'
+        title: '실시간 재고 동기화',
+        description: '문제: 주문 시 재고 차감 및 여러 사용자 간 재고 동기화 필요\n해결책: PostgreSQL Trigger로 order_items 삽입 시 자동 재고 차감, inventory_transactions 이력 관리, Supabase Realtime 구독\n결과: 완전 자동화된 재고 관리, 실시간 UI 업데이트'
       },
       {
-        title: '복잡한 공급망 관리 워크플로우',
-        description: '지점 → 본사 재고 요청 → 승인 → 배송 → 입고의 전체 프로세스 구현. supply_requests, supply_request_items, shipments 3개 테이블 연계. 본사 승인 시 자동으로 shipment 생성 및 배송 상태 추적. 배송 완료 시 지점 재고 자동 증가 및 inventory_transactions 기록. 상태 변경마다 관련 당사자에게 실시간 알림 발송.'
+        title: '공급망 관리 워크플로우',
+        description: '문제: 지점 발주부터 입고까지 복잡한 프로세스 관리\n해결책: supply_requests/items/shipments 3개 테이블 연계, 상태별 자동 처리, 배송 완료 시 재고 자동 증가, 실시간 알림\n결과: 완전한 공급망 관리 시스템, 효율적인 물류 처리'
       },
       {
-        title: 'TypeScript 타입 안전성 및 DX 최적화',
-        description: 'Supabase의 자동 생성 타입과 커스텀 타입을 조합하여 완전한 타입 추론 환경 구축. Database.ts에서 모든 테이블/뷰/함수 타입 정의 자동 생성. Zustand 스토어와 TanStack Query에 제네릭 타입 적용으로 IDE 자동완성 지원. TypeScript Strict Mode로 null/undefined 안전성 보장. Vite의 Hot Module Replacement로 즉시 변경사항 반영.'
+        title: 'TypeScript 타입 안전성',
+        description: '문제: 대규모 코드베이스에서 타입 오류 및 개발 생산성 저하\n해결책: Supabase 자동 생성 타입 + 커스텀 타입, Zustand/TanStack Query 제네릭 타입, TypeScript Strict Mode\n결과: 완벽한 타입 추론, IDE 자동완성, null/undefined 안전성 보장'
       }
     ],
     github: 'https://github.com/kimkichan1225/WebConvi',
@@ -172,50 +172,50 @@ const projectsData = [
     tech: ['React 19', 'Three.js', 'React Three Fiber', 'Spring Boot', 'WebSocket', 'MySQL', 'JWT', 'Mapbox'],
     overview: [
       '[ 개요 ]',
-      'React 19 + Three.js + Spring Boot 위치기반 3D 메타버스',
-      'GPS 기반 방 생성, WebSocket 실시간 3D 소셜 공간',
-      '3D 캐릭터, 친구 시스템, 미니게임, 아이템 상점',
+      'React 19 + Three.js + Spring Boot 위치기반 3D 소셜 메타버스',
+      'GPS 근거리 방 생성, 실시간 캐릭터 렌더링, WebSocket 동기화',
       '',
       '[ 기간 ]',
-      '2025.08.11 ~ 2025.08.22 (12일)',
+      '2024.08.11 ~ 2024.08.22 (12일)',
       '',
       '[ 주요 기능 ]',
-      '위치기반: GPS 근거리 방 생성/접속 (Mapbox API)',
-      '3D 메타버스: Three.js 실시간 캐릭터 렌더링, WebSocket 동기화',
-      '소셜: 친구 관리, 프로필, 미니게임, PortOne 결제 연동'
+      '위치기반: Geolocation + Turf.js GPS 근거리 방 생성/필터링',
+      '3D 메타버스: Three.js LOD/인스턴싱, 다중 사용자 렌더링',
+      '소셜: 친구 시스템, 실시간 채팅, 미니게임, PortOne 결제',
+      '백엔드: Spring Security + JWT + Redis 세션 관리'
     ],
     achievements: [
-      'Three.js LOD 및 인스턴싱으로 다중 사용자 렌더링 최적화',
-      'GPS 반경 계산 (Turf.js)으로 근거리 방 필터링',
-      'WebSocket 양방향 통신으로 실시간 캐릭터 위치 동기화',
-      'Spring Security + JWT로 안전한 인증/권한 관리',
-      'Redis 캐싱으로 DB 부하 감소 및 성능 향상',
-      'Mapbox API로 실시간 지도에 생성된 방 마커 표시',
-      'GLTF 3D 모델 최적화 및 애니메이션 시스템 구현',
-      'AWS S3 + RDS + EC2 기반 프로덕션 배포',
-      'Netlify + Vercel 프론트엔드 배포 및 CI/CD',
-      'XSS/CSRF/SQL Injection 방지 보안 구현'
+      'Three.js LOD 렌더링\nLevel of Detail + InstancedMesh로 50명 이상 동시 렌더링 60fps 유지',
+      'GPS 위치기반 시스템\nGeolocation + Turf.js Haversine 공식으로 반경 내 방 필터링',
+      'WebSocket 실시간 동기화\nSocket.io + STOMP로 캐릭터 이동/채팅 양방향 통신',
+      'Spring Security + JWT 인증\nAccess/Refresh Token 전략, Stateless 인증 시스템',
+      'Redis 세션 캐싱\nToken Blacklist 관리 및 DB 부하 감소',
+      'Mapbox API 지도 연동\n생성된 방을 실시간 지도에 마커로 표시',
+      'GLTF 3D 캐릭터 시스템\nAnimationMixer 애니메이션 제어, 커스터마이징 시스템',
+      'Spring Boot 백엔드\nJPA + MySQL 데이터 관리, RESTful API + DTO 패턴',
+      'AWS 프로덕션 배포\nS3(파일) + RDS(DB) + EC2(서버) 인프라 구축',
+      'PortOne 결제 연동\n아이템 상점 실제 결제 시스템 구현'
     ],
     challenges: [
       {
-        title: '3D 다중 사용자 렌더링 최적화',
-        description: 'Three.js LOD(Level of Detail) 시스템으로 거리에 따라 캐릭터 모델 디테일 조절. InstancedMesh로 동일 모델 배치 최적화하여 50명 이상 동시 렌더링 시에도 60fps 유지. Frustum Culling으로 화면 밖 객체 렌더링 제외.'
+        title: '3D 렌더링 최적화',
+        description: '문제: 다중 사용자 환경에서 프레임 드롭 발생\n해결책: LOD 시스템으로 거리별 모델 디테일 조절, InstancedMesh 배치 최적화, Frustum Culling\n결과: 50명 이상 동시 렌더링 60fps 유지'
       },
       {
-        title: 'GPS 기반 위치 서비스 구현',
-        description: 'Geolocation API로 사용자 실시간 위치 추적. Turf.js로 두 지점 간 거리 계산 (Haversine formula). 반경 N미터 내 방 필터링 및 지도 API에 마커 표시. 위치 권한 요청 및 에러 핸들링 구현.'
+        title: 'GPS 위치 서비스',
+        description: '문제: 실시간 위치 기반 방 생성 및 근거리 필터링\n해결책: Geolocation API 위치 추적, Turf.js Haversine 공식으로 거리 계산, 반경 내 방 필터링, 지도 마커 표시\n결과: 정확한 위치 기반 서비스, 근거리 사용자만 접속'
       },
       {
-        title: 'WebSocket 실시간 동기화',
-        description: 'Socket.io + STOMP 프로토콜로 클라이언트-서버 양방향 통신. 캐릭터 이동, 채팅, 게임 상태를 실시간 브로드캐스트. 네트워크 지연 보상을 위한 클라이언트 예측 및 서버 권한 검증. 재연결 로직 및 세션 복구 구현.'
+        title: 'WebSocket 실시간 통신',
+        description: '문제: 다중 사용자 캐릭터 이동 및 채팅 동기화\n해결책: Socket.io + STOMP 양방향 통신, 클라이언트 예측 + 서버 검증, 재연결 로직, 세션 복구\n결과: 안정적인 실시간 멀티플레이 환경'
       },
       {
-        title: 'Spring Boot 백엔드 아키텍처',
-        description: 'Spring Security + JWT로 Stateless 인증 시스템. Access Token + Refresh Token 전략으로 보안 강화. JPA + MySQL로 사용자/방/친구/아이템 데이터 관리. Redis로 세션 캐싱 및 Token Blacklist 관리. RESTful API 설계 및 DTO 패턴 적용.'
+        title: 'Spring Boot 인증 시스템',
+        description: '문제: 안전한 사용자 인증 및 세션 관리\n해결책: Spring Security + JWT Stateless 인증, Access/Refresh Token 전략, Redis Token Blacklist\n결과: 보안 강화된 인증, 확장 가능한 세션 관리'
       },
       {
-        title: '3D 캐릭터 시스템 및 애니메이션',
-        description: 'GLTF 포맷 3D 모델 로딩 및 Three.js AnimationMixer로 애니메이션 제어. WASD 키보드 입력 → 캐릭터 이동/회전 → 애니메이션 전환 (Idle/Walk/Run). 캐릭터 커스터마이징 (의상, 액세서리) 시스템. 충돌 감지 및 맵 경계 처리.'
+        title: '3D 캐릭터 애니메이션',
+        description: '문제: 자연스러운 캐릭터 이동 및 애니메이션 전환\n해결책: GLTF 모델 로딩, AnimationMixer 제어, WASD 입력 → 이동/회전 → 애니메이션 전환(Idle/Walk/Run)\n결과: 부드러운 캐릭터 제어, 커스터마이징 시스템'
       }
     ],
     github: 'https://github.com/kimkichan1225/3DCommunity',
@@ -302,35 +302,101 @@ const projectsData = [
     tech: ['React', 'Vite', 'Supabase', 'TailwindCSS'],
     overview: [
       '[ 개요 ]',
-      'React + Vite + Supabase 기반 QR 출석 관리 시스템',
-      'QR 스캔 출석, 관리자 대시보드, CSV 내보내기',
-      'Row Level Security (RLS) 보안, 모바일 최적화',
+      'React 18 + Vite + Supabase QR 기반 출석 관리 시스템',
+      '사용자: QR 스캔 출석, 관리자: 회원/출석 관리, 엑셀 내보내기',
       '',
       '[ 주요 기능 ]',
-      '사용자: QR 코드 스캔으로 간편한 출석 체크',
-      '관리자: 사용자/이벤트 관리, 출석 기록 조회, CSV 다운로드',
-      '보안: Supabase RLS 정책으로 테이블 수준 권한 제어'
+      '사용자: html5-qrcode QR 스캔, 이름 자동완성/저장, 출석 애니메이션',
+      '관리자: 회원 등록/삭제, 출석 기록 조회, 수동 출석 처리, 엑셀 내보내기',
+      'QR: QR 코드 생성/다운로드/인쇄, 모임 활성화/비활성화',
+      '보안: Supabase RLS 정책, Auth 기반 권한 관리'
     ],
     achievements: [
-      'QR 코드 기반 간편한 출석 시스템 구현',
-      'Supabase RLS로 데이터 보안 강화',
-      '모바일 최적화 반응형 디자인',
-      '실시간 출석 데이터 동기화',
-      'CSV 엑셀 다운로드 기능',
-      'TailwindCSS로 빠른 UI 개발'
+      'QR 코드 출석 시스템\nhtml5-qrcode 카메라 스캔, qrcode.react 코드 생성',
+      'Supabase RLS 보안\n역할별 데이터 접근 제어, Public 읽기/삽입, 관리자 전체 권한',
+      'PostgreSQL 자동화\nUNIQUE INDEX로 일일 중복 출석 방지, CASCADE 삭제',
+      'Supabase Realtime 구독\n새로운 출석/회원 추가 시 실시간 UI 자동 업데이트',
+      '엑셀 내보내기 시스템\nxlsx 라이브러리 년도별 시트, 월/일 헤더 형식',
+      '모바일 최적화 UI\nTailwind CSS 반응형 디자인, 터치 친화적 인터페이스',
+      '이름 자동완성\n로컬 스토리지 저장, 다음 출석 시 자동 입력',
+      '관리자 대시보드\n회원/출석 관리, 미출석자 실시간 표시, 검색 기능',
+      '회원가입 시 모임 자동 생성\n관리자 계정과 모임 연동, 탈퇴 시 완전 삭제',
+      'Netlify 배포\nVite 빌드 최적화, 환경변수 관리'
     ],
     challenges: [
       {
-        title: 'QR 코드 스캔 및 출석 처리',
-        description: 'html5-qrcode 라이브러리로 카메라 QR 스캔 구현. QR 데이터로 이벤트 조회 후 사용자 이름 입력받아 출석 기록. 같은 날 중복 출석 방지를 위한 UNIQUE INDEX 설정.'
+        title: 'QR 출석 시스템 구현',
+        description: '문제: QR 스캔부터 출석 기록까지 원활한 플로우 필요\n해결책: html5-qrcode 카메라 스캔, QR 데이터로 이벤트 조회, 이름 입력 자동완성, UNIQUE INDEX로 일일 중복 방지\n결과: 3초 내 출석 완료, 직관적인 사용자 경험'
       },
       {
-        title: 'Supabase Row Level Security',
-        description: 'RLS 정책으로 테이블 수준 권한 제어. Public 읽기 권한으로 출석 조회 가능, 삽입 권한으로 출석 체크 가능. 관리자는 Service Role Key로 모든 CRUD 작업.'
+        title: 'RLS 보안 및 권한 관리',
+        description: '문제: 사용자와 관리자 권한 분리 필요\n해결책: Supabase RLS 정책 (Public 읽기/삽입, 관리자 auth.uid() 검증), Service Role Key 관리자 전체 권한\n결과: 테이블 레벨 보안, 안전한 데이터 접근'
+      },
+      {
+        title: '실시간 데이터 동기화',
+        description: '문제: 관리자 화면 실시간 업데이트 필요\n해결책: Supabase Realtime 구독, users/attendances 테이블 리스닝, 이벤트 발생 시 자동 리렌더링\n결과: 새 출석/회원 즉시 반영, 실시간 모니터링'
+      },
+      {
+        title: '엑셀 내보내기 최적화',
+        description: '문제: 출석 기록을 보기 쉬운 형식으로 제공\n해결책: xlsx 라이브러리, 년도별 시트 분리, 1행 월/2행 일/3행~ 회원별 출석(O/-) 형식\n결과: 직관적인 엑셀 파일, 쉬운 출석 현황 파악'
+      },
+      {
+        title: '모바일 최적화',
+        description: '문제: 스마트폰에서 QR 스캔 및 출석 체크\n해결책: Tailwind CSS 모바일 퍼스트 디자인, 터치 최적화 버튼, 카메라 권한 처리\n결과: 모든 디바이스에서 원활한 출석 체크'
       }
     ],
     github: 'https://github.com/kimkichan1225/Attendance',
     demo: 'https://attendancekim.netlify.app/',
+    reports: []
+  },
+  {
+    id: 6,
+    category: '기타',
+    categoryLabel: '기타',
+    icon: '📅',
+    title: '신년계획 관리 웹 서비스',
+    description: '"계획 → 실행 → 회고" 흐름을 구현한 PHP 8 기반 목표 관리 시스템',
+    demo: 'https://new-year-plan.up.railway.app/login.php',
+    tech: ['PHP 8', 'MySQL 8.0', 'PDO', 'JavaScript', 'HTML5/CSS3'],
+    overview: [
+      '[ 개요 ]',
+      'PHP 8 + MySQL 기반 연간 목표 관리 시스템',
+      '목표 자동 분해(12개월), 진행률 자동 계산, 회고 시스템',
+      '',
+      '[ 기간 ]',
+      '2026.01 (개인 프로젝트)',
+      '',
+      '[ 주요 기능 ]',
+      '자동 계획 분해: 목표 생성 시 12개월 계획 자동 생성 및 분기별 그룹화',
+      '진행률 계산: 완료된 계획 기반 자동 진행률 계산 및 상태 관리',
+      '회고 시스템: 월별/목표별 회고 작성 및 연말 요약',
+      '대시보드: 통계 및 진행 상황 시각화'
+    ],
+    achievements: [
+      '자동 계획 분해 시스템\n목표 생성 시 12개월 계획 자동 생성 및 분기별(Q1~Q4) 그룹화',
+      '진행률 자동 계산 엔진\n완료된 월 계획 수 / 전체 12개월 × 100 자동 계산, DB 트리거로 실시간 업데이트',
+      '회고 시스템\n월별/목표별 회고 작성, 연말(12월) 요약 회고 기능',
+      '트랜잭션 기반 데이터 무결성\n목표 생성 + 12개월 계획 생성을 단일 트랜잭션으로 처리',
+      '상태 자동 관리\n진행률 기반 목표 상태 자동 전환 (미시작/진행중/완료)',
+      '보안 구현\npassword_hash 비밀번호 해싱, PDO Prepared Statements, htmlspecialchars XSS 방지',
+      'MVC 패턴 적용\nUser/Goal/GoalPlan/Reflection 모델 분리, PSR-12 코딩 표준 준수',
+      '대시보드 통계\n전체 목표 통계, 카테고리별 분포, 진행 상황 시각화'
+    ],
+    challenges: [
+      {
+        title: '목표-계획 트랜잭션 처리',
+        description: '문제: 목표 생성과 12개월 계획 생성 중 실패 시 데이터 불일치\n해결책: beginTransaction()으로 목표 INSERT와 12개월 계획 INSERT를 묶어 처리, 실패 시 rollback\n결과: 원자성 보장, 목표와 계획의 일관성 유지'
+      },
+      {
+        title: 'DB 트리거를 통한 진행률 자동 계산',
+        description: '문제: 계획 완료 체크 시 PHP에서 진행률을 계산하면 동기화 누락 가능\n해결책: tr_update_progress_after_plan_update 트리거로 goal_plans UPDATE 시 자동으로 goals.progress_percentage 재계산\n결과: 실시간 진행률 동기화, 서버 로직 간소화'
+      },
+      {
+        title: '데이터 무결성 보장',
+        description: '문제: 동일 목표에 같은 월 계획이 중복 생성될 가능성\n해결책: goal_plans 테이블에 UNIQUE KEY (goal_id, month) 설정\n결과: DB 수준에서 중복 방지, 데이터 무결성 보장'
+      }
+    ],
+    github: 'https://github.com/kimkichan1225/2026plan-php',
     reports: []
   }
 ];

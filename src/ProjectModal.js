@@ -93,7 +93,6 @@ export function ProjectModal({ project, onClose }) {
           <div className="tab-content">
             {activeTab === 'overview' && project.overview && (
               <div className="modal-details">
-                <h3>프로젝트 개요</h3>
                 <div className="overview-sections">
                   {(() => {
                     let currentSection = null;
@@ -143,18 +142,28 @@ export function ProjectModal({ project, onClose }) {
 
             {activeTab === 'achievements' && project.achievements && (
               <div className="modal-details">
-                <h3>주요 성과</h3>
-                <ul>
-                  {project.achievements.map((item, index) => (
-                    <li key={index}>{item}</li>
-                  ))}
-                </ul>
+                <div className="achievements-grid">
+                  {project.achievements.map((item, index) => {
+                    const lines = item.split('\n');
+                    const title = lines[0];
+                    const description = lines[1] || '';
+
+                    return (
+                      <div key={index} className="achievement-card">
+                        <div className="achievement-number">{index + 1}</div>
+                        <div className="achievement-content">
+                          <h5 className="achievement-title">{title}</h5>
+                          {description && <p className="achievement-description">{description}</p>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
 
             {activeTab === 'challenges' && project.challenges && (
               <div className="modal-details">
-                <h3>문제해결 사례</h3>
                 {project.challenges.map((challenge, index) => {
                   // Parse description into problem, solution, result
                   const parts = challenge.description.split('\n');
@@ -206,7 +215,6 @@ export function ProjectModal({ project, onClose }) {
             {/* Fallback for old data structure */}
             {activeTab === 'overview' && !project.overview && project.details && (
               <div className="modal-details">
-                <h3>주요 기능</h3>
                 <ul>
                   {project.details.map((detail, index) => (
                     <li key={index}>{detail}</li>
@@ -217,7 +225,6 @@ export function ProjectModal({ project, onClose }) {
 
             {activeTab === 'report' && project.reports && (
               <div className="modal-report">
-                <h3>프로젝트 문서</h3>
                 <div className="reports-grid">
                   {project.reports.map((report, index) => (
                     <div key={index} className="report-item">
@@ -245,7 +252,6 @@ export function ProjectModal({ project, onClose }) {
 
             {activeTab === 'report' && project.report && !project.reports && (
               <div className="modal-report">
-                <h3>프로젝트 보고서</h3>
                 <div className="pdf-container">
                   <iframe
                     src={project.report}
