@@ -711,7 +711,7 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
               <div className="category-header">
                 <div className="category-title">
                   <span className="category-icon">💻</span>
-                  <h3>개인 프로젝트</h3>
+                  <h3>개인(팀) 프로젝트</h3>
                 </div>
               </div>
               <div className="projects-grid">
@@ -787,7 +787,7 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
               <div className="category-header">
                 <div className="category-title">
                   <span className="category-icon">📦</span>
-                  <h3>기타 프로젝트</h3>
+                  <h3>미니 프로젝트</h3>
                 </div>
               </div>
               <div className="projects-grid">
