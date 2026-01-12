@@ -431,6 +431,39 @@
   color: #495057;
 }
 
+/* 프로젝트 탭 네비게이션 */
+.project-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0;
+}
+
+.project-tab {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #666;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  bottom: -2px;
+}
+
+.project-tab:hover {
+  color: #4a90e2;
+}
+
+.project-tab.active {
+  color: #4a90e2;
+  border-bottom-color: #4a90e2;
+}
+
 /* 프로젝트 카테고리 */
 .project-category {
   margin-bottom: 4rem;
@@ -874,6 +907,24 @@
   border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
+/* 프로젝트 상태 배지 (진행 중) */
+.project-status-badge {
+  position: absolute;
+  top: 45px;
+  right: 12px;
+  background: rgba(16, 185, 129, 0.95);
+  color: white;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.3px;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .nav-content {
@@ -1078,6 +1129,24 @@
   background-clip: text;
 }
 
+/* 다크 모드 프로젝트 탭 */
+.dark-mode .project-tabs {
+  border-bottom-color: #333;
+}
+
+.dark-mode .project-tab {
+  color: #b0b0b0;
+}
+
+.dark-mode .project-tab:hover {
+  color: #7B9FFF;
+}
+
+.dark-mode .project-tab.active {
+  color: #7B9FFF;
+  border-bottom-color: #7B9FFF;
+}
+
 .dark-mode .project-card {
   background: #1e1e1e;
   border: 1px solid #333;
@@ -1168,6 +1237,12 @@
   background: rgba(30, 30, 30, 0.95);
   color: #fbbf24;
   border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.dark-mode .project-status-badge {
+  background: rgba(16, 185, 129, 0.95);
+  color: white;
+  border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
 .dark-mode .project-card-icon-area {

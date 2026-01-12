@@ -165,57 +165,63 @@ const projectsData = [
     id: 3,
     category: 'KDT',
     categoryLabel: 'KDT 프로젝트 - 3차',
+    status: '진행 중',
     title: 'MetaPlaza(위치기반 3D 소셜 메타버스)',
     description: 'React 19 + Three.js + Spring Boot로 구축한 위치기반 3D 소셜 커뮤니티 플랫폼',
     image: '/FourthProject.png',
     video: null,
-    tech: ['React 19', 'Three.js', 'React Three Fiber', 'Spring Boot', 'WebSocket', 'MySQL', 'JWT', 'Mapbox'],
+    tech: ['React 19.1', 'Three.js', 'React Three Fiber', 'Rapier', 'Spring Boot 3.2', 'WebSocket', 'PostgreSQL', 'JWT', 'Mapbox', 'Supabase', 'TossPayments'],
     overview: [
       '[ 개요 ]',
-      'React 19 + Three.js + Spring Boot 위치기반 3D 소셜 메타버스',
-      'GPS 근거리 방 생성, 실시간 캐릭터 렌더링, WebSocket 동기화',
+      'React 19 + Three.js + Spring Boot 3D 소셜 메타버스 커뮤니티 플랫폼',
+      '실시간 멀티플레이어, 미니게임, 경제 시스템, 게시판, 지도 연동',
       '',
       '[ 기간 ]',
-      '2024.08.11 ~ 2024.08.22 (12일)',
+      '2024.08.11 ~ 2024.08.22 (12일) + 지속 업데이트 중 (2026.01.09)',
       '',
       '[ 주요 기능 ]',
-      '위치기반: Geolocation + Turf.js GPS 근거리 방 생성/필터링',
-      '3D 메타버스: Three.js LOD/인스턴싱, 다중 사용자 렌더링',
-      '소셜: 친구 시스템, 실시간 채팅, 미니게임, PortOne 결제',
-      '백엔드: Spring Security + JWT + Redis 세션 관리'
+      '3D 가상 광장: Three.js + Rapier 물리 엔진, 실시간 멀티플레이어 (WebSocket STOMP)',
+      '캐릭터: 3D 모델 + 애니메이션(Idle/Walk/Run), 상점 아바타 구매/착용',
+      '소셜: 전역 채팅, 말풍선, 친구 시스템, DM, 알림 시스템',
+      '게시판: 게시글/댓글/좋아요/신고, 공지사항',
+      '미니게임: 오목, 반응속도 게임, 로비 시스템, 관전 기능',
+      '경제: Silver/Gold Coin, 상점, 인벤토리, TossPayments 결제, 출석 체크',
+      '지도: Mapbox GPS 위치 기반 캐릭터 스폰',
+      '관리자: 유저/게시판/신고 관리, 제재, 통계'
     ],
     achievements: [
-      'Three.js LOD 렌더링\nLevel of Detail + InstancedMesh로 50명 이상 동시 렌더링 60fps 유지',
-      'GPS 위치기반 시스템\nGeolocation + Turf.js Haversine 공식으로 반경 내 방 필터링',
-      'WebSocket 실시간 동기화\nSocket.io + STOMP로 캐릭터 이동/채팅 양방향 통신',
-      'Spring Security + JWT 인증\nAccess/Refresh Token 전략, Stateless 인증 시스템',
-      'Redis 세션 캐싱\nToken Blacklist 관리 및 DB 부하 감소',
-      'Mapbox API 지도 연동\n생성된 방을 실시간 지도에 마커로 표시',
-      'GLTF 3D 캐릭터 시스템\nAnimationMixer 애니메이션 제어, 커스터마이징 시스템',
-      'Spring Boot 백엔드\nJPA + MySQL 데이터 관리, RESTful API + DTO 패턴',
-      'AWS 프로덕션 배포\nS3(파일) + RDS(DB) + EC2(서버) 인프라 구축',
-      'PortOne 결제 연동\n아이템 상점 실제 결제 시스템 구현'
+      'React Three Rapier 물리 엔진\n현실감 있는 캐릭터 이동, 충돌 감지',
+      'WebSocket STOMP 멀티플레이어\n실시간 위치/애니메이션 동기화, 접속/퇴장 알림, 중복 로그인 방지',
+      '미니게임 시스템\n오목(15x15 보드), 반응속도 게임, 로비(실시간 방 목록/관전자 수), 대기방 중복 입장 방지',
+      '경제 시스템\nSilver/Gold Coin, 상점(아바타/프로필/아웃라인), 인벤토리 착용, TossPayments 결제, 재화 교환',
+      '출석 체크 시스템\n매일 출석으로 Silver/Gold Coin 획득',
+      '게시판 시스템\n게시글/댓글 CRUD, 좋아요, 신고, 공지사항(관리자)',
+      '채팅 시스템\n전역 채팅, 캐릭터 위 말풍선(5초), DM(친구), 입력 중 이동 차단',
+      '친구 & 알림 시스템\n친구 요청/수락/거절, 게임 초대, DM 알림, 토스트 알림',
+      'Mapbox GPS 연동\n사용자 위치 기반 캐릭터 스폰, 지도 모드 전환',
+      '관리자 기능\n유저 관리(역할 변경), 게시판 관리, 신고 검토, 제재(기간 설정), 통계 대시보드',
+      'Spring Boot + PostgreSQL\nJPA, JWT 인증, Spring Security, Supabase DB, Netlify/Render 배포'
     ],
     challenges: [
       {
-        title: '3D 렌더링 최적화',
-        description: '문제: 다중 사용자 환경에서 프레임 드롭 발생\n해결책: LOD 시스템으로 거리별 모델 디테일 조절, InstancedMesh 배치 최적화, Frustum Culling\n결과: 50명 이상 동시 렌더링 60fps 유지'
+        title: '미니게임 로비 시스템',
+        description: '문제: 실시간 방 목록, 관전자 수, 중복 방 표시, 대기방 중복 입장\n해결책: WebSocket으로 방 생성/삭제 실시간 동기화, 관전자 수 항상 표시, 중복 방 필터링, 대기방 중복 입장 방지 로직\n결과: 안정적인 로비, 게임 중 관전 가능, 중복 입장 차단 (2026.01.09 업데이트)'
       },
       {
-        title: 'GPS 위치 서비스',
-        description: '문제: 실시간 위치 기반 방 생성 및 근거리 필터링\n해결책: Geolocation API 위치 추적, Turf.js Haversine 공식으로 거리 계산, 반경 내 방 필터링, 지도 마커 표시\n결과: 정확한 위치 기반 서비스, 근거리 사용자만 접속'
+        title: 'WebSocket STOMP 멀티플레이어',
+        description: '문제: 실시간 캐릭터 동기화, 중복 로그인, 재연결\n해결책: STOMP 프로토콜, /app/multiplayer.move 위치 브로드캐스트, 세션 ID 기반 중복 로그인 방지, 재연결 로직\n결과: 안정적인 실시간 동기화, 중복 접속 차단'
       },
       {
-        title: 'WebSocket 실시간 통신',
-        description: '문제: 다중 사용자 캐릭터 이동 및 채팅 동기화\n해결책: Socket.io + STOMP 양방향 통신, 클라이언트 예측 + 서버 검증, 재연결 로직, 세션 복구\n결과: 안정적인 실시간 멀티플레이 환경'
+        title: 'TossPayments 결제 연동',
+        description: '문제: Gold Coin 충전 시 결제 검증 및 보안\n해결책: TossPayments SDK 연동, 결제 성공 시 서버 검증(/api/payment/verify), 금액 일치 확인, 트랜잭션 처리\n결과: 안전한 결제 시스템, Gold Coin 충전 성공'
       },
       {
-        title: 'Spring Boot 인증 시스템',
-        description: '문제: 안전한 사용자 인증 및 세션 관리\n해결책: Spring Security + JWT Stateless 인증, Access/Refresh Token 전략, Redis Token Blacklist\n결과: 보안 강화된 인증, 확장 가능한 세션 관리'
+        title: '게시판 신고 시스템',
+        description: '문제: 부적절한 게시글/댓글 신고 및 관리자 검토\n해결책: 신고 테이블, 신고 사유/타겟, 관리자 대시보드 검토, 제재(기간 설정), 게시글/댓글 삭제\n결과: 건전한 커뮤니티 환경, 신고 처리 워크플로우 완성'
       },
       {
-        title: '3D 캐릭터 애니메이션',
-        description: '문제: 자연스러운 캐릭터 이동 및 애니메이션 전환\n해결책: GLTF 모델 로딩, AnimationMixer 제어, WASD 입력 → 이동/회전 → 애니메이션 전환(Idle/Walk/Run)\n결과: 부드러운 캐릭터 제어, 커스터마이징 시스템'
+        title: '알림 시스템 구현',
+        description: '문제: 친구 요청, 게임 초대, DM 수신 시 실시간 알림\n해결책: WebSocket /user/queue/notifications, 토스트 알림, 알림 센터, 읽음 처리\n결과: 실시간 알림, 사용자 경험 향상'
       }
     ],
     github: 'https://github.com/kimkichan1225/3DCommunity',
@@ -357,46 +363,115 @@ const projectsData = [
     title: '신년계획 관리 웹 서비스',
     description: '"계획 → 실행 → 회고" 흐름을 구현한 PHP 8 기반 목표 관리 시스템',
     demo: 'https://new-year-plan.up.railway.app/login.php',
-    tech: ['PHP 8', 'MySQL 8.0', 'PDO', 'JavaScript', 'HTML5/CSS3'],
+    tech: ['PHP 8', 'MySQL 8.0', 'PDO', 'JavaScript', 'HTML5/CSS3', 'AJAX'],
     overview: [
       '[ 개요 ]',
-      'PHP 8 + MySQL 기반 연간 목표 관리 시스템',
-      '목표 자동 분해(12개월), 진행률 자동 계산, 회고 시스템',
+      'PHP 8 + MySQL 기반 목표 관리 및 소셜 네트워킹 플랫폼',
+      '목표 자동 분해(12개월), 진행률 자동 계산, 회고, 팔로우, 커뮤니티',
       '',
       '[ 기간 ]',
       '2026.01 (개인 프로젝트)',
       '',
       '[ 주요 기능 ]',
-      '자동 계획 분해: 목표 생성 시 12개월 계획 자동 생성 및 분기별 그룹화',
-      '진행률 계산: 완료된 계획 기반 자동 진행률 계산 및 상태 관리',
-      '회고 시스템: 월별/목표별 회고 작성 및 연말 요약',
-      '대시보드: 통계 및 진행 상황 시각화'
+      '목표 관리: 12개월 계획 자동 생성, 진행률 자동 계산, 회고 시스템, 공개/비공개 설정',
+      '소셜 기능: 팔로우/팔로워 시스템, 사용자 검색, 프로필 사진 업로드',
+      '커뮤니티: 공개 목표 탐색, 검색(제목/설명/작성자), 카테고리 필터, 정렬(최신/인기/좋아요)',
+      '상호작용: 좋아요(중복 방지), 댓글, 조회수 추적',
+      '알림 시스템: 팔로우/좋아요/댓글 실시간 알림, 읽지 않은 알림 배지',
+      '대시보드: 통계, 카테고리별 분포, 최근 활동'
     ],
     achievements: [
-      '자동 계획 분해 시스템\n목표 생성 시 12개월 계획 자동 생성 및 분기별(Q1~Q4) 그룹화',
-      '진행률 자동 계산 엔진\n완료된 월 계획 수 / 전체 12개월 × 100 자동 계산, DB 트리거로 실시간 업데이트',
-      '회고 시스템\n월별/목표별 회고 작성, 연말(12월) 요약 회고 기능',
-      '트랜잭션 기반 데이터 무결성\n목표 생성 + 12개월 계획 생성을 단일 트랜잭션으로 처리',
-      '상태 자동 관리\n진행률 기반 목표 상태 자동 전환 (미시작/진행중/완료)',
-      '보안 구현\npassword_hash 비밀번호 해싱, PDO Prepared Statements, htmlspecialchars XSS 방지',
-      'MVC 패턴 적용\nUser/Goal/GoalPlan/Reflection 모델 분리, PSR-12 코딩 표준 준수',
-      '대시보드 통계\n전체 목표 통계, 카테고리별 분포, 진행 상황 시각화'
+      '자동 계획 분해 시스템\n목표 생성 시 12개월 계획 자동 생성, 분기별(Q1~Q4) 그룹화, 트랜잭션 처리',
+      '5개 DB 트리거 활용\n진행률/팔로워 수/팔로잉 수/좋아요 수 자동 업데이트',
+      '팔로우/팔로워 시스템\nfollows 테이블, UNIQUE KEY 중복 방지, 팔로우 카운트 자동 업데이트',
+      '커뮤니티 검색 시스템\n제목/설명/작성자 다중 필드 LIKE 검색, 카테고리 필터, 정렬(최신/인기/좋아요)',
+      '좋아요 & 댓글 시스템\nlikes/comments 테이블, UNIQUE KEY 중복 좋아요 방지, 좋아요 수 자동 업데이트',
+      '알림 시스템\nnotifications 테이블, 팔로우/좋아요/댓글/목표 공유 시 자동 생성, 읽지 않은 알림 배지',
+      'AJAX 비동기 통신\nFetch API로 팔로우/좋아요/댓글 페이지 새로고침 없이 처리',
+      '프로필 사진 업로드\n파일 검증(크기/확장자), uploads/profiles/ 저장',
+      '9개 테이블 설계\nusers, goals, goal_plans, reflections, follows, likes, comments, notifications + 복합 관계(M:N)',
+      '보안 & MVC 패턴\nPDO, password_hash, XSS 방지, 8개 모델 클래스, PSR-12'
     ],
     challenges: [
       {
-        title: '목표-계획 트랜잭션 처리',
-        description: '문제: 목표 생성과 12개월 계획 생성 중 실패 시 데이터 불일치\n해결책: beginTransaction()으로 목표 INSERT와 12개월 계획 INSERT를 묶어 처리, 실패 시 rollback\n결과: 원자성 보장, 목표와 계획의 일관성 유지'
+        title: '팔로우 시스템 구현',
+        description: '문제: 팔로우/언팔로우 토글, 중복 팔로우 방지, 팔로워 수 실시간 업데이트 필요\n해결책: follows 테이블 UNIQUE KEY (follower_id, followed_id), 2개 트리거로 INSERT/DELETE 시 users.followers_count, following_count 자동 업데이트, AJAX 토글\n결과: 중복 방지, 실시간 카운트 동기화, 페이지 새로고침 불필요'
       },
       {
-        title: 'DB 트리거를 통한 진행률 자동 계산',
-        description: '문제: 계획 완료 체크 시 PHP에서 진행률을 계산하면 동기화 누락 가능\n해결책: tr_update_progress_after_plan_update 트리거로 goal_plans UPDATE 시 자동으로 goals.progress_percentage 재계산\n결과: 실시간 진행률 동기화, 서버 로직 간소화'
+        title: '커뮤니티 검색 및 필터링',
+        description: '문제: 공개 목표를 제목/설명/작성자로 검색, 카테고리 필터, 정렬 필요\n해결책: WHERE is_public=1, LIKE 쿼리 3개 필드 OR 조건, 카테고리 WHERE, ORDER BY (created_at/views/likes), 페이지네이션\n결과: 유연한 검색, 다양한 정렬 옵션, 사용자 경험 향상'
       },
       {
-        title: '데이터 무결성 보장',
-        description: '문제: 동일 목표에 같은 월 계획이 중복 생성될 가능성\n해결책: goal_plans 테이블에 UNIQUE KEY (goal_id, month) 설정\n결과: DB 수준에서 중복 방지, 데이터 무결성 보장'
+        title: '좋아요 시스템 및 중복 방지',
+        description: '문제: 중복 좋아요 방지, 좋아요 수 실시간 업데이트\n해결책: likes 테이블 UNIQUE KEY (user_id, goal_id), 2개 트리거로 INSERT/DELETE 시 goals.likes 자동 증감, AJAX 토글\n결과: DB 수준 중복 차단, 자동 카운트 동기화'
+      },
+      {
+        title: '알림 시스템 구현',
+        description: '문제: 팔로우/좋아요/댓글 발생 시 자동 알림 생성, 읽지 않은 알림 개수 표시\n해결책: notifications 테이블, 이벤트 발생 시 INSERT (type: follow/like/comment/goal_shared), COUNT(is_read=0) 쿼리, 네비게이션 바 배지\n결과: 실시간 알림, 읽지 않은 알림 시각적 표시'
       }
     ],
     github: 'https://github.com/kimkichan1225/2026plan-php',
+    reports: []
+  },
+  {
+    id: 7,
+    category: '개인',
+    categoryLabel: '개인(팀) 프로젝트',
+    status: '진행 중',
+    title: 'Starry(별자리 기반 성향 시각화 플랫폼)',
+    description: '별자리를 통해 개인의 성향을 시각화하고 공유하는 웹 애플리케이션',
+    image: '/StarryProject.png',
+    video: null,
+    tech: ['React 18', 'Supabase', 'Tailwind CSS', 'PostgreSQL', 'React Router'],
+    overview: [
+      '[ 개요 ]',
+      'React 18 + Supabase 기반 별자리 성향 시각화 소셜 플랫폼',
+      '설문 공유 → 별 생성 → 별자리 시각화, AuthContext 전역 상태 관리',
+      '',
+      '[ 기간 ]',
+      '2026.01 (개인/팀 프로젝트)',
+      '',
+      '[ 팀 구성 ]',
+      '개발자: 김기찬, 디자이너: 김태희',
+      '',
+      '[ 주요 기능 ]',
+      '인증: 이메일/비밀번호, 소셜 로그인 (Google, Kakao)',
+      '설문 공유: 개인 링크 생성, 닉네임 자동 표시, 로딩 애니메이션',
+      '사용자 설정: 비밀번호 변경, 소셜 계정 연동, QR 코드 링크',
+      'DB: Supabase PostgreSQL, Profiles 테이블, RLS 정책'
+    ],
+    achievements: [
+      'AuthContext 전역 상태 관리\n앱 시작 시 1회 사용자 정보 로딩, 닉네임 깜빡임 현상 해결, API 호출 횟수 감소',
+      'Supabase Auth 인증\n이메일/비밀번호, 소셜 로그인 (Google, Kakao), 개발자 테스트 로그인',
+      'Profiles 테이블 RLS\n공개 프로필 정보 저장, 누구나 읽기 가능, 본인만 수정 가능, 회원가입 시 자동 생성 트리거',
+      '설문 공유 시스템\n개인 링크 생성 (/survey/:userId), 클립보드 복사, 대상 사용자 닉네임 자동 표시',
+      '로딩 애니메이션\n로고와 서브타이틀이 위로 이동하며 페이드아웃, translateY + opacity 전환, 2초 duration',
+      '비밀번호 변경 기능\n현재 비밀번호 검증, 새 비밀번호 확인, Supabase updateUser',
+      '소셜 계정 연동 관리\nGoogle, Kakao, Naver, Facebook 연동 상태 표시 및 관리',
+      'QR 코드 링크 공유\n개인 설문 링크 QR 코드 생성, 클립보드 복사 기능',
+      '한국어 에러 메시지\nSupabase 영어 에러 메시지를 한국어로 변환, 사용자 경험 개선',
+      'Vercel 배포\nhttps://starry-one.vercel.app, React 18 + Vite 빌드 최적화'
+    ],
+    challenges: [
+      {
+        title: 'AuthContext로 닉네임 깜빡임 해결',
+        description: '문제: 페이지 로드 시 "User1"이 표시되었다가 실제 닉네임으로 변경되는 깜빡임, 각 페이지마다 useEffect로 개별 로딩하여 비효율\n해결책: AuthContext 생성, 앱 시작 시 1회만 사용자 정보 로딩, 모든 컴포넌트에서 useAuth() 훅으로 동일한 상태 공유\n결과: 닉네임 깜빡임 완전 해결, API 호출 횟수 감소, 코드 중복 제거'
+      },
+      {
+        title: 'Profiles 테이블로 사용자 닉네임 접근',
+        description: '문제: 설문 페이지에서 대상 사용자 닉네임 표시 필요, auth.users 테이블은 클라이언트에서 직접 쿼리 불가\n해결책: public.profiles 테이블 생성, RLS 정책(모든 사용자 읽기 가능), 회원가입 시 자동 프로필 생성 트리거, userId로 profiles 쿼리\n결과: "{닉네임} 님의 밤하늘에 별을 선물하세요!" 정상 표시, 보안 유지, 확장성 확보'
+      },
+      {
+        title: '로딩 애니메이션 방향 개선',
+        description: '문제: 로고가 오른쪽에서 왼쪽으로 나타나는 것처럼 보임, 서브타이틀이 제자리에서 사라져 어색함\n해결책: 로고와 서브타이틀에 translateY 속성 추가, 로딩 전: translate-y-0, 로딩 후: -translate-y-[22vh] + opacity-0, 상단 네비게이션 로고 페이드인\n결과: 로고와 서브타이틀이 자연스럽게 위로 이동하며 사라짐, 부드러운 전환 효과'
+      },
+      {
+        title: '한국어 에러 메시지 변환',
+        description: '문제: Supabase 에러 메시지가 영어로 표시 ("Invalid login credentials"), 사용자 경험 저하\n해결책: 에러 메시지 체크 로직 추가, "Invalid login credentials" 감지 시 "이메일 또는 비밀번호가 틀렸습니다." 변환\n결과: 한국 사용자에게 친숙한 에러 메시지, 사용자 경험 개선'
+      }
+    ],
+    github: 'https://github.com/kimkichan1225/Starry',
+    demo: 'https://starry-one.vercel.app/',
     reports: []
   }
 ];
@@ -404,6 +479,7 @@ const projectsData = [
 // 웹 모드 콘텐츠 컴포넌트
 function WebModeContent({ onToggleMode, isDarkMode }) {
   const [selectedProject, setSelectedProject] = useState(null);
+  const [projectTab, setProjectTab] = useState('featured'); // 'featured' or 'all'
   const [homeRef, homeVisible] = useScrollAnimation();
   const [aboutRef, aboutVisible] = useScrollAnimation();
   const [projectsRef, projectsVisible] = useScrollAnimation();
@@ -554,7 +630,99 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
           <div ref={projectsRef} className={`fade-in ${projectsVisible ? 'visible' : ''}`} style={{ width: '100%', maxWidth: '1200px' }}>
             <h2>Projects</h2>
 
-            {/* 대학 졸업작품 카테고리 */}
+            {/* 프로젝트 탭 네비게이션 */}
+            <div className="project-tabs">
+              <button
+                className={`project-tab ${projectTab === 'featured' ? 'active' : ''}`}
+                onClick={() => setProjectTab('featured')}
+              >
+                주요 프로젝트
+              </button>
+              <button
+                className={`project-tab ${projectTab === 'all' ? 'active' : ''}`}
+                onClick={() => setProjectTab('all')}
+              >
+                전체 프로젝트
+              </button>
+            </div>
+
+            {/* 주요 프로젝트 */}
+            {projectTab === 'featured' && (
+              <div className="projects-grid" style={{ marginTop: '2rem' }}>
+                {[3, 7, 2].map((projectId, index) => {
+                  const project = projectsData.find(p => p.id === projectId);
+                  if (!project) return null;
+                  return (
+                    <div
+                      key={project.id}
+                      className={`project-card scale-in ${projectsVisible ? 'visible' : ''}`}
+                      style={{ transitionDelay: `${index * 0.1}s` }}
+                      onClick={() => setSelectedProject(project)}
+                    >
+                      {project.status && (
+                        <div className="project-status-badge">{project.status}</div>
+                      )}
+                      {project.image && (
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className="project-card-image"
+                        />
+                      )}
+                      {!project.image && (
+                        <div className="project-card-image"></div>
+                      )}
+                      <div className="project-card-content">
+                        <h3>{project.title}</h3>
+                        <p>{project.description}</p>
+                        {project.tech && (
+                          <div className="project-card-tech">
+                            {project.tech.slice(0, 5).map((tech, idx) => (
+                              <span key={idx} className="project-tech-tag">
+                                {tech}
+                              </span>
+                            ))}
+                            {project.tech.length > 5 && (
+                              <span className="project-tech-tag more">+{project.tech.length - 5}</span>
+                            )}
+                          </div>
+                        )}
+                        {(project.github || project.demo) && (
+                          <div className="project-card-links">
+                            {project.github && (
+                              <a
+                                href={project.github}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="project-card-link"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                GitHub
+                              </a>
+                            )}
+                            {project.demo && (
+                              <a
+                                href={project.demo}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="project-card-link demo"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {project.demo.includes('releases/download') ? 'Download Game' : 'Live Demo'}
+                              </a>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* 전체 프로젝트 - 대학 졸업작품 카테고리 */}
+            {projectTab === 'all' && (
+              <>
             <div className="project-category">
               <div className="category-header">
                 <div className="category-title">
@@ -573,6 +741,9 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                       onClick={() => setSelectedProject(project)}
                     >
                       <div className="project-badge graduation">{project.categoryLabel}</div>
+                      {project.status && (
+                        <div className="project-status-badge">{project.status}</div>
+                      )}
                       {project.image && (
                         <img
                           src={project.image}
@@ -649,6 +820,9 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                       onClick={() => setSelectedProject(project)}
                     >
                       <div className="project-badge">{project.categoryLabel}</div>
+                      {project.status && (
+                        <div className="project-status-badge">{project.status}</div>
+                      )}
                       {project.image && (
                         <img
                           src={project.image}
@@ -725,6 +899,9 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                       onClick={() => setSelectedProject(project)}
                     >
                       <div className="project-badge personal">{project.categoryLabel}</div>
+                      {project.status && (
+                        <div className="project-status-badge">{project.status}</div>
+                      )}
                       {project.image && (
                         <img
                           src={project.image}
@@ -850,6 +1027,8 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                   ))}
               </div>
             </div>
+              </>
+            )}
           </div>
         </section>
 
