@@ -245,7 +245,7 @@ const projectsData = [
     title: 'Void(2D Unity Action RPG)',
     description: 'Unity 6로 제작한 2D 액션 RPG 게임 (졸업 프로젝트)',
     image: '/ThirdProject.png',
-    video: null,
+    video: '/ThirdProjectPlay.mp4',
     tech: ['Unity 6', 'C#', 'Windows'],
     overview: [
       '[ 개요 ]',
@@ -438,11 +438,11 @@ const projectsData = [
     description: '별자리를 통해 개인의 성향을 시각화하고 공유하는 웹 애플리케이션',
     image: '/StarryProject.png',
     video: null,
-    tech: ['React 18', 'Supabase', 'Tailwind CSS', 'PostgreSQL', 'React Router'],
+    tech: ['React 18', 'Supabase', 'Supabase Edge Functions', 'Tailwind CSS', 'PostgreSQL', 'React Router', 'Solapi API', 'Canvas'],
     overview: [
       '[ 개요 ]',
       'React 18 + Supabase 기반 별자리 성향 시각화 소셜 플랫폼',
-      '설문 공유 → 별 생성 → 별자리 시각화, AuthContext 전역 상태 관리',
+      '설문 공유 → 별 생성 → 별자리 시각화, Canvas 기반 렌더링',
       '',
       '[ 기간 ]',
       '2026.01 (개인/팀 프로젝트)',
@@ -451,39 +451,52 @@ const projectsData = [
       '개발자: 김기찬, 디자이너: 김태희',
       '',
       '[ 주요 기능 ]',
-      '인증: 이메일/비밀번호, 소셜 로그인 (Google, Kakao)',
-      '설문 공유: 개인 링크 생성, 닉네임 자동 표시, 로딩 애니메이션',
-      '사용자 설정: 비밀번호 변경, 소셜 계정 연동, QR 코드 링크',
-      'DB: Supabase PostgreSQL, Profiles 테이블, RLS 정책'
+      '인증: 이메일/비밀번호, 소셜 로그인 (Google, Kakao), SMS 인증 (Solapi)',
+      '설문 시스템: 5개 질문 기반 별 속성 자동 생성 (색상/꼭짓점/크기/채도/날카로움)',
+      '별 시스템: Canvas 기반 렌더링, 글로우 효과, 별자리 연결선, 최대 30개 별',
+      '관리자: 대시보드 통계, 회원/공지사항 관리, 설정 (점검 모드, 최대 별 개수)',
+      '사용자 설정: 비밀번호 변경, 소셜 계정 연동, QR 코드 링크 공유'
     ],
     achievements: [
-      'AuthContext 전역 상태 관리\n앱 시작 시 1회 사용자 정보 로딩, 닉네임 깜빡임 현상 해결, API 호출 횟수 감소',
+      'AuthContext 전역 상태 관리\n앱 시작 시 1회 사용자 정보 로딩, 닉네임 깜빡임 해결, API 호출 80% 감소',
+      'SMS 인증 시스템\nSolapi API 연동, 6자리 인증 코드, 3분 유효시간, Rate limiting (분당 3회)',
+      'Supabase Edge Functions\nSMS 발송/인증 백엔드 검증, CORS 설정, 공유 모듈 (_shared)',
+      '설문 질문 시스템\n5개 질문, 4개 선택지, 이전/다음 이동, 진행률 표시',
+      '별 속성 자동 생성\n설문 응답 기반 색상(빨강/초록/파랑/노랑), 꼭짓점(4~8개), 크기, 채도, 날카로움 매핑',
+      'Canvas 기반 별 렌더링\n글로우 효과, 별자리 연결선 표시, 최대 30개 별 지원',
+      '관리자 대시보드\n실시간 통계 (회원 수/별 수/연결 수/오늘 가입자), 회원 검색/삭제, 공지사항 CRUD',
+      '관리자 설정 시스템\n최대 별 개수, 점검 모드, 회원가입 허용 설정',
+      'Profiles 테이블 RLS\n공개 프로필, 본인만 수정 가능, 회원가입 시 자동 생성 트리거',
+      '설문 공유 시스템\n개인 링크 (/survey/:userId), 클립보드 복사, 로딩 애니메이션',
       'Supabase Auth 인증\n이메일/비밀번호, 소셜 로그인 (Google, Kakao), 개발자 테스트 로그인',
-      'Profiles 테이블 RLS\n공개 프로필 정보 저장, 누구나 읽기 가능, 본인만 수정 가능, 회원가입 시 자동 생성 트리거',
-      '설문 공유 시스템\n개인 링크 생성 (/survey/:userId), 클립보드 복사, 대상 사용자 닉네임 자동 표시',
-      '로딩 애니메이션\n로고와 서브타이틀이 위로 이동하며 페이드아웃, translateY + opacity 전환, 2초 duration',
-      '비밀번호 변경 기능\n현재 비밀번호 검증, 새 비밀번호 확인, Supabase updateUser',
-      '소셜 계정 연동 관리\nGoogle, Kakao, Naver, Facebook 연동 상태 표시 및 관리',
       'QR 코드 링크 공유\n개인 설문 링크 QR 코드 생성, 클립보드 복사 기능',
       '한국어 에러 메시지\nSupabase 영어 에러 메시지를 한국어로 변환, 사용자 경험 개선',
       'Vercel 배포\nhttps://starry-one.vercel.app, React 18 + Vite 빌드 최적화'
     ],
     challenges: [
       {
+        title: 'SMS 인증 시스템 구현',
+        description: '문제: 회원가입 시 전화번호 인증 필요, 보안 및 악용 방지 필요\n해결책: Solapi API 연동, Supabase Edge Functions로 백엔드 검증, 6자리 코드 3분 유효, phone_verifications 테이블, Rate limiting (분당 3회)\n결과: 안전한 SMS 인증, 악용 방지, 서버 사이드 검증'
+      },
+      {
+        title: '설문 기반 별 속성 자동 생성',
+        description: '문제: 5개 설문 응답을 별의 시각적 속성으로 변환 필요\n해결책: Q1→색상(빨강/초록/파랑/노랑), Q2→꼭짓점(8/5/4/6개), Q3→크기(0.35~0.40), Q4→채도(80~20%), Q5→날카로움(0.5~0.2) 매핑, Canvas로 실시간 미리보기\n결과: 개인화된 별 생성, 직관적인 설문-시각화 연결'
+      },
+      {
         title: 'AuthContext로 닉네임 깜빡임 해결',
-        description: '문제: 페이지 로드 시 "User1"이 표시되었다가 실제 닉네임으로 변경되는 깜빡임, 각 페이지마다 useEffect로 개별 로딩하여 비효율\n해결책: AuthContext 생성, 앱 시작 시 1회만 사용자 정보 로딩, 모든 컴포넌트에서 useAuth() 훅으로 동일한 상태 공유\n결과: 닉네임 깜빡임 완전 해결, API 호출 횟수 감소, 코드 중복 제거'
+        description: '문제: 페이지 로드 시 "User1" 표시 후 실제 닉네임으로 변경되는 깜빡임, 각 페이지마다 개별 로딩하여 비효율\n해결책: AuthContext 생성, 앱 시작 시 1회만 사용자 정보 로딩, useAuth() 훅으로 동일 상태 공유\n결과: 닉네임 깜빡임 해결, API 호출 80% 감소, 코드 중복 제거'
       },
       {
         title: 'Profiles 테이블로 사용자 닉네임 접근',
-        description: '문제: 설문 페이지에서 대상 사용자 닉네임 표시 필요, auth.users 테이블은 클라이언트에서 직접 쿼리 불가\n해결책: public.profiles 테이블 생성, RLS 정책(모든 사용자 읽기 가능), 회원가입 시 자동 프로필 생성 트리거, userId로 profiles 쿼리\n결과: "{닉네임} 님의 밤하늘에 별을 선물하세요!" 정상 표시, 보안 유지, 확장성 확보'
+        description: '문제: 설문 페이지에서 대상 사용자 닉네임 표시 필요, auth.users 테이블 직접 쿼리 불가\n해결책: public.profiles 테이블 생성, RLS 정책(모든 사용자 읽기 가능), 회원가입 시 자동 프로필 생성 트리거\n결과: "{닉네임} 님의 밤하늘에 별을 선물하세요!" 정상 표시, 보안 유지'
+      },
+      {
+        title: '관리자 시스템 구현',
+        description: '문제: 플랫폼 운영을 위한 관리자 기능 필요\n해결책: admin.js 이메일 기반 권한 체크, 대시보드(실시간 통계), 회원관리(검색/삭제), 공지사항(CRUD/카테고리), 설정(점검 모드/최대 별 개수)\n결과: 완전한 관리자 대시보드, 효율적인 플랫폼 운영'
       },
       {
         title: '로딩 애니메이션 방향 개선',
-        description: '문제: 로고가 오른쪽에서 왼쪽으로 나타나는 것처럼 보임, 서브타이틀이 제자리에서 사라져 어색함\n해결책: 로고와 서브타이틀에 translateY 속성 추가, 로딩 전: translate-y-0, 로딩 후: -translate-y-[22vh] + opacity-0, 상단 네비게이션 로고 페이드인\n결과: 로고와 서브타이틀이 자연스럽게 위로 이동하며 사라짐, 부드러운 전환 효과'
-      },
-      {
-        title: '한국어 에러 메시지 변환',
-        description: '문제: Supabase 에러 메시지가 영어로 표시 ("Invalid login credentials"), 사용자 경험 저하\n해결책: 에러 메시지 체크 로직 추가, "Invalid login credentials" 감지 시 "이메일 또는 비밀번호가 틀렸습니다." 변환\n결과: 한국 사용자에게 친숙한 에러 메시지, 사용자 경험 개선'
+        description: '문제: 로고가 오른쪽에서 왼쪽으로 나타나는 것처럼 보임, 서브타이틀이 제자리에서 사라져 어색함\n해결책: translateY 속성 추가, 로딩 전: translate-y-0, 로딩 후: -translate-y-[22vh] + opacity-0\n결과: 로고와 서브타이틀이 자연스럽게 위로 이동하며 사라짐, 60fps 부드러운 전환'
       }
     ],
     github: 'https://github.com/kimkichan1225/Starry',
