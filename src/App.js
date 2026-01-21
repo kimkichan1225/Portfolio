@@ -245,7 +245,7 @@ const projectsData = [
     title: 'Void(2D Unity Action RPG)',
     description: 'Unity 6로 제작한 2D 액션 RPG 게임 (졸업 프로젝트)',
     image: '/ThirdProject.png',
-    video: null,
+    video: '/VoidProjectPlay.mp4',
     tech: ['Unity 6', 'C#', 'Windows'],
     overview: [
       '[ 개요 ]',
