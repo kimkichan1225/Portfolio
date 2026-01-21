@@ -79,7 +79,7 @@ export function ProjectModal({ project, onClose }) {
             >
               문제해결 사례
             </button>
-            {(project.report || project.reports) && (
+            {(project.report || (project.reports && project.reports.length > 0)) && project.category !== '기타' && (
               <button
                 className={`tab-button ${activeTab === 'report' ? 'active' : ''}`}
                 onClick={() => setActiveTab('report')}

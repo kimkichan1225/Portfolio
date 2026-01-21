@@ -288,24 +288,24 @@ const projectsData = [
     ],
     challenges: [
       {
-        title: '하이브리드 전투 시스템 설계',
-        description: '실시간 액션 전투와 턴제 카드 배틀을 하나의 게임에 통합. 일반 몬스터는 실시간 히트박스 판정 및 넉백 시스템으로 빠른 전투감 제공. 보스전은 턴제 카드 선택 + 주사위 메커니즘으로 전환하여 전략적 깊이 추가. 전투 모드 전환 시 UI, 카메라, 입력 시스템을 완전히 교체하여 자연스러운 게임플레이 유지.'
+        title: '세이브 데이터 로드 시 플레이어 스탯 덮어쓰기 문제',
+        description: '문제: 게임 로드 시 PlayerStats.Start()가 저장된 데이터보다 먼저 실행되어 플레이어의 저장된 능력치가 초기값으로 덮어써짐\n해결책: GameManager에 isLoadingGame 플래그 추가, 씬 전환 전에 플래그 설정, PlayerStats.Start()에서 플래그 확인하여 로드 중일 때 초기화 스킵\n결과: 저장된 플레이어 데이터 정상 복원, 신규/로드 게임 모두 정상 동작'
       },
       {
-        title: '무기별 밸런싱 및 차별화',
-        description: '3종 무기(검/창/메이스)의 공격력, 공격속도, 사거리, 넉백 효과를 세밀하게 조정. 검: 밸런스형(중간 데미지, 빠른 속도), 창: 사거리형(낮은 데미지, 긴 리치), 메이스: 파워형(높은 데미지, 느린 속도, 강한 넉백). 각 무기의 애니메이션, 히트박스, 콤보 시스템을 개별 설계하여 플레이 스타일 차별화. 보스전에서는 무기별로 카드 능력치 보정 적용.'
+        title: '싱글톤 인스턴스 중복 생성 문제',
+        description: '문제: 씬 전환 시 DontDestroyOnLoad로 유지되는 싱글톤 객체가 새 씬에서 중복 생성되어 여러 인스턴스 존재\n해결책: 모든 싱글톤 클래스의 Awake()에서 인스턴스 유효성 검사, 이미 존재하면 Destroy(gameObject)로 자신 파괴\n결과: 씬 전환 후에도 단일 인스턴스 유지, 게임 상태 일관성 확보'
       },
       {
-        title: '턴제 보스 전투 및 주사위 시스템',
-        description: '보스전 진입 시 실시간 액션에서 턴제 카드 배틀로 완전 전환. 플레이어와 보스가 번갈아 카드를 선택하고 주사위를 굴려 데미지 결정. 주사위 결과에 따라 카드 효과 증폭 또는 감소 (크리티컬/일반/미스). 턴 타이머, 카드 선택 UI, 주사위 애니메이션, 데미지 계산 로직 구현. 보스 HP가 0이 되면 스테이지 클리어 및 보상 지급.'
+        title: '적 레이어 충돌 감지 실패 문제',
+        description: '문제: 플레이어 공격이 적에게 데미지를 주지 않음, 공격 판정 로직은 정상이나 충돌 미감지\n해결책: 모든 적 GameObject의 레이어를 "Enemy"로 통일, 공격 스크립트에서 LayerMask.NameToLayer("Enemy")로 레이어 체크\n결과: 레이어 기반 안정적 공격 판정, 새 적 추가 시 레이어 설정만으로 전투 시스템 통합'
       },
       {
-        title: '복잡한 스테이지 진행 및 상태 관리',
-        description: '튜토리얼 → 숲 맵 → 성 → 최종 보스로 이어지는 다단계 구조 설계. 각 스테이지별 적 배치, 난이도 조정, 보상 설정. 스테이지 간 이동 시 플레이어 상태(HP, 레벨, 인벤토리) 유지. 대장간(무기 강화), 상점(아이템 구매), 라이프맵(스토리 진행) 등 서브 시스템 통합. SceneManager를 활용한 씬 전환 및 데이터 전달.'
+        title: '상점 새로고침 비용 초기화 문제',
+        description: '문제: 상점을 나갔다가 다시 들어오면 새로고침 비용이 초기값(50)으로 리셋되어 무한 새로고침 가능\n해결책: ShopManager를 싱글톤으로 구현, DontDestroyOnLoad 적용하여 새로고침 비용 상태 유지\n결과: 새로고침 비용 50→100→150 증가 유지, 게임 밸런스 개선'
       },
       {
-        title: '세이브/로드 시스템 및 데이터 직렬화',
-        description: 'JSON 기반 세이브 시스템으로 플레이어 데이터(레벨, 스탯, 인벤토리, 스테이지 진행도, 무기 강화 정보) 저장. 3개 세이브 슬롯 지원으로 여러 플레이스루 관리 가능. Application.persistentDataPath에 슬롯별 JSON 파일 저장. 로드 시 저장된 데이터 역직렬화하여 게임 상태 복원. 세이브 파일 무결성 검증 및 버전 관리로 데이터 손실 방지.'
+        title: '보스 전투 카드 아트워크 로드 실패 문제',
+        description: '문제: 저장된 게임 로드 시 보스 전투용 카드의 아트워크(스프라이트)가 표시되지 않음\n해결책: 카드 아트워크 경로를 문자열로 저장, 스프라이트를 Resources 폴더에 배치, 런타임에 Resources.Load<Sprite>()로 로드\n결과: 저장/로드 후에도 카드 아트워크 정상 표시'
       }
     ],
     github: 'https://github.com/kimkichan1225/2DUnityGame',
@@ -516,6 +516,61 @@ const projectsData = [
     ],
     github: 'https://github.com/kimkichan1225/Starry',
     demo: 'https://starry-one.vercel.app/',
+    reports: []
+  },
+  {
+    id: 8,
+    category: '기타',
+    categoryLabel: '기타',
+    icon: '🤖',
+    title: 'VibeCode Arena',
+    description: '멀티 AI 에이전트 기반 바이브코딩 웹 플랫폼',
+    image: null,
+    video: null,
+    tech: ['React 18', 'TypeScript', 'Vite', 'Node.js', 'Express', 'Socket.IO', 'Anthropic Claude API', 'Zustand', 'Monaco Editor', 'Tailwind CSS'],
+    overview: [
+      '[ 개요 ]',
+      'React 18 + Node.js + Claude API 멀티 AI 에이전트 코드 생성 플랫폼',
+      '자연어로 코딩 요청 → 2개 AI 에이전트가 협력하여 코드 생성/검증',
+      '',
+      '[ 주요 기능 ]',
+      '자연어 코딩: 바이브(감성)를 담아 자연어로 코드 요청',
+      '멀티 에이전트 협업: Vibe Agent(코드 생성) + CodeReviewer Agent(종합 리뷰)',
+      '실시간 스트리밍: AI 응답을 실시간으로 스트리밍하여 표시',
+      '코드 수정 기능: 생성된 코드를 AI 토론을 통해 추가 수정 가능',
+      '프로젝트 모드: 다중 파일 프로젝트 생성 (React, Vue, Svelte, Vanilla JS)',
+      'React 실시간 미리보기: 브라우저 내에서 React/TypeScript 코드 실행',
+      '버전 관리: 코드 버전별 비교(Diff) 기능'
+    ],
+    achievements: [
+      '멀티 AI 에이전트 시스템\nVibe Agent(코드 생성/수정) + CodeReviewer Agent(버그, 성능, 보안, 가독성 통합 검토)',
+      '실시간 스트리밍\nSocket.IO로 AI 응답 실시간 스트리밍, 점진적 코드 표시',
+      '코드 수정 모드\n기존 코드 기반 수정 요청, AI가 전체 맥락 이해하고 수정',
+      'React 실시간 미리보기\nBabel로 TypeScript 자동 변환, 브라우저 내 React 코드 실행',
+      '프로젝트 모드\nReact, Vue, Svelte, Vanilla JS 다중 파일 프로젝트 생성',
+      'Monaco Editor 통합\n코드 하이라이팅, 자동완성, 버전 비교(Diff)',
+      'Railway 단일 서비스 배포\nFrontend + Backend 통합, 환경변수 2개만으로 배포'
+    ],
+    challenges: [
+      {
+        title: 'React 실행 시 무한 로딩 (CDN 차단)',
+        description: '문제: "React 실행" 버튼 클릭 시 무한 로딩, 브라우저 추적 방지 기능이 unpkg.com, cdnjs 등 외부 CDN 차단\n해결책: React, ReactDOM, Babel 라이브러리를 로컬(public/libs/)에 저장, react-runner.html에서 로컬 경로로 로드\n결과: CDN 의존성 제거, 브라우저 보안 설정과 무관하게 안정적 실행'
+      },
+      {
+        title: 'TypeScript 코드 실행 오류',
+        description: '문제: Partial is not defined, boolean true is not iterable 에러, 수동 정규식 TypeScript 타입 제거 시 복잡한 제네릭 처리 실패\n해결책: Babel의 typescript 프리셋 사용, [\'typescript\', \'react\'] 프리셋 적용\n결과: 모든 TypeScript 문법(제네릭, 인터페이스 등) 완벽 지원'
+      },
+      {
+        title: '코드 수정 기능 구현',
+        description: '문제: 한 번 생성된 코드를 수정하려면 처음부터 다시 생성해야 함\n해결책: Backend VibeRequest에 existingCode, isModification 필드 추가, VibeAgent가 수정 모드일 때 기존 코드 기반 수정, Frontend vibeStore에 수정 모드 상태 추가\n결과: 기존 코드 유지하면서 원하는 부분만 수정 요청 가능'
+      },
+      {
+        title: 'Railway 단일 서비스 배포',
+        description: '문제: Frontend와 Backend 별도 배포 시 관리 복잡, CORS/환경변수 이중 작업\n해결책: Backend에서 Production 환경일 때 Frontend 정적 파일 서빙(express.static), railway.json으로 빌드/시작 명령 통합\n결과: 단일 서비스로 전체 앱 배포, 환경변수 2개(API 키, NODE_ENV)만 설정'
+      }
+    ],
+    github: 'https://github.com/kimkichan1225/VibeCode-Arena',
+    demo: 'https://vibecode-arena-production.up.railway.app/',
     reports: []
   }
 ];
