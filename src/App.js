@@ -179,7 +179,7 @@ const projectsData = [
     title: 'MetaPlaza(위치기반 3D 소셜 메타버스)',
     description: 'React 19 + Three.js + Spring Boot로 구축한 위치기반 3D 소셜 커뮤니티 플랫폼',
     image: '/FourthProject.png',
-    video: null,
+    video: '/ThirdProjectPlay.mp4',
     tech: ['React 19.1', 'Three.js', 'React Three Fiber', 'Rapier', 'Spring Boot 3.2', 'WebSocket', 'PostgreSQL', 'JWT', 'Mapbox', 'Supabase', 'TossPayments'],
     overview: [
       '[ 개요 ]',
@@ -245,7 +245,7 @@ const projectsData = [
     title: 'Void(2D Unity Action RPG)',
     description: 'Unity 6로 제작한 2D 액션 RPG 게임 (졸업 프로젝트)',
     image: '/ThirdProject.png',
-    video: '/ThirdProjectPlay.mp4',
+    video: null,
     tech: ['Unity 6', 'C#', 'Windows'],
     overview: [
       '[ 개요 ]',
