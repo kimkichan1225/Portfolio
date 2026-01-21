@@ -437,7 +437,7 @@ const projectsData = [
     title: 'Starry(별자리 기반 성향 시각화 플랫폼)',
     description: '별자리를 통해 개인의 성향을 시각화하고 공유하는 웹 애플리케이션',
     image: '/StarryProject.png',
-    video: null,
+    video: '/StarryProjectPlay.mp4',
     tech: ['React 18', 'Supabase', 'Supabase Edge Functions', 'Tailwind CSS', 'PostgreSQL', 'React Router', 'Solapi API', 'Canvas'],
     overview: [
       '[ 개요 ]',
