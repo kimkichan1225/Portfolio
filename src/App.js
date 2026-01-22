@@ -808,6 +808,7 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
 
             {/* 주요 프로젝트 */}
             {projectTab === 'featured' && (
+              <>
               <div className="projects-grid" style={{ marginTop: '2rem' }}>
                 {[3, 7, 2].map((projectId, index) => {
                   const project = projectsData.find(p => p.id === projectId);
@@ -830,7 +831,9 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                         />
                       )}
                       {!project.image && (
-                        <div className="project-card-image"></div>
+                        <div className="project-card-image project-card-icon-area">
+                          <span className="project-card-icon">{project.icon || '📦'}</span>
+                        </div>
                       )}
                       <div className="project-card-content">
                         <h3>{project.title}</h3>
@@ -878,6 +881,78 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                   );
                 })}
               </div>
+
+              {/* 미니 프로젝트 */}
+              <div className="project-category" style={{ marginTop: '3rem' }}>
+                <div className="category-header">
+                  <div className="category-title">
+                    <span className="category-icon">📦</span>
+                    <h3>미니 프로젝트</h3>
+                  </div>
+                </div>
+                <div className="projects-grid">
+                  {[8].map((projectId, index) => {
+                    const project = projectsData.find(p => p.id === projectId);
+                    if (!project) return null;
+                    return (
+                      <div
+                        key={project.id}
+                        className={`project-card scale-in ${projectsVisible ? 'visible' : ''}`}
+                        style={{ transitionDelay: `${index * 0.1}s` }}
+                        onClick={() => setSelectedProject(project)}
+                      >
+                        <div className="project-badge other">{project.categoryLabel}</div>
+                        <div className="project-card-icon-area">
+                          <span className="project-card-icon">{project.icon || '📦'}</span>
+                        </div>
+                        <div className="project-card-content">
+                          <h3>{project.title}</h3>
+                          <p>{project.description}</p>
+                          {project.tech && (
+                            <div className="project-card-tech">
+                              {project.tech.slice(0, 5).map((tech, idx) => (
+                                <span key={idx} className="project-tech-tag">
+                                  {tech}
+                                </span>
+                              ))}
+                              {project.tech.length > 5 && (
+                                <span className="project-tech-tag more">+{project.tech.length - 5}</span>
+                              )}
+                            </div>
+                          )}
+                          {(project.github || project.demo) && (
+                            <div className="project-card-links">
+                              {project.github && (
+                                <a
+                                  href={project.github}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="project-card-link"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  GitHub
+                                </a>
+                              )}
+                              {project.demo && (
+                                <a
+                                  href={project.demo}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="project-card-link demo"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  {project.demo.includes('releases/download') ? 'Download Game' : 'Live Demo'}
+                                </a>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              </>
             )}
 
             {/* 전체 프로젝트 - 대학 졸업작품 카테고리 */}
@@ -912,7 +987,9 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                         />
                       )}
                       {!project.image && (
-                        <div className="project-card-image"></div>
+                        <div className="project-card-image project-card-icon-area">
+                          <span className="project-card-icon">{project.icon || '📦'}</span>
+                        </div>
                       )}
                       <div className="project-card-content">
                         <h3>{project.title}</h3>
@@ -991,7 +1068,9 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                         />
                       )}
                       {!project.image && (
-                        <div className="project-card-image"></div>
+                        <div className="project-card-image project-card-icon-area">
+                          <span className="project-card-icon">{project.icon || '📦'}</span>
+                        </div>
                       )}
                       <div className="project-card-content">
                         <h3>{project.title}</h3>
@@ -1070,7 +1149,9 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                         />
                       )}
                       {!project.image && (
-                        <div className="project-card-image"></div>
+                        <div className="project-card-image project-card-icon-area">
+                          <span className="project-card-icon">{project.icon || '📦'}</span>
+                        </div>
                       )}
                       <div className="project-card-content">
                         <h3>{project.title}</h3>
