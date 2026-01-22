@@ -3308,7 +3308,7 @@ function Minimap({ characterRef, gameState, interactionPoints }) {
 
   // 레벨별 맵 범위 설정 (x, z 좌표 기준)
   const levelBounds = {
-    playing_level1: { minX: -80, maxX: 80, minZ: -80, maxZ: 80 },
+    playing_level1: { minX: -80, maxX: 80, minZ: -140, maxZ: 80 },
     playing_level2: { minX: -60, maxX: 60, minZ: -60, maxZ: 80 },
     playing_level3: { minX: -60, maxX: 80, minZ: -40, maxZ: 40 },
     playing_level4: { minX: -20, maxX: 80, minZ: -40, maxZ: 40 },
