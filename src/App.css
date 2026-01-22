@@ -2243,6 +2243,98 @@
   }
 }
 
+/* 미니맵 스타일 */
+.minimap-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 100;
+}
+
+.minimap {
+  width: 200px;
+  height: 200px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.minimap-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(91, 127, 255, 0.8);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 3px 0;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.minimap-player {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #5B7FFF;
+  border: 2px solid white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  box-shadow: 0 0 8px rgba(91, 127, 255, 0.8);
+  animation: playerPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes playerPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(91, 127, 255, 0.8); }
+  50% { box-shadow: 0 0 15px rgba(91, 127, 255, 1); }
+}
+
+.minimap-marker {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+
+.minimap-marker.door {
+  background: #FFD700;
+  border: 1px solid #FFA500;
+  box-shadow: 0 0 5px rgba(255, 215, 0, 0.6);
+}
+
+.minimap-marker.cabinet {
+  background: #10B981;
+  border: 1px solid #059669;
+  box-shadow: 0 0 5px rgba(16, 185, 129, 0.6);
+}
+
+.minimap-marker.table {
+  background: #8B5CF6;
+  border: 1px solid #7C3AED;
+  box-shadow: 0 0 5px rgba(139, 92, 246, 0.6);
+}
+
+.minimap-marker.npc {
+  background: #F59E0B;
+  border: 1px solid #D97706;
+  box-shadow: 0 0 5px rgba(245, 158, 11, 0.6);
+}
+
+.minimap-marker.special {
+  background: #EC4899;
+  border: 1px solid #DB2777;
+  box-shadow: 0 0 5px rgba(236, 72, 153, 0.6);
+}
+
 /* NPC 대화창 스타일 */
 .npc-dialogue-box {
   position: fixed;

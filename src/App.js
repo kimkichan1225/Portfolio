@@ -3302,6 +3302,78 @@ useGLTF.preload('/mailbox.glb');
 useGLTF.preload('/instagramlogo.glb');
 useGLTF.preload('/toolbox.glb');
 
+// 미니맵 컴포넌트
+function Minimap({ characterRef, gameState, interactionPoints }) {
+  const [playerPos, setPlayerPos] = useState({ x: 50, y: 50 });
+
+  // 레벨별 맵 범위 설정 (x, z 좌표 기준)
+  const levelBounds = {
+    playing_level1: { minX: -80, maxX: 80, minZ: -80, maxZ: 80 },
+    playing_level2: { minX: -60, maxX: 60, minZ: -60, maxZ: 80 },
+    playing_level3: { minX: -60, maxX: 80, minZ: -40, maxZ: 40 },
+    playing_level4: { minX: -20, maxX: 80, minZ: -40, maxZ: 40 },
+  };
+
+  // 3D 좌표를 미니맵 2D 좌표로 변환
+  const worldToMinimap = (worldX, worldZ) => {
+    const bounds = levelBounds[gameState] || levelBounds.playing_level1;
+    const x = ((worldX - bounds.minX) / (bounds.maxX - bounds.minX)) * 100;
+    const y = ((worldZ - bounds.minZ) / (bounds.maxZ - bounds.minZ)) * 100;
+    return { x: Math.max(5, Math.min(95, x)), y: Math.max(5, Math.min(95, y)) };
+  };
+
+  // 플레이어 위치 업데이트
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (characterRef?.current) {
+        const pos = characterRef.current.translation ?
+          characterRef.current.translation() :
+          characterRef.current.position;
+        if (pos) {
+          const minimapPos = worldToMinimap(pos.x, pos.z);
+          setPlayerPos(minimapPos);
+        }
+      }
+    }, 50);
+    return () => clearInterval(interval);
+  }, [characterRef, gameState]);
+
+  // 상호작용 포인트 마커 렌더링
+  const renderMarkers = () => {
+    if (!interactionPoints) return null;
+    return interactionPoints.map((point, index) => {
+      if (!point.position) return null;
+      const pos = worldToMinimap(point.position.x, point.position.z);
+      return (
+        <div
+          key={index}
+          className={`minimap-marker ${point.type}`}
+          style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+          title={point.label}
+        />
+      );
+    });
+  };
+
+  return (
+    <div className="minimap-container">
+      <div className="minimap">
+        <div className="minimap-header">
+          {gameState === 'playing_level1' && 'Village'}
+          {gameState === 'playing_level2' && 'Gallery'}
+          {gameState === 'playing_level3' && 'Office'}
+          {gameState === 'playing_level4' && 'Room'}
+        </div>
+        {renderMarkers()}
+        <div
+          className="minimap-player"
+          style={{ left: `${playerPos.x}%`, top: `${playerPos.y}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
 function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPositionsFound, onRedlightPositionsFound, onGreenlightPositionsFound, onRedlight2PositionsFound, onYellowlightPositionsFound, onStarLightPositionFound, ...props }) {
   const { scene } = useGLTF('/resources/GameView/Level1Map-v3.glb');
 
@@ -4356,6 +4428,38 @@ function App() {
           </Physics>
         </Suspense>
         </Canvas>
+      )}
+
+      {/* 미니맵 */}
+      {!isWebMode && (
+        <Minimap
+          characterRef={characterRef}
+          gameState={gameState}
+          interactionPoints={
+            gameState === 'playing_level1' ? [
+              { position: doorPosition, type: 'door', label: 'Gallery' },
+              { position: door2Position, type: 'door', label: 'Office' },
+              { position: npcPosition, type: 'npc', label: 'NPC' },
+            ] : gameState === 'playing_level2' ? [
+              { position: doorPositionLevel2, type: 'door', label: 'Back to Village' },
+              { position: asuraCabinetPosition, type: 'cabinet', label: 'Asura Project' },
+              { position: conviCabinetPosition, type: 'cabinet', label: 'Convi Project' },
+              { position: voidCabinetPosition, type: 'cabinet', label: 'Void Project' },
+            ] : gameState === 'playing_level3' ? [
+              { position: doorPositionLevel3, type: 'door', label: 'Back to Village' },
+              { position: door3Position, type: 'door', label: 'Personal Room' },
+              { position: frontendTablePosition, type: 'table', label: 'Frontend' },
+              { position: backendTablePosition, type: 'table', label: 'Backend' },
+              { position: gamedevTablePosition, type: 'table', label: 'GameDev' },
+              { position: toolsTablePosition, type: 'table', label: 'Tools' },
+            ] : gameState === 'playing_level4' ? [
+              { position: doorPositionLevel4, type: 'door', label: 'Back to Office' },
+              { position: cabinetTVPosition, type: 'special', label: 'Contact' },
+              { position: wallPosition, type: 'special', label: 'Profile' },
+              { position: deskCornerPosition, type: 'special', label: 'Portfolio' },
+            ] : []
+          }
+        />
       )}
 
       {/* 문 상호작용 UI - Level1 door001 (Level2로) */}
