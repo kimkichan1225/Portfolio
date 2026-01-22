@@ -27,7 +27,9 @@
       "Bash(netlify deploy:*)",
       "Bash(netlify link:*)",
       "Bash(tasklist:*)",
-      "Bash(npm run build:check:*)"
+      "Bash(npm run build:check:*)",
+      "Bash(git lfs track:*)",
+      "Bash(git lfs:*)"
     ],
     "deny": [],
     "ask": []
