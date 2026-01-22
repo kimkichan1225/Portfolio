@@ -1354,19 +1354,23 @@ function NavigationBar({ isWebMode, onToggleMode, isDarkMode, onToggleDarkMode }
       let currentY = 0;
       let isFirstPage = true;
 
+      // 이미지 품질 설정 (0.7 = 70% 품질, 용량 대폭 감소)
+      const imageQuality = 0.7;
+      const captureScale = 1.5; // 1.5배 해상도 (2에서 낮춤)
+
       // 네비게이션 바 캡처
       if (navbar) {
         const navCanvas = await html2canvas(navbar, {
-          scale: 2,
+          scale: captureScale,
           useCORS: true,
           allowTaint: true,
           backgroundColor: isDarkMode ? '#1a1a1a' : '#ffffff',
         });
-        const navImgData = navCanvas.toDataURL('image/png');
+        const navImgData = navCanvas.toDataURL('image/jpeg', imageQuality);
         const navRatio = pdfWidth / navCanvas.width;
         const navHeight = navCanvas.height * navRatio;
 
-        pdf.addImage(navImgData, 'PNG', 0, 0, pdfWidth, navHeight);
+        pdf.addImage(navImgData, 'JPEG', 0, 0, pdfWidth, navHeight);
         currentY = navHeight;
       }
 
@@ -1375,7 +1379,7 @@ function NavigationBar({ isWebMode, onToggleMode, isDarkMode, onToggleDarkMode }
         const section = sections[i];
 
         const canvas = await html2canvas(section, {
-          scale: 2,
+          scale: captureScale,
           useCORS: true,
           allowTaint: true,
           backgroundColor: isDarkMode ? '#1a1a2e' : '#ffffff',
@@ -1385,7 +1389,7 @@ function NavigationBar({ isWebMode, onToggleMode, isDarkMode, onToggleDarkMode }
           windowHeight: section.scrollHeight,
         });
 
-        const imgData = canvas.toDataURL('image/png');
+        const imgData = canvas.toDataURL('image/jpeg', imageQuality);
         const imgWidth = canvas.width;
         const imgHeight = canvas.height;
         const ratio = pdfWidth / imgWidth;
@@ -1435,8 +1439,8 @@ function NavigationBar({ isWebMode, onToggleMode, isDarkMode, onToggleDarkMode }
               imgWidth, sourceHeight
             );
 
-            const partImgData = tempCanvas.toDataURL('image/png');
-            pdf.addImage(partImgData, 'PNG', 0, currentY, pdfWidth, heightToDraw);
+            const partImgData = tempCanvas.toDataURL('image/jpeg', imageQuality);
+            pdf.addImage(partImgData, 'JPEG', 0, currentY, pdfWidth, heightToDraw);
 
             sourceY += sourceHeight;
             remainingHeight -= heightToDraw;
@@ -1453,7 +1457,7 @@ function NavigationBar({ isWebMode, onToggleMode, isDarkMode, onToggleDarkMode }
             pdf.addPage();
             currentY = 0;
           }
-          pdf.addImage(imgData, 'PNG', 0, currentY, pdfWidth, scaledHeight);
+          pdf.addImage(imgData, 'JPEG', 0, currentY, pdfWidth, scaledHeight);
           currentY += scaledHeight;
         }
 
