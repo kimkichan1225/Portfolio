@@ -178,7 +178,7 @@ const projectsData = [
     id: 3,
     category: 'KDT',
     categoryLabel: 'KDT 프로젝트 - 3차',
-    status: '진행 중',
+    status: '1차 완료',
     title: 'MetaPlaza(위치기반 3D 소셜 메타버스)',
     description: 'React 19 + Three.js + Spring Boot로 구축한 위치기반 3D 소셜 커뮤니티 플랫폼',
     image: '/FourthProject.png',
@@ -445,7 +445,7 @@ const projectsData = [
     id: 7,
     category: '개인',
     categoryLabel: '개인(팀) 프로젝트',
-    status: '진행 중',
+    status: '1차 완료',
     title: 'Starry(별자리 기반 성향 시각화 플랫폼)',
     description: '별자리를 통해 개인의 성향을 시각화하고 공유하는 웹 애플리케이션',
     image: '/StarryProject.png',
@@ -574,6 +574,64 @@ const projectsData = [
     ],
     github: 'https://github.com/kimkichan1225/VibeCode-Arena',
     demo: 'https://vibecode-arena-production.up.railway.app/',
+    reports: []
+  },
+  {
+    id: 9,
+    category: '개인',
+    categoryLabel: '개인(팀) 프로젝트',
+    status: '진행 중',
+    title: 'Web MMORPG(브라우저 기반 2D MMORPG)',
+    description: 'React 18 + TypeScript + Socket.IO로 구축한 실시간 멀티플레이어 2D MMORPG 게임',
+    image: '/WebMMORPGProject.png',
+    video: null,
+    tech: ['React 18', 'TypeScript', 'Vite', 'Zustand', 'HTML5 Canvas', 'Socket.IO', 'Node.js', 'Express', 'Supabase', 'PostgreSQL', 'Railway'],
+    overview: [
+      '[ 개요 ]',
+      'React 18 + TypeScript + Socket.IO 기반 브라우저 2D MMORPG 게임',
+      '캐릭터 생성/전직, 실시간 멀티플레이어, 생활 스킬, 파티/길드 시스템',
+      '',
+      '[ 기간 ]',
+      '2025.01 ~ 진행 중',
+      '',
+      '[ 주요 기능 ]',
+      '캐릭터: 4종 직업 선택 (Warrior, Archer, Mage, Thief), 2차 전직 시스템 (레벨 30+)',
+      '전투: 실시간 멀티플레이어 이동 및 전투, 몬스터 스폰 및 AI, 레벨업 및 스탯 분배',
+      '생활 스킬: 벌목(도끼), 채광(곡괭이), 채집(낫), 낚시(낚싯대)',
+      '소셜: 파티 시스템 (최대 4명), 길드 시스템, 실시간 채팅 (글로벌/파티/길드/귓속말), 거래 시스템',
+      '기타: 서버 동기화 게임 시간 (낮/밤 주기), NPC 대화 및 퀘스트, 미니맵'
+    ],
+    achievements: [
+      'HTML5 Canvas 기반 게임 렌더링\n브라우저에서 동작하는 2D MMORPG 엔진 구현',
+      '4종 직업 + 12종 2차 전직 시스템\n전사(검사/둔기사/봉술사), 궁수(보우마스터/석궁사/거너), 마법사(원소술사/흑마법사/신관), 도적(대거마스터/암살자/격투가)',
+      '실시간 멀티플레이어 동기화\nSocket.IO 기반 위치/전투/상태 실시간 동기화',
+      '5종 스탯 시스템\nSTR(공격력), DEX(공격속도/회피), INT(마법공격력/마나), VIT(HP/방어), LUK(치명타/드롭률)',
+      '4종 생활 스킬 시스템\n벌목/채광/채집/낚시, 스킬 레벨 1~100, LUK 연동 희귀 자원 확률',
+      '서버 권한 게임 시간\n1초=1게임분, 5초마다 동기화, 클라이언트 로컬 보간으로 부드러운 시간 흐름',
+      '파티/길드 시스템\n파티 최대 4명, 길드 계급 (Leader/Officer/Member), 실시간 채팅',
+      'Zustand 상태 관리\nReact.memo/useMemo로 리렌더링 최적화, 안정적인 60fps',
+      'Railway 통합 배포\n클라이언트 + 서버 단일 서비스, GitHub push 자동 배포'
+    ],
+    challenges: [
+      {
+        title: '공격 방향 동기화 문제',
+        description: '문제: 플레이어 공격 시 방향이 잘못된 곳으로 표시, 다른 플레이어에게 공격 방향 미동기화\n해결책: player:attack 이벤트에 방향/위치/타겟 좌표 데이터 추가, 서버에서 공격 방향 브로드캐스트\n결과: 정확한 공격 방향 표시, 멀티플레이어 공격 동기화 완료'
+      },
+      {
+        title: '게임 시간 동기화 문제',
+        description: '문제: 각 클라이언트가 독립적으로 시간 계산하여 플레이어마다 다른 시간 표시, 낮/밤 주기 불일치\n해결책: 서버에서 gameTime 관리 (1초=1게임분), 5초마다 time:update 브로드캐스트, 클라이언트 로컬 보간\n결과: 모든 플레이어가 동일한 게임 시간 공유, 일관된 낮/밤 주기'
+      },
+      {
+        title: '성능 최적화',
+        description: '문제: 게임 루프에서 불필요한 리렌더링 발생, 많은 플레이어/몬스터 시 프레임 드롭\n해결책: React.memo로 UI 컴포넌트 메모이제이션 (PartyUI, SkillBar, ChatBox 등), useMemo로 선택자 최적화, Canvas 렌더링과 React 상태 분리\n결과: 불필요한 리렌더링 제거, 안정적인 60fps 유지'
+      },
+      {
+        title: 'Railway 서버 배포 오류',
+        description: '문제: TypeScript 빌드 오류, 서버 시작 경로 오류, 클라이언트 정적 파일 경로 오류, Supabase 환경변수 미인식\n해결책: 타입 인터페이스 수정, tsconfig.json rootDir 기반 출력 구조 파악, 정적 파일 경로 수정, VITE_ 접두사 환경변수 추가\n결과: Railway 배포 성공, 클라이언트/서버 통합 서빙 정상 작동'
+      }
+    ],
+    github: 'https://github.com/kimkichan1225/WebMMORPG',
+    demo: 'https://webmmorpg-production.up.railway.app/',
     reports: []
   }
 ];
@@ -762,7 +820,7 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                       onClick={() => setSelectedProject(project)}
                     >
                       {project.status && (
-                        <div className="project-status-badge">{project.status}</div>
+                        <div className={`project-status-badge ${project.status === '1차 완료' ? 'completed' : ''}`}>{project.status}</div>
                       )}
                       {project.image && (
                         <img
@@ -844,7 +902,7 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                     >
                       <div className="project-badge graduation">{project.categoryLabel}</div>
                       {project.status && (
-                        <div className="project-status-badge">{project.status}</div>
+                        <div className={`project-status-badge ${project.status === '1차 완료' ? 'completed' : ''}`}>{project.status}</div>
                       )}
                       {project.image && (
                         <img
@@ -923,7 +981,7 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                     >
                       <div className="project-badge">{project.categoryLabel}</div>
                       {project.status && (
-                        <div className="project-status-badge">{project.status}</div>
+                        <div className={`project-status-badge ${project.status === '1차 완료' ? 'completed' : ''}`}>{project.status}</div>
                       )}
                       {project.image && (
                         <img
@@ -1002,7 +1060,7 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                     >
                       <div className="project-badge personal">{project.categoryLabel}</div>
                       {project.status && (
-                        <div className="project-status-badge">{project.status}</div>
+                        <div className={`project-status-badge ${project.status === '1차 완료' ? 'completed' : ''}`}>{project.status}</div>
                       )}
                       {project.image && (
                         <img

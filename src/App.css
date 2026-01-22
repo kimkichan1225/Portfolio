@@ -1339,6 +1339,12 @@
   letter-spacing: 0.3px;
 }
 
+/* 1차 완료 상태 배지 (파란색) */
+.project-status-badge.completed {
+  background: rgba(59, 130, 246, 0.95);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .nav-content {
@@ -1707,6 +1713,11 @@
   background: rgba(16, 185, 129, 0.95);
   color: white;
   border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.dark-mode .project-status-badge.completed {
+  background: rgba(59, 130, 246, 0.95);
+  border: 1px solid rgba(59, 130, 246, 0.4);
 }
 
 .dark-mode .project-card-icon-area {
