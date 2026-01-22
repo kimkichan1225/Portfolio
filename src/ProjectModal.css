@@ -683,11 +683,12 @@
 }
 
 .section-title {
-  color: white;
+  color: #ffffff !important;
   font-size: 1.15rem;
   font-weight: 700;
   margin: 0;
   letter-spacing: 0.3px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .overview-section-content {
