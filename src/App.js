@@ -4715,11 +4715,11 @@ function App() {
                 <span className="portfolio-tech-tag">React 19</span>
                 <span className="portfolio-tech-tag">Three.js</span>
                 <span className="portfolio-tech-tag">React Three Fiber</span>
+                <span className="portfolio-tech-tag">React Three Rapier</span>
                 <span className="portfolio-tech-tag">JavaScript</span>
                 <span className="portfolio-tech-tag">HTML5</span>
                 <span className="portfolio-tech-tag">CSS3</span>
-                <span className="portfolio-tech-tag">Vite</span>
-                <span className="portfolio-tech-tag">Netlify</span>
+                <span className="portfolio-tech-tag">Vercel</span>
               </div>
             </div>
 
@@ -4727,13 +4727,14 @@ function App() {
               <h3>📋 주요 기능</h3>
               <ul className="portfolio-feature-list">
                 <li>웹 모드와 게임 모드 간 원활한 전환 (듀얼 모드 시스템)</li>
-                <li>4개의 독특한 3D 레벨 (자연 마을, 도시 레이싱, 오피스, 우주 공간)</li>
+                <li>4개의 독특한 3D 레벨 (마을, 프로젝트 갤러리, 기술 스택 사무실, 개인 작업실)</li>
                 <li>GLTF 애니메이션 캐릭터 컨트롤 (Idle, Walk, Run)</li>
                 <li>Rapier 물리 엔진 기반 캐릭터 이동 및 충돌 감지</li>
                 <li>레벨 간 포털/도어 상호작용 시스템</li>
-                <li>드라이브 가능한 차량 시스템 (Level 2)</li>
+                <li>실시간 미니맵 (플레이어 위치 + 상호작용 포인트)</li>
                 <li>프로젝트별 기술 스택 팝업 시스템</li>
-                <li>커스텀 GLSL 셰이더 (그라디언트 바닥, 포털 볼텍스)</li>
+                <li>커스텀 GLSL 셰이더 (그라디언트 바닥)</li>
+                <li>NPC 대화 시스템 및 다크/라이트 모드</li>
               </ul>
             </div>
 
@@ -4746,6 +4747,7 @@ function App() {
                 <li>4개 레벨 간 원활한 전환 시스템</li>
                 <li>Rapier RigidBody 재생성 패턴으로 오류 해결</li>
                 <li>근접 감지 기반 인터랙션 시스템</li>
+                <li>9개 프로젝트 포트폴리오 (KDT, 졸업작품, 개인/팀 프로젝트)</li>
               </ul>
             </div>
 
