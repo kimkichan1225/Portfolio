@@ -1057,6 +1057,56 @@
   line-height: 1;
 }
 
+/* PDF 다운로드 버튼 */
+.pdf-download-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  margin-right: 1rem;
+  color: white;
+}
+
+.pdf-download-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.pdf-download-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+}
+
+.pdf-download-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.pdf-download-btn .toggle-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.pdf-download-btn .toggle-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.dark-mode .pdf-download-btn {
+  background: linear-gradient(135deg, #7B9FFF 0%, #9D7BC9 100%);
+  box-shadow: 0 2px 8px rgba(123, 159, 255, 0.3);
+}
+
+.dark-mode .pdf-download-btn:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgba(123, 159, 255, 0.4);
+}
+
 /* 다크 모드 전역 스타일 */
 .dark-mode {
   --primary-blue: #7B9FFF;

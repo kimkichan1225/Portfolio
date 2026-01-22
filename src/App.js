@@ -10,6 +10,8 @@ import { TypingAnimation } from './TypingAnimation';
 import { useScrollAnimation } from './useScrollAnimation';
 import { ProjectModal } from './ProjectModal';
 import { Physics, RigidBody, CapsuleCollider } from '@react-three/rapier';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 // 프로젝트 데이터
 const projectsData = [
@@ -1233,6 +1235,7 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
 // 네비게이션 바 컴포넌트
 function NavigationBar({ isWebMode, onToggleMode, isDarkMode, onToggleDarkMode }) {
   const [mouseY, setMouseY] = useState(0);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -1250,6 +1253,169 @@ function NavigationBar({ isWebMode, onToggleMode, isDarkMode, onToggleDarkMode }
 
   const shouldShow = isWebMode || mouseY < 80;
 
+  // PDF 다운로드 함수
+  const handleDownloadPDF = async () => {
+    if (isGeneratingPDF) return;
+
+    setIsGeneratingPDF(true);
+    showCustomPopup('PDF 생성 중... 잠시만 기다려주세요.');
+
+    try {
+      const webContent = document.querySelector('.web-mode-content');
+      if (!webContent) {
+        showCustomPopup('웹 모드에서만 PDF 다운로드가 가능합니다.');
+        setIsGeneratingPDF(false);
+        return;
+      }
+
+      // 현재 스크롤 위치 저장
+      const originalScrollPos = window.scrollY;
+
+      // 스크롤을 맨 위로
+      window.scrollTo(0, 0);
+
+      // 모든 fade-in, scale-in 요소들을 보이게 설정
+      const fadeElements = document.querySelectorAll('.fade-in, .scale-in');
+      fadeElements.forEach(el => el.classList.add('visible'));
+
+      // 잠시 대기 후 캡처
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // 각 섹션을 개별적으로 캡처하여 PDF에 추가
+      const sections = webContent.querySelectorAll('.section');
+      const navbar = document.querySelector('.navigation-bar');
+
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      let currentY = 0;
+      let isFirstPage = true;
+
+      // 네비게이션 바 캡처
+      if (navbar) {
+        const navCanvas = await html2canvas(navbar, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: isDarkMode ? '#1a1a1a' : '#ffffff',
+        });
+        const navImgData = navCanvas.toDataURL('image/png');
+        const navRatio = pdfWidth / navCanvas.width;
+        const navHeight = navCanvas.height * navRatio;
+
+        pdf.addImage(navImgData, 'PNG', 0, 0, pdfWidth, navHeight);
+        currentY = navHeight;
+      }
+
+      // 각 섹션 캡처
+      for (let i = 0; i < sections.length; i++) {
+        const section = sections[i];
+
+        const canvas = await html2canvas(section, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: isDarkMode ? '#1a1a2e' : '#ffffff',
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: section.scrollWidth,
+          windowHeight: section.scrollHeight,
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const ratio = pdfWidth / imgWidth;
+        const scaledHeight = imgHeight * ratio;
+
+        // 현재 페이지에 공간이 부족하면 새 페이지 추가
+        if (currentY + scaledHeight > pdfHeight && !isFirstPage) {
+          pdf.addPage();
+          currentY = 0;
+        }
+
+        // 섹션이 한 페이지보다 크면 여러 페이지에 나눠서 추가
+        if (scaledHeight > pdfHeight) {
+          let remainingHeight = scaledHeight;
+          let sourceY = 0;
+
+          while (remainingHeight > 0) {
+            if (currentY > 0 || !isFirstPage) {
+              if (currentY >= pdfHeight) {
+                pdf.addPage();
+                currentY = 0;
+              }
+            }
+
+            const availableHeight = pdfHeight - currentY;
+            const heightToDraw = Math.min(availableHeight, remainingHeight);
+
+            // 이미지의 일부분만 그리기
+            const sourceRatio = imgHeight / scaledHeight;
+            const sourceHeight = heightToDraw * sourceRatio;
+
+            // 임시 캔버스 생성하여 이미지 자르기
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = imgWidth;
+            tempCanvas.height = sourceHeight;
+            const ctx = tempCanvas.getContext('2d');
+
+            const img = new Image();
+            img.src = imgData;
+            await new Promise(resolve => { img.onload = resolve; });
+
+            ctx.drawImage(
+              img,
+              0, sourceY,
+              imgWidth, sourceHeight,
+              0, 0,
+              imgWidth, sourceHeight
+            );
+
+            const partImgData = tempCanvas.toDataURL('image/png');
+            pdf.addImage(partImgData, 'PNG', 0, currentY, pdfWidth, heightToDraw);
+
+            sourceY += sourceHeight;
+            remainingHeight -= heightToDraw;
+            currentY += heightToDraw;
+
+            if (remainingHeight > 0) {
+              pdf.addPage();
+              currentY = 0;
+            }
+          }
+        } else {
+          // 섹션이 한 페이지 안에 들어가는 경우
+          if (currentY + scaledHeight > pdfHeight) {
+            pdf.addPage();
+            currentY = 0;
+          }
+          pdf.addImage(imgData, 'PNG', 0, currentY, pdfWidth, scaledHeight);
+          currentY += scaledHeight;
+        }
+
+        isFirstPage = false;
+      }
+
+      pdf.save('Portfolio_KimKichan.pdf');
+
+      // 원래 스크롤 위치로 복원
+      window.scrollTo(0, originalScrollPos);
+
+      showCustomPopup('PDF 다운로드 완료!');
+    } catch (error) {
+      console.error('PDF 생성 오류:', error);
+      showCustomPopup('PDF 생성 중 오류가 발생했습니다.');
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
   return (
     <nav
       className={`navigation-bar ${shouldShow ? 'visible' : 'hidden'}`}
@@ -1265,6 +1431,19 @@ function NavigationBar({ isWebMode, onToggleMode, isDarkMode, onToggleDarkMode }
           <a href="#contact" className="nav-link">Contact & Skills</a>
         </div>
         <div className="nav-right">
+          {isWebMode && (
+            <button
+              className="pdf-download-btn"
+              onClick={handleDownloadPDF}
+              disabled={isGeneratingPDF}
+              title="포트폴리오 PDF 다운로드"
+            >
+              <span className="toggle-icon">
+                {isGeneratingPDF ? '⏳' : '📄'}
+              </span>
+              <span className="toggle-text">PDF</span>
+            </button>
+          )}
           <button
             className="dark-mode-toggle"
             onClick={onToggleDarkMode}
