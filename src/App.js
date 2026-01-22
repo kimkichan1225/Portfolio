@@ -1134,86 +1134,144 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
         </section>
 
         <section id="contact" className="section">
-          <div ref={contactRef} className="contact-skills-container">
-            <h2 className="contact-skills-title">Contact & Skills</h2>
+          <div ref={contactRef} className="contact-profile-container">
+            <h2 className="section-title">Contact & Profile</h2>
 
-            <div className="contact-skills-grid">
-              <div className="contact-box">
-                <h3>연락처</h3>
-
-                <div className="skill-category">
-                  <h4>Email</h4>
-                  <div className="skill-tags">
-                    <span onClick={handleCopyEmail} className="skill-tag contact-link" style={{ cursor: 'pointer' }}>kimkichan1225@gmail.com</span>
-                  </div>
+            <div className="contact-profile-grid">
+              {/* 연락처 */}
+              <div className="info-card">
+                <div className="card-header">
+                  <span className="card-icon">📬</span>
+                  <h3>연락처</h3>
                 </div>
-
-                <div className="skill-category">
-                  <h4>Phone</h4>
-                  <div className="skill-tags">
-                    <span className="skill-tag">+82 10-4225-5388</span>
+                <div className="card-body">
+                  <div className="contact-item">
+                    <span className="item-label">Email</span>
+                    <span className="item-value clickable" onClick={handleCopyEmail}>kimkichan1225@gmail.com</span>
                   </div>
-                </div>
-
-                <div className="skill-category">
-                  <h4>GitHub</h4>
-                  <div className="skill-tags">
-                    <a href="https://github.com/kimkichan1225" target="_blank" rel="noopener noreferrer" className="skill-tag contact-link">github.com/kimkichan1225</a>
+                  <div className="contact-item">
+                    <span className="item-label">Phone</span>
+                    <span className="item-value">+82 10-4225-5388</span>
                   </div>
-                </div>
-
-                <div className="skill-category">
-                  <h4>Instagram</h4>
-                  <div className="skill-tags">
-                    <a href="https://www.instagram.com/kim_kichan/#" target="_blank" rel="noopener noreferrer" className="skill-tag contact-link">@kim_kichan</a>
+                  <div className="contact-item">
+                    <span className="item-label">GitHub</span>
+                    <a href="https://github.com/kimkichan1225" target="_blank" rel="noopener noreferrer" className="item-value link">github.com/kimkichan1225</a>
+                  </div>
+                  <div className="contact-item">
+                    <span className="item-label">Instagram</span>
+                    <a href="https://www.instagram.com/kim_kichan/#" target="_blank" rel="noopener noreferrer" className="item-value link">@kim_kichan</a>
                   </div>
                 </div>
               </div>
 
-              <div className="skills-box">
-                <h3>기술 스택</h3>
+              {/* 이력사항 */}
+              <div className="info-card wide">
+                <div className="card-header">
+                  <span className="card-icon">📋</span>
+                  <h3>이력사항</h3>
+                </div>
+                <div className="card-body">
+                  <div className="timeline-grid">
+                    <div className="timeline-section">
+                      <h4 className="timeline-title">학력</h4>
+                      <div className="timeline-items">
+                        <div className="timeline-item">
+                          <span className="timeline-date">20.03 ~ 26.02</span>
+                          <span className="timeline-content">대진대학교 컴퓨터공학과 학사 졸업</span>
+                        </div>
+                        <div className="timeline-item">
+                          <span className="timeline-date">17.03 ~ 20.02</span>
+                          <span className="timeline-content">경희고등학교 졸업</span>
+                        </div>
+                      </div>
+                    </div>
 
-                <div className="skill-category">
-                  <h4>Frontend</h4>
-                  <div className="skill-tags">
-                    <span className="skill-tag">React 19</span>
-                    <span className="skill-tag">TypeScript</span>
-                    <span className="skill-tag">JavaScript</span>
-                    <span className="skill-tag">Three.js</span>
-                    <span className="skill-tag">HTML5</span>
-                    <span className="skill-tag">CSS3</span>
-                    <span className="skill-tag">TailwindCSS</span>
+                    <div className="timeline-section">
+                      <h4 className="timeline-title">교육</h4>
+                      <div className="timeline-items">
+                        <div className="timeline-item">
+                          <span className="timeline-date">25.03 ~ 26.01</span>
+                          <span className="timeline-content">한국정보교육원 - 자바 스프링 리액트로 완성하는 클라우드 활용 풀스택 개발</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="timeline-section">
+                      <h4 className="timeline-title">자격</h4>
+                      <div className="timeline-items">
+                        <div className="timeline-item">
+                          <span className="timeline-date">25.03</span>
+                          <span className="timeline-content">정보처리기사(필기) - 한국산업인력공단</span>
+                        </div>
+                        <div className="timeline-item">
+                          <span className="timeline-date">25.12</span>
+                          <span className="timeline-content">운전면허(2종 보통) - 경찰청</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="timeline-section">
+                      <h4 className="timeline-title">병역</h4>
+                      <div className="timeline-items">
+                        <div className="timeline-item">
+                          <span className="timeline-date">21.05 ~ 22.11</span>
+                          <span className="timeline-content">육군 병장 만기전역</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
+              </div>
 
-                <div className="skill-category">
-                  <h4>Backend</h4>
-                  <div className="skill-tags">
-                    <span className="skill-tag">Node.js</span>
-                    <span className="skill-tag">Express</span>
-                    <span className="skill-tag">Socket.IO</span>
-                    <span className="skill-tag">Supabase</span>
-                    <span className="skill-tag">PostgreSQL</span>
-                  </div>
+              {/* 기술 스택 */}
+              <div className="info-card">
+                <div className="card-header">
+                  <span className="card-icon">💻</span>
+                  <h3>기술 스택</h3>
                 </div>
-
-                <div className="skill-category">
-                  <h4>Game Development</h4>
-                  <div className="skill-tags">
-                    <span className="skill-tag">Unity 6</span>
-                    <span className="skill-tag">C#</span>
-                    <span className="skill-tag">React Three Fiber</span>
+                <div className="card-body">
+                  <div className="skills-section">
+                    <h4 className="skills-title">Frontend</h4>
+                    <div className="skills-tags">
+                      <span className="tag">React 19</span>
+                      <span className="tag">TypeScript</span>
+                      <span className="tag">JavaScript</span>
+                      <span className="tag">Three.js</span>
+                      <span className="tag">HTML5</span>
+                      <span className="tag">CSS3</span>
+                      <span className="tag">TailwindCSS</span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="skill-category">
-                  <h4>Tools</h4>
-                  <div className="skill-tags">
-                    <span className="skill-tag">Git</span>
-                    <span className="skill-tag">GitHub</span>
-                    <span className="skill-tag">Vite</span>
-                    <span className="skill-tag">Netlify</span>
-                    <span className="skill-tag">Render</span>
+                  <div className="skills-section">
+                    <h4 className="skills-title">Backend</h4>
+                    <div className="skills-tags">
+                      <span className="tag">Node.js</span>
+                      <span className="tag">Express</span>
+                      <span className="tag">Socket.IO</span>
+                      <span className="tag">Supabase</span>
+                      <span className="tag">PostgreSQL</span>
+                    </div>
+                  </div>
+
+                  <div className="skills-section">
+                    <h4 className="skills-title">Game Dev</h4>
+                    <div className="skills-tags">
+                      <span className="tag">Unity 6</span>
+                      <span className="tag">C#</span>
+                      <span className="tag">React Three Fiber</span>
+                    </div>
+                  </div>
+
+                  <div className="skills-section">
+                    <h4 className="skills-title">Tools</h4>
+                    <div className="skills-tags">
+                      <span className="tag">Git</span>
+                      <span className="tag">GitHub</span>
+                      <span className="tag">Vite</span>
+                      <span className="tag">Netlify</span>
+                      <span className="tag">Render</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1428,7 +1486,7 @@ function NavigationBar({ isWebMode, onToggleMode, isDarkMode, onToggleDarkMode }
           <a href="#home" className="nav-link">Home</a>
           <a href="#about" className="nav-link">About</a>
           <a href="#projects" className="nav-link">Projects</a>
-          <a href="#contact" className="nav-link">Contact & Skills</a>
+          <a href="#contact" className="nav-link">Contact & Profile</a>
         </div>
         <div className="nav-right">
           {isWebMode && (

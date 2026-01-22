@@ -264,14 +264,336 @@
   font-weight: 700;
 }
 
+/* ===== 새로운 Contact & Profile 통일 디자인 ===== */
+.contact-profile-container {
+  width: 100%;
+  max-width: 1400px;
+  padding: 0 2rem;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  text-align: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+}
+
+.contact-profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* 통일된 카드 스타일 */
+.info-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.18);
+}
+
+.info-card.wide {
+  /* 이력사항 카드는 기본 너비 유지 */
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.card-icon {
+  font-size: 1.5rem;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* 연락처 스타일 */
+.contact-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.75rem;
+  background: #f8f9ff;
+  border-radius: 10px;
+  border-left: 3px solid #667eea;
+  transition: all 0.3s ease;
+}
+
+.contact-item:last-child {
+  margin-bottom: 0;
+}
+
+.contact-item:hover {
+  background: #f0f3ff;
+  transform: translateX(3px);
+}
+
+.item-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #667eea;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.item-value {
+  font-size: 0.9rem;
+  color: #333;
+  word-break: break-all;
+}
+
+.item-value.clickable {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.item-value.clickable:hover {
+  color: #667eea;
+}
+
+.item-value.link {
+  color: #667eea;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.item-value.link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* 이력사항 타임라인 스타일 */
+.timeline-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.timeline-section {
+  background: #f8f9ff;
+  border-radius: 10px;
+  padding: 1rem;
+  border-left: 3px solid #667eea;
+}
+
+.timeline-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #667eea;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 0.75rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed rgba(102, 126, 234, 0.3);
+}
+
+.timeline-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.timeline-date {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  min-width: 85px;
+  text-align: center;
+}
+
+.timeline-content {
+  font-size: 0.85rem;
+  color: #444;
+  line-height: 1.4;
+  flex: 1;
+}
+
+/* 기술 스택 스타일 */
+.skills-section {
+  margin-bottom: 1.25rem;
+}
+
+.skills-section:last-child {
+  margin-bottom: 0;
+}
+
+.skills-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #667eea;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 0.6rem 0;
+}
+
+.skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.tag {
+  padding: 0.35rem 0.7rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.tag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1200px) {
+  .contact-profile-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .info-card.wide {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+}
+
+/* 다크 모드 - Contact & Profile */
+.dark-mode .info-card {
+  background: #2a2a2a;
+  border-color: rgba(123, 159, 255, 0.2);
+}
+
+.dark-mode .card-header {
+  background: linear-gradient(135deg, #7B9FFF 0%, #9D7BC9 100%);
+}
+
+.dark-mode .contact-item {
+  background: rgba(123, 159, 255, 0.1);
+  border-left-color: #7B9FFF;
+}
+
+.dark-mode .contact-item:hover {
+  background: rgba(123, 159, 255, 0.15);
+}
+
+.dark-mode .item-label {
+  color: #7B9FFF;
+}
+
+.dark-mode .item-value {
+  color: #e0e0e0;
+}
+
+.dark-mode .item-value.link {
+  color: #7B9FFF;
+}
+
+.dark-mode .item-value.link:hover {
+  color: #9D7BC9;
+}
+
+.dark-mode .timeline-section {
+  background: rgba(123, 159, 255, 0.1);
+  border-left-color: #7B9FFF;
+}
+
+.dark-mode .timeline-title {
+  color: #7B9FFF;
+  border-bottom-color: rgba(123, 159, 255, 0.3);
+}
+
+.dark-mode .timeline-date {
+  background: linear-gradient(135deg, #7B9FFF 0%, #9D7BC9 100%);
+}
+
+.dark-mode .timeline-content {
+  color: #d0d0d0;
+}
+
+.dark-mode .skills-title {
+  color: #7B9FFF;
+}
+
+.dark-mode .tag {
+  background: linear-gradient(135deg, #7B9FFF 0%, #9D7BC9 100%);
+}
+
+/* ===== 기존 스타일 유지 (하위 호환성) ===== */
 .contact-skills-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2.5rem;
 }
 
+.contact-skills-grid.three-columns {
+  grid-template-columns: 1fr 1.2fr 1fr;
+}
+
+@media (max-width: 1200px) {
+  .contact-skills-grid.three-columns {
+    grid-template-columns: 1fr 1fr;
+  }
+  .contact-skills-grid.three-columns .profile-box {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-skills-grid.three-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
 .contact-box,
-.skills-box {
+.skills-box,
+.profile-box {
   background: white !important;
   padding: 1.8rem;
   border-radius: 20px;
@@ -283,7 +605,8 @@
 }
 
 .contact-box::before,
-.skills-box::before {
+.skills-box::before,
+.profile-box::before {
   content: '';
   position: absolute;
   top: 0;
@@ -294,7 +617,8 @@
 }
 
 .contact-box:hover,
-.skills-box:hover {
+.skills-box:hover,
+.profile-box:hover {
   transform: translateY(-8px);
   box-shadow: 0 12px 48px rgba(102, 126, 234, 0.2);
 }
@@ -401,6 +725,96 @@
 
 .skill-tag.contact-link:hover::before {
   left: 100%;
+}
+
+/* 이력사항 박스 스타일 */
+.profile-category {
+  margin-bottom: 1.5rem;
+}
+
+.profile-category:last-child {
+  margin-bottom: 0;
+}
+
+.profile-category h4 {
+  font-size: 0.95rem;
+  color: #667eea !important;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+  padding-bottom: 0.5rem;
+}
+
+.profile-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.profile-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 0.6rem 0.8rem;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.profile-item:hover {
+  background: rgba(102, 126, 234, 0.1);
+  transform: translateX(5px);
+}
+
+.profile-date {
+  font-size: 0.8rem;
+  color: #667eea;
+  font-weight: 600;
+  white-space: nowrap;
+  min-width: 100px;
+  padding: 0.2rem 0.5rem;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 5px;
+  text-align: center;
+}
+
+.profile-content {
+  font-size: 0.9rem;
+  color: #495057;
+  line-height: 1.5;
+  flex: 1;
+}
+
+/* 다크 모드 이력사항 스타일 */
+.dark-mode .profile-box {
+  background: #2a2a2a !important;
+}
+
+.dark-mode .profile-category h4 {
+  color: #7B9FFF !important;
+  border-bottom-color: rgba(123, 159, 255, 0.2);
+}
+
+.dark-mode .profile-item {
+  background: rgba(123, 159, 255, 0.08);
+}
+
+.dark-mode .profile-item:hover {
+  background: rgba(123, 159, 255, 0.15);
+}
+
+.dark-mode .profile-date {
+  color: #7B9FFF;
+  background: rgba(123, 159, 255, 0.15);
+}
+
+.dark-mode .profile-content {
+  color: #d0d0d0;
 }
 
 .contact-info {
