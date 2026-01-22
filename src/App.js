@@ -102,7 +102,7 @@ const projectsData = [
     title: '편의점 종합 솔루션',
     description: 'React 19 + TypeScript로 구축한 실시간 편의점 통합 관리 플랫폼',
     image: '/SecondProject.png',
-    video: '/SecondProjectPlay.mov',
+    video: '/SecondProjectPlay2.mp4',
     tech: ['React 19', 'TypeScript', 'Vite 6', 'Supabase', 'PostgreSQL', 'TailwindCSS', 'CSS3', 'Zustand', 'TanStack Query'],
     overview: [
       '[ 개요 ]',
