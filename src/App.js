@@ -2257,9 +2257,6 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       const distance = charPos.distanceTo(npcPos);
 
       if (distance < doorInteractionDistance) {
-        if (!isNearNPC) {
-          console.log('NPC 근접 감지됨! 거리:', distance);
-        }
         setIsNearNPC(true);
       } else {
         setIsNearNPC(false);
@@ -3118,10 +3115,6 @@ function NPCOldClassy({ position = [0, 0, 0], scale = 2, rotation = [0, 0, 0], o
       const mixer = new THREE.AnimationMixer(clonedScene);
       mixerRef.current = mixer;
 
-      // 애니메이션 이름 로그
-      const animationNames = animations.map(a => a.name);
-      console.log('NPC 애니메이션 목록:', animationNames);
-
       // Idle 애니메이션 찾기
       const idleAnim = animations.find(a => a.name.toLowerCase().includes('idle')) || animations[0];
 
@@ -3149,7 +3142,6 @@ function NPCOldClassy({ position = [0, 0, 0], scale = 2, rotation = [0, 0, 0], o
   useEffect(() => {
     if (onPositionFound && position && !hasCalledCallback.current) {
       hasCalledCallback.current = true;
-      console.log('NPC 위치 전달:', { x: position[0], y: position[1], z: position[2] });
       onPositionFound({
         x: position[0],
         y: position[1],
@@ -3617,12 +3609,12 @@ function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, onNPC
           />
           {/* 불빛 시각화 */}
           <mesh>
-            <sphereGeometry args={[0.3, 16, 16]} />
+            <sphereGeometry args={[0.3, 8, 8]} />
             <meshBasicMaterial color="#FF0000" transparent opacity={0.9} />
           </mesh>
           {/* 글로우 효과 */}
           <mesh>
-            <sphereGeometry args={[0.5, 16, 16]} />
+            <sphereGeometry args={[0.5, 8, 8]} />
             <meshBasicMaterial color="#FF6666" transparent opacity={0.3} />
           </mesh>
         </group>
@@ -3641,12 +3633,12 @@ function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, onNPC
           />
           {/* 불빛 시각화 */}
           <mesh>
-            <sphereGeometry args={[0.3, 16, 16]} />
+            <sphereGeometry args={[0.3, 8, 8]} />
             <meshBasicMaterial color="#00FF00" transparent opacity={0.9} />
           </mesh>
           {/* 글로우 효과 */}
           <mesh>
-            <sphereGeometry args={[0.5, 16, 16]} />
+            <sphereGeometry args={[0.5, 8, 8]} />
             <meshBasicMaterial color="#66FF66" transparent opacity={0.3} />
           </mesh>
         </group>
@@ -3665,12 +3657,12 @@ function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, onNPC
           />
           {/* 불빛 시각화 */}
           <mesh>
-            <sphereGeometry args={[0.5, 16, 16]} />
+            <sphereGeometry args={[0.5, 8, 8]} />
             <meshBasicMaterial color="#FF0000" transparent opacity={0.9} />
           </mesh>
           {/* 글로우 효과 */}
           <mesh>
-            <sphereGeometry args={[0.5, 16, 16]} />
+            <sphereGeometry args={[0.5, 8, 8]} />
             <meshBasicMaterial color="#FF6666" transparent opacity={0.3} />
           </mesh>
         </group>
@@ -3689,12 +3681,12 @@ function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, onNPC
           />
           {/* 불빛 시각화 */}
           <mesh>
-            <sphereGeometry args={[0.3, 16, 16]} />
+            <sphereGeometry args={[0.3, 8, 8]} />
             <meshBasicMaterial color="#FFFF00" transparent opacity={0.9} />
           </mesh>
           {/* 글로우 효과 */}
           <mesh>
-            <sphereGeometry args={[0.5, 16, 16]} />
+            <sphereGeometry args={[0.5, 8, 8]} />
             <meshBasicMaterial color="#FFFF99" transparent opacity={0.3} />
           </mesh>
         </group>
@@ -3755,8 +3747,8 @@ function Level2({ characterRef, onDoorPositionFound, onAsuraCabinetPositionFound
         position={[0, 50, 0]}
         intensity={3}
         castShadow
-        shadow-mapSize-width={8192}
-        shadow-mapSize-height={8192}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
         shadow-camera-far={1000}
         shadow-camera-left={-500}
         shadow-camera-right={500}
@@ -3819,8 +3811,8 @@ function Level3({ characterRef, onDoorPositionFound, onDoor2PositionFound, onFro
         position={[0, 50, 0]}
         intensity={3}
         castShadow
-        shadow-mapSize-width={8192}
-        shadow-mapSize-height={8192}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
         shadow-camera-far={1000}
         shadow-camera-left={-500}
         shadow-camera-right={500}
@@ -3885,8 +3877,8 @@ function Level4({ characterRef, onDoorPositionFound, onCabinetTVPositionFound, o
         position={[0, 50, 0]}
         intensity={3}
         castShadow
-        shadow-mapSize-width={8192}
-        shadow-mapSize-height={8192}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
         shadow-camera-far={1000}
         shadow-camera-left={-500}
         shadow-camera-right={500}
@@ -4161,9 +4153,17 @@ function App() {
         <WebModeContent onToggleMode={toggleMode} isDarkMode={isDarkMode} />
       ) : (
         // 게임 모드: 3D 게임
-        <Canvas 
+        <Canvas
           camera={{ position: [-0.00, 28.35, 19.76], rotation: [-0.96, -0.00, -0.00] }}
           shadows
+          dpr={[1, 1.5]}
+          performance={{ min: 0.5 }}
+          gl={{
+            antialias: true,
+            powerPreference: "high-performance",
+            stencil: false,
+            depth: true
+          }}
         >
         <ambientLight intensity={0.5} />
 
@@ -4175,16 +4175,15 @@ function App() {
               intensity={isDarkMode ? 2 : 6}
               color={isDarkMode ? "#C0D0F0" : "#FFFFFF"}
               castShadow
-              shadow-mapSize-width={8192}
-              shadow-mapSize-height={8192}
-              shadow-camera-far={1000}
-              shadow-camera-left={-500}
-              shadow-camera-right={500}
-              shadow-camera-top={500}
-              shadow-camera-bottom={-500}
+              shadow-mapSize-width={2048}
+              shadow-mapSize-height={2048}
+              shadow-camera-far={500}
+              shadow-camera-left={-200}
+              shadow-camera-right={200}
+              shadow-camera-top={200}
+              shadow-camera-bottom={-200}
               shadow-bias={-0.0001}
               shadow-normalBias={0.02}
-              shadow-radius={4}
             />
             {/* 태양/달 시각화 */}
             <mesh position={[50, 50, 25]}>
@@ -4450,10 +4449,10 @@ function App() {
         />
       )}
 
-      {/* 세 번째 프로젝트 모달 */}
+      {/* Void 프로젝트 모달 (VoidCabinet) */}
       {showThirdProject && (
         <ProjectModal
-          project={projectsData[2]}
+          project={projectsData[3]}
           onClose={() => setShowThirdProject(false)}
         />
       )}
