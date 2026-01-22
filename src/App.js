@@ -1,8 +1,9 @@
 import React, { Suspense, useRef, useEffect, useState, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useGLTF, useAnimations, shaderMaterial, useFBX, Text } from '@react-three/drei';
+import { useGLTF, useAnimations, shaderMaterial, useFBX, Text, Clone } from '@react-three/drei';
 import { extend } from '@react-three/fiber';
 import * as THREE from 'three';
+import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils';
 import './App.css';
 import './TutorialPopup.css';
 import { useKeyboardControls } from './useKeyboardControls';
@@ -1750,7 +1751,7 @@ function CameraController({ gameState, characterRef }) {
   return null;
 }
 
-function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor, door2Position, setIsNearDoor2, door3Position, setIsNearDoor3, doorPositionLevel2, setIsNearDoorLevel2, doorPositionLevel3, setIsNearDoorLevel3, doorPositionLevel4, setIsNearDoorLevel4, cabinetTVPosition, setIsNearCabinetTV, setShowContactInfo, wallPosition, setIsNearWall, setShowProfile, asuraCabinetPosition, setIsNearAsuraCabinet, setShowFirstProject, conviCabinetPosition, setIsNearConviCabinet, setShowSecondProject, voidCabinetPosition, setIsNearVoidCabinet, setShowThirdProject, frontendTablePosition, setIsNearFrontendTable, backendTablePosition, setIsNearBackendTable, gamedevTablePosition, setIsNearGamedevTable, toolsTablePosition, setIsNearToolsTable, deskCornerPosition, setIsNearDeskCorner, setShowPortfolioPopup, spawnPosition }) {
+function Model({ characterRef, gameState, setGameState, setGameStateWithFade, doorPosition, setIsNearDoor, door2Position, setIsNearDoor2, door3Position, setIsNearDoor3, doorPositionLevel2, setIsNearDoorLevel2, doorPositionLevel3, setIsNearDoorLevel3, doorPositionLevel4, setIsNearDoorLevel4, cabinetTVPosition, setIsNearCabinetTV, setShowContactInfo, wallPosition, setIsNearWall, setShowProfile, asuraCabinetPosition, setIsNearAsuraCabinet, setShowFirstProject, conviCabinetPosition, setIsNearConviCabinet, setShowSecondProject, voidCabinetPosition, setIsNearVoidCabinet, setShowThirdProject, frontendTablePosition, setIsNearFrontendTable, backendTablePosition, setIsNearBackendTable, gamedevTablePosition, setIsNearGamedevTable, toolsTablePosition, setIsNearToolsTable, deskCornerPosition, setIsNearDeskCorner, setShowPortfolioPopup, spawnPosition, npcPosition, isNearNPC, setIsNearNPC }) {
   const { scene, animations } = useGLTF('/resources/GameView/Suit.glb');
   const { actions } = useAnimations(animations, characterRef);
 
@@ -2246,6 +2247,25 @@ function Model({ characterRef, gameState, setGameState, setGameStateWithFade, do
       }
     } else {
       setIsNearDeskCorner(false);
+    }
+
+    // NPC 근접 감지 (Level1에서만, 자동 표시)
+    if (gameState === 'playing_level1' && npcPosition) {
+      const charPos = new THREE.Vector3(posX, posY, posZ);
+      // Y좌표를 동일하게 맞춰서 XZ 평면 거리만 계산 (높이 차이 무시)
+      const npcPos = new THREE.Vector3(npcPosition.x, posY, npcPosition.z);
+      const distance = charPos.distanceTo(npcPos);
+
+      if (distance < doorInteractionDistance) {
+        if (!isNearNPC) {
+          console.log('NPC 근접 감지됨! 거리:', distance);
+        }
+        setIsNearNPC(true);
+      } else {
+        setIsNearNPC(false);
+      }
+    } else {
+      setIsNearNPC(false);
     }
 
     // C키로 캐릭터 위치 로그 (디버그)
@@ -3072,6 +3092,80 @@ function Toolbox(props) {
   return <primitive object={clonedScene} {...props} />;
 }
 
+// NPC 컴포넌트 - OldClassy 모델
+function NPCOldClassy({ position = [0, 0, 0], scale = 2, rotation = [0, 0, 0], onPositionFound }) {
+  const groupRef = useRef();
+  const mixerRef = useRef();
+  const { scene, animations } = useGLTF('/resources/GameView/OldClassy.glb');
+  const hasCalledCallback = useRef(false);
+
+  // SkeletonUtils로 스켈레톤까지 제대로 복제
+  const clonedScene = useMemo(() => {
+    const cloned = SkeletonUtils.clone(scene);
+    cloned.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+    return cloned;
+  }, [scene]);
+
+  // 애니메이션 믹서 설정 및 Idle 애니메이션 재생
+  useEffect(() => {
+    if (clonedScene && animations.length > 0) {
+      // 새 믹서 생성 (복제된 씬에 연결)
+      const mixer = new THREE.AnimationMixer(clonedScene);
+      mixerRef.current = mixer;
+
+      // 애니메이션 이름 로그
+      const animationNames = animations.map(a => a.name);
+      console.log('NPC 애니메이션 목록:', animationNames);
+
+      // Idle 애니메이션 찾기
+      const idleAnim = animations.find(a => a.name.toLowerCase().includes('idle')) || animations[0];
+
+      if (idleAnim) {
+        const action = mixer.clipAction(idleAnim);
+        action.setLoop(THREE.LoopRepeat, Infinity);
+        action.clampWhenFinished = false;
+        action.play();
+      }
+
+      return () => {
+        mixer.stopAllAction();
+      };
+    }
+  }, [clonedScene, animations]);
+
+  // 매 프레임 애니메이션 업데이트
+  useFrame((state, delta) => {
+    if (mixerRef.current) {
+      mixerRef.current.update(delta);
+    }
+  });
+
+  // 위치 전달 - 마운트 시 한 번만
+  useEffect(() => {
+    if (onPositionFound && position && !hasCalledCallback.current) {
+      hasCalledCallback.current = true;
+      console.log('NPC 위치 전달:', { x: position[0], y: position[1], z: position[2] });
+      onPositionFound({
+        x: position[0],
+        y: position[1],
+        z: position[2]
+      });
+    }
+  }, [onPositionFound, position]);
+
+  return (
+    <group ref={groupRef} position={position} scale={scale} rotation={rotation}>
+      <primitive object={clonedScene} />
+    </group>
+  );
+}
+
+useGLTF.preload('/resources/GameView/OldClassy.glb');
 useGLTF.preload('/githubcat.glb');
 useGLTF.preload('/mailbox.glb');
 useGLTF.preload('/instagramlogo.glb');
@@ -3081,14 +3175,16 @@ function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPos
   const { scene } = useGLTF('/resources/GameView/Level1Map-v3.glb');
 
   // Level1Map 모델을 복사해서 각 인스턴스가 독립적으로 작동하도록 함
-  const clonedScene = useMemo(() => {
+  const { clonedScene, positions } = useMemo(() => {
     const cloned = scene.clone();
     const streetlightPositions = [];
     const redlightPositions = [];
     const greenlightPositions = [];
     const redlight2Positions = [];
     const yellowlightPositions = [];
-    let starLightPosition = null;
+    let doorPos = null;
+    let door2Pos = null;
+    let starLightPos = null;
 
     cloned.traverse((child) => {
       if (child.isMesh) {
@@ -3099,17 +3195,13 @@ function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPos
       if (child.name === 'door001') {
         const worldPos = new THREE.Vector3();
         child.getWorldPosition(worldPos);
-        if (onDoorPositionFound) {
-          onDoorPositionFound(worldPos);
-        }
+        doorPos = worldPos;
       }
       // door 오브젝트 찾기 (Level3로 가는 문)
       if (child.name === 'door') {
         const worldPos = new THREE.Vector3();
         child.getWorldPosition(worldPos);
-        if (onDoor2PositionFound) {
-          onDoor2PositionFound(worldPos);
-        }
+        door2Pos = worldPos;
       }
       // Streetlight 오브젝트들 찾기
       if (child.name && child.name.startsWith('Streetlight')) {
@@ -3141,7 +3233,7 @@ function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPos
         child.name === 'Greenlight' ||
         child.name === 'Greenlight001' ||
         child.name === 'Greenlight002' ||
-        child.name === 'Greenlight003' 
+        child.name === 'Greenlight003'
       )) {
         const worldPos = new THREE.Vector3();
         child.getWorldPosition(worldPos);
@@ -3181,37 +3273,52 @@ function Level1Map({ onDoorPositionFound, onDoor2PositionFound, onStreetlightPos
       if (child.name === 'Yellowlight003') {
         const worldPos = new THREE.Vector3();
         child.getWorldPosition(worldPos);
-        starLightPosition = worldPos;
+        starLightPos = worldPos;
       }
     });
 
-    // 가로등 위치들 전달
-    if (onStreetlightPositionsFound && streetlightPositions.length > 0) {
-      onStreetlightPositionsFound(streetlightPositions);
-    }
-    // 빨간 불빛 위치들 전달 (Redlight004~009)
-    if (onRedlightPositionsFound && redlightPositions.length > 0) {
-      onRedlightPositionsFound(redlightPositions);
-    }
-    // 초록 불빛 위치들 전달 (Greenlight004~009)
-    if (onGreenlightPositionsFound && greenlightPositions.length > 0) {
-      onGreenlightPositionsFound(greenlightPositions);
-    }
-    // 빨간 불빛 위치들 전달 (Redlight, Redlight001~003)
-    if (onRedlight2PositionsFound && redlight2Positions.length > 0) {
-      onRedlight2PositionsFound(redlight2Positions);
-    }
-    // 노란 불빛 위치들 전달 (Yellowlight, Yellowlight001~002)
-    if (onYellowlightPositionsFound && yellowlightPositions.length > 0) {
-      onYellowlightPositionsFound(yellowlightPositions);
-    }
-    // 별 장식 위치 전달 (Yellowlight003)
-    if (onStarLightPositionFound && starLightPosition) {
-      onStarLightPositionFound(starLightPosition);
-    }
+    return {
+      clonedScene: cloned,
+      positions: {
+        doorPos,
+        door2Pos,
+        streetlightPositions,
+        redlightPositions,
+        greenlightPositions,
+        redlight2Positions,
+        yellowlightPositions,
+        starLightPos
+      }
+    };
+  }, [scene]);
 
-    return cloned;
-  }, [scene, onDoorPositionFound, onDoor2PositionFound, onStreetlightPositionsFound, onRedlightPositionsFound, onGreenlightPositionsFound, onRedlight2PositionsFound, onYellowlightPositionsFound, onStarLightPositionFound]);
+  // useEffect에서 콜백 호출 (렌더링 완료 후)
+  useEffect(() => {
+    if (positions.doorPos && onDoorPositionFound) {
+      onDoorPositionFound(positions.doorPos);
+    }
+    if (positions.door2Pos && onDoor2PositionFound) {
+      onDoor2PositionFound(positions.door2Pos);
+    }
+    if (positions.streetlightPositions.length > 0 && onStreetlightPositionsFound) {
+      onStreetlightPositionsFound(positions.streetlightPositions);
+    }
+    if (positions.redlightPositions.length > 0 && onRedlightPositionsFound) {
+      onRedlightPositionsFound(positions.redlightPositions);
+    }
+    if (positions.greenlightPositions.length > 0 && onGreenlightPositionsFound) {
+      onGreenlightPositionsFound(positions.greenlightPositions);
+    }
+    if (positions.redlight2Positions.length > 0 && onRedlight2PositionsFound) {
+      onRedlight2PositionsFound(positions.redlight2Positions);
+    }
+    if (positions.yellowlightPositions.length > 0 && onYellowlightPositionsFound) {
+      onYellowlightPositionsFound(positions.yellowlightPositions);
+    }
+    if (positions.starLightPos && onStarLightPositionFound) {
+      onStarLightPositionFound(positions.starLightPos);
+    }
+  }, [positions, onDoorPositionFound, onDoor2PositionFound, onStreetlightPositionsFound, onRedlightPositionsFound, onGreenlightPositionsFound, onRedlight2PositionsFound, onYellowlightPositionsFound, onStarLightPositionFound]);
 
   return (
     <RigidBody type="fixed" colliders="trimesh">
@@ -3434,7 +3541,7 @@ function Level4Map({ onDoorPositionFound, onCabinetTVPositionFound, onWallPositi
 
 useGLTF.preload('/resources/GameView/Level4Map-v2.glb');
 
-function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, isDarkMode }) {
+function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, onNPCPositionFound, isDarkMode }) {
   const [streetlightPositions, setStreetlightPositions] = useState([]);
   const [redlightPositions, setRedlightPositions] = useState([]);
   const [greenlightPositions, setGreenlightPositions] = useState([]);
@@ -3606,6 +3713,14 @@ function Level1({ characterRef, onDoorPositionFound, onDoor2PositionFound, isDar
           />
         </group>
       )}
+
+      {/* NPC - OldClassy */}
+      <NPCOldClassy
+        position={[-1, 0, -35]}
+        scale={2}
+        rotation={[0, Math.PI / 2, 0]}
+        onPositionFound={onNPCPositionFound}
+      />
 
       {/* 숨겨진 텍스트로 프리로드 - 화면 밖에 배치 */}
       <Text
@@ -3948,6 +4063,8 @@ function App() {
   const [showPortfolioPopup, setShowPortfolioPopup] = useState(false); // 포트폴리오 팝업 표시 여부
   const [isFading, setIsFading] = useState(false); // 페이드 전환 상태
   const [spawnPosition, setSpawnPosition] = useState([0, 2, 0]); // 캐릭터 스폰 위치
+  const [npcPosition, setNpcPosition] = useState(null); // Level1 NPC 위치
+  const [isNearNPC, setIsNearNPC] = useState(false); // NPC 근처에 있는지 여부
 
   // 페이드 효과와 함께 레벨 전환
   const setGameStateWithFade = (newState) => {
@@ -4083,11 +4200,11 @@ function App() {
 
         <Suspense fallback={null}>
           <Physics key={getPhysicsKey()} gravity={[0, -40, 0]}>
-            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} door2Position={door2Position} setIsNearDoor2={setIsNearDoor2} door3Position={door3Position} setIsNearDoor3={setIsNearDoor3} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} doorPositionLevel3={doorPositionLevel3} setIsNearDoorLevel3={setIsNearDoorLevel3} doorPositionLevel4={doorPositionLevel4} setIsNearDoorLevel4={setIsNearDoorLevel4} cabinetTVPosition={cabinetTVPosition} setIsNearCabinetTV={setIsNearCabinetTV} setShowContactInfo={setShowContactInfo} wallPosition={wallPosition} setIsNearWall={setIsNearWall} setShowProfile={setShowProfile} asuraCabinetPosition={asuraCabinetPosition} setIsNearAsuraCabinet={setIsNearAsuraCabinet} setShowFirstProject={setShowFirstProject} conviCabinetPosition={conviCabinetPosition} setIsNearConviCabinet={setIsNearConviCabinet} setShowSecondProject={setShowSecondProject} voidCabinetPosition={voidCabinetPosition} setIsNearVoidCabinet={setIsNearVoidCabinet} setShowThirdProject={setShowThirdProject} frontendTablePosition={frontendTablePosition} setIsNearFrontendTable={setIsNearFrontendTable} backendTablePosition={backendTablePosition} setIsNearBackendTable={setIsNearBackendTable} gamedevTablePosition={gamedevTablePosition} setIsNearGamedevTable={setIsNearGamedevTable} toolsTablePosition={toolsTablePosition} setIsNearToolsTable={setIsNearToolsTable} deskCornerPosition={deskCornerPosition} setIsNearDeskCorner={setIsNearDeskCorner} setShowPortfolioPopup={setShowPortfolioPopup} spawnPosition={spawnPosition} />
+            <Model characterRef={characterRef} gameState={gameState} setGameState={setGameState} setGameStateWithFade={setGameStateWithFade} doorPosition={doorPosition} setIsNearDoor={setIsNearDoor} door2Position={door2Position} setIsNearDoor2={setIsNearDoor2} door3Position={door3Position} setIsNearDoor3={setIsNearDoor3} doorPositionLevel2={doorPositionLevel2} setIsNearDoorLevel2={setIsNearDoorLevel2} doorPositionLevel3={doorPositionLevel3} setIsNearDoorLevel3={setIsNearDoorLevel3} doorPositionLevel4={doorPositionLevel4} setIsNearDoorLevel4={setIsNearDoorLevel4} cabinetTVPosition={cabinetTVPosition} setIsNearCabinetTV={setIsNearCabinetTV} setShowContactInfo={setShowContactInfo} wallPosition={wallPosition} setIsNearWall={setIsNearWall} setShowProfile={setShowProfile} asuraCabinetPosition={asuraCabinetPosition} setIsNearAsuraCabinet={setIsNearAsuraCabinet} setShowFirstProject={setShowFirstProject} conviCabinetPosition={conviCabinetPosition} setIsNearConviCabinet={setIsNearConviCabinet} setShowSecondProject={setShowSecondProject} voidCabinetPosition={voidCabinetPosition} setIsNearVoidCabinet={setIsNearVoidCabinet} setShowThirdProject={setShowThirdProject} frontendTablePosition={frontendTablePosition} setIsNearFrontendTable={setIsNearFrontendTable} backendTablePosition={backendTablePosition} setIsNearBackendTable={setIsNearBackendTable} gamedevTablePosition={gamedevTablePosition} setIsNearGamedevTable={setIsNearGamedevTable} toolsTablePosition={toolsTablePosition} setIsNearToolsTable={setIsNearToolsTable} deskCornerPosition={deskCornerPosition} setIsNearDeskCorner={setIsNearDeskCorner} setShowPortfolioPopup={setShowPortfolioPopup} spawnPosition={spawnPosition} npcPosition={npcPosition} isNearNPC={isNearNPC} setIsNearNPC={setIsNearNPC} />
             <CameraController gameState={gameState} characterRef={characterRef} />
             <CameraLogger />
             {gameState === 'playing_level1' && (
-              <Level1 key="level1" characterRef={characterRef} onDoorPositionFound={setDoorPosition} onDoor2PositionFound={setDoor2Position} isDarkMode={isDarkMode} />
+              <Level1 key="level1" characterRef={characterRef} onDoorPositionFound={setDoorPosition} onDoor2PositionFound={setDoor2Position} onNPCPositionFound={setNpcPosition} isDarkMode={isDarkMode} />
             )}
             {gameState === 'playing_level2' && (
               <Level2 key="level2" characterRef={characterRef} onDoorPositionFound={setDoorPositionLevel2} onAsuraCabinetPositionFound={setAsuraCabinetPosition} onConviCabinetPositionFound={setConviCabinetPosition} onVoidCabinetPositionFound={setVoidCabinetPosition} />
@@ -4184,6 +4301,30 @@ function App() {
       {!isWebMode && isNearDeskCorner && gameState === 'playing_level4' && !showPortfolioPopup && (
         <div className="door-interaction-ui">
           💼 E키를 눌러 포트폴리오 프로젝트 보기
+        </div>
+      )}
+
+      {/* NPC 대화창 - Level1 */}
+      {!isWebMode && isNearNPC && gameState === 'playing_level1' && (
+        <div className="npc-dialogue-box">
+          <div className="npc-dialogue-content">
+            <div className="npc-name">마을 주민</div>
+            <div className="npc-message">
+              {isDarkMode ? (
+                <>
+                  <span className="npc-highlight">밤이 되니 트리에 불이 들어왔네요!</span>
+                  <br />
+                  반짝이는 조명들이 정말 아름답지 않나요?
+                </>
+              ) : (
+                <>
+                  해가 지면 마을 트리에 예쁜 불이 켜진답니다.
+                  <br />
+                  <span className="npc-hint">상단의 🌙 버튼으로 밤을 맞이해보세요!</span>
+                </>
+              )}
+            </div>
+          </div>
         </div>
       )}
 

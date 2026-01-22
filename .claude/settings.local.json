@@ -29,7 +29,8 @@
       "Bash(tasklist:*)",
       "Bash(npm run build:check:*)",
       "Bash(git lfs track:*)",
-      "Bash(git lfs:*)"
+      "Bash(git lfs:*)",
+      "Bash(ls -la \"C:\\\\Users\\\\vxbc5\\\\Desktop\\\\PortGame\\\\portfolio-game\\\\public\\\\resources\\\\GameView\"\" 2>/dev/null || dir \"C:Usersvxbc5DesktopPortGameportfolio-gamepublicresourcesGameView\"\")"
     ],
     "deny": [],
     "ask": []

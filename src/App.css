@@ -2232,6 +2232,106 @@
   }
 }
 
+/* NPC 대화창 스타일 */
+.npc-dialogue-box {
+  position: fixed;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 500px;
+  width: 90%;
+  z-index: 100;
+  animation: npcDialogueFadeIn 0.4s ease-out;
+}
+
+.npc-dialogue-content {
+  background: linear-gradient(135deg, rgba(30, 30, 50, 0.95) 0%, rgba(50, 40, 70, 0.95) 100%);
+  border-radius: 20px;
+  padding: 1.5rem;
+  border: 2px solid rgba(255, 215, 0, 0.4);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(255, 215, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  position: relative;
+}
+
+.npc-dialogue-content::before {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid rgba(50, 40, 70, 0.95);
+}
+
+.npc-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #FFD700;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.npc-message {
+  font-size: 1rem;
+  color: #f0f0f0;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.npc-highlight {
+  color: #FFD700;
+  font-weight: 600;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+.npc-hint {
+  color: #87CEEB;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+@keyframes npcDialogueFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+/* 다크 모드에서 대화창 강조 */
+.dark-mode .npc-dialogue-content {
+  border-color: rgba(255, 215, 0, 0.6);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(255, 215, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .npc-highlight {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.4);
+  }
+}
+
 /* 페이드 전환 오버레이 */
 .fade-overlay {
   position: fixed;
