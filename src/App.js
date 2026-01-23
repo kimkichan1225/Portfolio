@@ -677,7 +677,7 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
             ))}
           </div>
 
-          <div ref={homeRef} className={`fade-in ${homeVisible ? 'visible' : ''}`} style={{ textAlign: 'center', maxWidth: '900px', position: 'relative', zIndex: 1 }}>
+          <div ref={homeRef} className={`fade-in ${homeVisible ? 'visible' : ''}`} style={{ textAlign: 'center', maxWidth: '900px', position: 'relative', zIndex: 1, marginTop: '-30px' }}>
             <h2 style={{ fontSize: '3rem', marginBottom: '1rem' }}>
               <span className="highlight">
                 <TypingAnimation
@@ -717,6 +717,32 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                 <p style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#888' }}>
                   💡 상단 우측의 <strong>🎮 버튼</strong>을 클릭하여 게임 모드로 전환해보세요!
                 </p>
+                <button
+                  onClick={onToggleMode}
+                  style={{
+                    marginTop: '1.5rem',
+                    padding: '12px 24px',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '25px',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.5)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
+                  }}
+                >
+                  🎮 게임 모드로 전환
+                </button>
               </div>
             </div>
           </div>
