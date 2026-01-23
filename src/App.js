@@ -4160,7 +4160,7 @@ function Level4({ characterRef, onDoorPositionFound, onCabinetTVPositionFound, o
 
 // 튜토리얼 팝업 컴포넌트
 function TutorialPopup({ onClose, onDoNotShowAgain }) {
-  const [currentPage, setCurrentPage] = useState(0); // 0: 조작법, 1: 미니맵
+  const [currentPage, setCurrentPage] = useState(0); // 0: 미니맵, 1: 조작법
 
   const nextPage = () => {
     if (currentPage < 1) setCurrentPage(currentPage + 1);
@@ -4197,24 +4197,8 @@ function TutorialPopup({ onClose, onDoNotShowAgain }) {
           →
         </button>
 
-        {/* 페이지 1: 조작법 */}
+        {/* 페이지 1: 미니맵 */}
         {currentPage === 0 && (
-          <div className="tutorial-content tutorial-page">
-            <h3>조작법:</h3>
-            <ul>
-              <li><strong>WASD</strong>: 이동</li>
-              <li><strong>Shift</strong>: 달리기</li>
-              <li><strong>E</strong>: 상호작용</li>
-            </ul>
-
-            <p className="tutorial-description">
-              마을을 돌아다니며 프로젝트를 탐험해보세요!
-            </p>
-          </div>
-        )}
-
-        {/* 페이지 2: 미니맵 */}
-        {currentPage === 1 && (
           <div className="tutorial-content tutorial-page">
             <h3>마을 지도:</h3>
             <div className="tutorial-minimap">
@@ -4230,7 +4214,29 @@ function TutorialPopup({ onClose, onDoNotShowAgain }) {
           </div>
         )}
 
-        {/* 버튼은 2페이지(미니맵)에서만 표시 */}
+        {/* 페이지 2: 조작법 */}
+        {currentPage === 1 && (
+          <div className="tutorial-content tutorial-page">
+            <h3>조작법:</h3>
+            <ul>
+              <li><strong>WASD</strong>: 이동</li>
+              <li><strong>Shift</strong>: 달리기</li>
+              <li><strong>E</strong>: 상호작용</li>
+            </ul>
+
+            <h3 style={{ marginTop: '1rem' }}>인터페이스:</h3>
+            <ul>
+              <li><strong>화면 위쪽으로 마우스 이동</strong>: 메뉴 바 표시</li>
+              <li><strong>🌐 Web 버튼</strong>: 웹 모드로 전환</li>
+            </ul>
+
+            <p className="tutorial-description">
+              마을을 돌아다니며 프로젝트를 탐험해보세요!
+            </p>
+          </div>
+        )}
+
+        {/* 버튼은 2페이지(조작법)에서만 표시 */}
         {currentPage === 1 && (
           <div className="tutorial-buttons">
             <button className="tutorial-btn tutorial-btn-primary" onClick={onClose}>

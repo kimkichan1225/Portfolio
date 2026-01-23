@@ -226,41 +226,42 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(91, 127, 255, 0.1);
-  border: 2px solid #5B7FFF;
-  color: #5B7FFF;
-  width: 50px;
-  height: 50px;
+  background: linear-gradient(135deg, #667EEA 0%, #5B7FFF 100%);
+  border: none;
+  color: white;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
+  font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10;
+  box-shadow: 0 4px 15px rgba(91, 127, 255, 0.4);
 }
 
 .tutorial-arrow:hover:not(.disabled) {
-  background: #5B7FFF;
-  color: white;
-  transform: translateY(-50%) scale(1.1);
+  background: linear-gradient(135deg, #764BA2 0%, #667EEA 100%);
+  transform: translateY(-50%) scale(1.15);
+  box-shadow: 0 6px 20px rgba(91, 127, 255, 0.5);
 }
 
 .tutorial-arrow.disabled {
-  opacity: 0.3;
+  opacity: 0.4;
   cursor: not-allowed;
-  border-color: #ccc;
-  color: #ccc;
-  background: rgba(200, 200, 200, 0.1);
+  background: #ccc;
+  box-shadow: none;
 }
 
 .tutorial-arrow-left {
-  left: 10px;
+  left: -75px;
 }
 
 .tutorial-arrow-right {
-  right: 10px;
+  right: -75px;
 }
 
 .tutorial-page {
@@ -300,20 +301,19 @@
 }
 
 .dark-mode .tutorial-arrow {
-  background: rgba(123, 159, 255, 0.15);
-  border-color: #7B9FFF;
-  color: #7B9FFF;
+  background: linear-gradient(135deg, #7B9FFF 0%, #9D7BC9 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(123, 159, 255, 0.4);
 }
 
 .dark-mode .tutorial-arrow:hover:not(.disabled) {
-  background: #7B9FFF;
-  color: white;
+  background: linear-gradient(135deg, #9D7BC9 0%, #7B9FFF 100%);
+  box-shadow: 0 6px 20px rgba(123, 159, 255, 0.5);
 }
 
 .dark-mode .tutorial-arrow.disabled {
-  border-color: #555;
-  color: #555;
-  background: rgba(100, 100, 100, 0.1);
+  background: #555;
+  box-shadow: none;
 }
 
 .dark-mode .tutorial-minimap {
@@ -335,11 +335,11 @@
   }
 
   .tutorial-arrow-left {
-    left: 5px;
+    left: -50px;
   }
 
   .tutorial-arrow-right {
-    right: 5px;
+    right: -50px;
   }
 
   .minimap-image {
