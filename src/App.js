@@ -31,7 +31,7 @@ const projectsData = [
       'Three.js 3인칭 시점, 26종 캐릭터, 20+ 무기, 2개 맵',
       '',
       '[ 기간 ]',
-      '2024.07.18 ~ 2024.07.28 (11일)',
+      '2025.07.18 ~ 2025.07.28 (11일)',
       '',
       '[ 역할 ]',
       '서버: 서버 구축, 코드 안정화',
@@ -110,7 +110,7 @@ const projectsData = [
       '고객/점주/본사 3개 역할, 17개 테이블, 13개 함수, 15개 트리거',
       '',
       '[ 기간 ]',
-      '2024.08.11 ~ 2024.08.22 (12일)',
+      '2025.08.11 ~ 2025.08.22 (12일)',
       '',
       '[ 역할 ]',
       '프론트엔드: 본사 기능 구현',
@@ -190,7 +190,7 @@ const projectsData = [
       '실시간 멀티플레이어, 5종 미니게임, 경제 시스템, 게시판, 지도 연동',
       '',
       '[ 기간 ]',
-      '2024.08.11 ~ 2024.08.22 (12일) + 지속 업데이트 중 (2026.01.21)',
+      '2026.01.02 ~ 2026.01.29 (4주)',
       '',
       '[ 주요 기능 ]',
       '3D 가상 광장: Three.js + Rapier 물리 엔진, 실시간 멀티플레이어 (WebSocket STOMP)',
@@ -397,9 +397,6 @@ const projectsData = [
       'PHP 8 + MySQL 기반 목표 관리 및 소셜 네트워킹 플랫폼',
       '목표 자동 분해(12개월), 진행률 자동 계산, 회고, 팔로우, 커뮤니티',
       '',
-      '[ 기간 ]',
-      '2026.01 (개인 프로젝트)',
-      '',
       '[ 주요 기능 ]',
       '목표 관리: 12개월 계획 자동 생성, 진행률 자동 계산, 회고 시스템, 공개/비공개 설정',
       '소셜 기능: 팔로우/팔로워 시스템, 사용자 검색, 프로필 사진 업로드',
@@ -457,7 +454,7 @@ const projectsData = [
       '설문 공유 → 별 생성 → 별자리 시각화, Canvas 기반 렌더링',
       '',
       '[ 기간 ]',
-      '2026.01 (개인/팀 프로젝트)',
+      '2025.12.13 ~ 2026.01.19 1차 완료, 추가 개발 예정',
       '',
       '[ 팀 구성 ]',
       '개발자: 김기찬, 디자이너: 김태희',
@@ -523,6 +520,73 @@ const projectsData = [
   },
   {
     id: 8,
+    category: '개인',
+    categoryLabel: '개인(팀) 프로젝트',
+    title: 'DevDocs AI(AI 문서 관리 협업 플랫폼)',
+    description: 'React 18 + TypeScript + Supabase로 구축한 AI 기반 문서 관리 및 협업 플랫폼',
+    image: '/Devdocs-AIProject.png',
+    video: null,
+    tech: ['React 18', 'TypeScript', 'Vite', 'Tailwind CSS v4', 'Zustand', 'Node.js', 'Express', 'Supabase', 'PostgreSQL', 'Claude API', 'TipTap', 'Tesseract.js', 'Socket.IO'],
+    overview: [
+      '[ 개요 ]',
+      'React 18 + TypeScript + Supabase + Claude API 기반 AI 문서 관리 협업 플랫폼',
+      '다양한 파일 형식 지원, AI 요약/Q&A/번역/비교, 실시간 공동 편집, 팀 워크스페이스',
+      '',
+      '[ 기간 ]',
+      '2026.01',
+      '',
+      '[ 주요 기능 ]',
+      '문서 관리: PDF/DOCX/XLSX/이미지 업로드, OCR 텍스트 추출, URL 문서 생성, 폴더/태그/즐겨찾기',
+      '전문 검색: 개인+팀 통합 검색, 관련도 정렬, 검색어 하이라이트, 자동완성',
+      'AI 기능: Claude API 문서 요약/Q&A 채팅/번역/AI 편집/문서 비교/README 자동 생성',
+      '협업: 팀 워크스페이스(owner/admin/member), 문서 공유(사용자/링크), 댓글/멘션, 실시간 공동 편집',
+      '기타: 자동 저장, 휴지통(30일 보관), 버전 히스토리, 다크모드'
+    ],
+    achievements: [
+      '다양한 파일 형식 지원\nPDF, DOCX, XLSX, PPTX, 이미지, Markdown, 텍스트, 코드 파일 업로드 및 파싱',
+      'OCR 텍스트 추출\nTesseract.js로 이미지/스캔 PDF에서 한국어/영어 텍스트 자동 추출',
+      'Claude API AI 기능\n문서 요약(짧게/보통/상세), Q&A 채팅(대화 기록 저장), 번역, AI 편집, 문서 비교',
+      'GitHub README 자동 생성\nGitHub URL 분석하여 README 자동 생성',
+      '전문 검색 시스템\n개인+팀 통합 검색, ILIKE 기반 Full-text Search, 관련도 정렬, 자동완성',
+      '팀 워크스페이스\n팀 생성/초대, 역할 권한 관리(owner/admin/member), 팀 대시보드/공지사항/활동 로그',
+      '문서 공유 시스템\n특정 사용자 공유(보기/댓글/편집 권한), 비밀번호/만료일 공유 링크',
+      '실시간 공동 편집\nSocket.IO 동시 접속자 표시, 커서 위치 공유, 내용 실시간 동기화',
+      '댓글 시스템\n댓글/대댓글, @멘션, 해결 처리, 알림',
+      'TipTap 리치 텍스트 에디터\n표, 글자색/크기, 정렬, 링크, 이미지 등 고급 편집',
+      '문서 내보내기\nPDF, Word(DOCX), HTML, Markdown, TXT 형식 지원',
+      '자동 저장 & 버전 히스토리\n2초 후 자동 저장, 편집 기록 관리 및 복원',
+      '휴지통 시스템\n삭제 문서 30일 보관, 복원/영구 삭제 (개인/팀 문서)',
+      'Supabase RLS 보안\nRow Level Security로 역할별 데이터 접근 제어',
+      'Railway 배포\n클라이언트 + 서버 통합 배포'
+    ],
+    challenges: [
+      {
+        title: 'OCR 텍스트 추출 구현',
+        description: '문제: 이미지 기반 PDF(스캔 문서, 포트폴리오 등)에서 텍스트 추출 불가\n해결책: Tesseract.js 연동, 한국어/영어 언어팩 지원, 이미지/PDF 모두 OCR 처리\n결과: 스캔 문서에서도 텍스트 검색 및 AI 분석 가능'
+      },
+      {
+        title: '실시간 공동 편집 시스템',
+        description: '문제: 여러 사용자가 동시에 문서 편집 시 충돌 및 동기화 문제\n해결책: Socket.IO 실시간 통신, 동시 접속자 표시, 커서 위치 공유, 내용 실시간 동기화\n결과: Google Docs와 유사한 실시간 공동 편집 경험'
+      },
+      {
+        title: '팀 권한 관리 시스템',
+        description: '문제: owner/admin/member 역할별 세분화된 권한 관리 필요\n해결책: team_permissions 테이블, 역할별 권한 설정(멤버 관리/공지 작성/활동 로그 조회), RLS 정책 연동\n결과: 유연한 역할 기반 접근 제어, 팀 운영 효율화'
+      },
+      {
+        title: '전문 검색 최적화',
+        description: '문제: 대량 문서에서 빠른 검색 및 관련도 정렬 필요\n해결책: PostgreSQL ILIKE 기반 검색, 제목/내용 매칭 점수 계산, 검색어 하이라이트, 페이지네이션\n결과: 빠른 통합 검색, 직관적인 검색 결과 표시'
+      },
+      {
+        title: 'Claude API 연동',
+        description: '문제: 문서 요약/Q&A/번역 등 다양한 AI 기능 구현 필요\n해결책: Anthropic Claude API(claude-sonnet-4-20250514) 연동, 용도별 프롬프트 설계, 채팅 히스토리 저장\n결과: 문서 기반 AI 분석, 맥락 유지 Q&A 채팅'
+      }
+    ],
+    github: 'https://github.com/kimkichan1225/DevDocs-AI',
+    demo: 'https://devdocs-ai-production.up.railway.app',
+    reports: []
+  },
+  {
+    id: 9,
     category: '기타',
     categoryLabel: '기타',
     icon: '🤖',
@@ -577,7 +641,7 @@ const projectsData = [
     reports: []
   },
   {
-    id: 9,
+    id: 10,
     category: '개인',
     categoryLabel: '개인(팀) 프로젝트',
     status: '진행 중',
@@ -836,7 +900,7 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
             {projectTab === 'featured' && (
               <>
               <div className="projects-grid" style={{ marginTop: '2rem' }}>
-                {[3, 7, 2].map((projectId, index) => {
+                {[3, 7, 8, 2].map((projectId, index) => {
                   const project = projectsData.find(p => p.id === projectId);
                   if (!project) return null;
                   return (
