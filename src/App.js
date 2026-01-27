@@ -981,7 +981,7 @@ function WebModeContent({ onToggleMode, isDarkMode }) {
                   </div>
                 </div>
                 <div className="projects-grid">
-                  {[8].map((projectId, index) => {
+                  {[9].map((projectId, index) => {
                     const project = projectsData.find(p => p.id === projectId);
                     if (!project) return null;
                     return (
